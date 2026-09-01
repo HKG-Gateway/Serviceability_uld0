@@ -368,18 +368,22 @@
 • 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
 • 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。`;
 
-        // --- Straps Criteria Text Exactly Matching Manual ---
+        // Straps Criteria Text
         const strapsFullCriteriaExact = 
 `📌 軍帶 (Restraint Straps):
-🔵 主要 SCAF 軍帶 (藍色) 拒收條件:
-• 未附有清晰可辨的 TSO 標籤。
-• 已超過有效期限。
-• 存在任何形式的損壞 (切口/磨損/開線)。
+🔵 主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色) -- 如出現以下任何情況，應判定為不可使用：
+  註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用
+  - 未附有清晰可辨的 TSO 標籤
+  - 已超過有效期限
+  - 存在任何形式的損壞
 
-🟡 次要貨物綁帶 (黃色) 拒收條件:
-• 已超過有效期限。
-• 扣環無法保持鎖定狀態。
-• 綁帶材料切口或磨損超過綁帶寬度的 25%，或存在解不開的結。`;
+🟡 次要貨物綁固帶 (黃色) -- 如出現以下任何情況，應判定為不可使用：
+  - 已超過有效期限 (如適用)
+  - 扣環無法保持鎖定狀態
+  - 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受
+  - 綁帶材料存在以下情況：
+    • 單一切口或磨損超過綁帶寬度的 25%
+    • 存在一個或以上解不開的結`;
 
         // --- Datasets & Hybrid Engine State ---
         let activePage = 'uld', currentItemKey = 'amp', currentCategory = 'all';
@@ -558,7 +562,7 @@
             }
         };
 
-        // 2. Pallet Contour Dataset
+        // 2. Pallet Contour Dataset (H2 removed as requested)
         const contourData = {
             "q6": { sketchfabUid: "", glbFile: "q6.glb", label: "Q6", title: "Q6 Main Deck Contour (主艙單邊側斜)", color: "text-blue-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ Q6 輪廓說明:\n• 單邊頂部斜角設計，貼合 B747F / B777F 主艙機身內壁。" },
             "q7": { 
@@ -574,6 +578,7 @@
 • 最高 105 吋 / 118 吋
 • 另一邊 96 吋收角` 
             },
+            // 🌟 Updated: X6 fullCriteria updated as requested
             "x6": { 
                 sketchfabUid: "8b8afd58c6304017a1f8a440cb5b5f39", 
                 glbFile: "x6.glb", 
@@ -582,11 +587,13 @@
                 color: "text-teal-600", 
                 headerLabel: "輪廓說明 (Contour Limits)", 
                 titleSuffix: "收板輪廓說明", 
-                fullCriteria: "✈️ X6 輪廓說明:\n• B767F 機身截面較窄，頂部兩側呈對稱雙面斜頂角。" 
+                fullCriteria: 
+`✈️ X6 輪廓說明:
+• 最高 96 吋
+• 另一邊 45 吋收角` 
             },
             "a2": { sketchfabUid: "", glbFile: "a2.glb", label: "A2", title: "A2 Main Deck Container (主艙面板標準)", color: "text-emerald-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ A2 輪廓與機艙說明:\n• 全機艙適用於 747-400 / 747-8F。" },
-            "w2": { sketchfabUid: "", glbFile: "w2.glb", label: "W2", title: "W2 Standard Lower Deck Box (下艙標準方體)", color: "text-cyan-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ W2 輪廓說明:\n• 標準平頂直壁方體輪廓，適用於腹艙中央直壁空間。" },
-            "h2": { sketchfabUid: "", glbFile: "h2.glb", label: "H2", title: "H2 High Straight Box (主艙平頂高箱)", color: "text-indigo-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ H2 輪廓說明:\n• 64 吋直壁平頂結構。" }
+            "w2": { sketchfabUid: "", glbFile: "w2.glb", label: "W2", title: "W2 Standard Lower Deck Box (下艙標準方體)", color: "text-cyan-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ W2 輪廓說明:\n• 標準平頂直壁方體輪廓，適用於腹艙中央直壁空間。" }
         };
 
         // Three.js Engine Variables
@@ -828,6 +835,23 @@
                 if (tabAccessory) tabAccessory.innerText = `配件 (${accessoryCount})`;
             }
 
+            // Mapping for extra label suffixes
+            const extraLabels = {
+                'amp': 'Container',
+                'amj': 'Container',
+                'amd': 'Container',
+                'aay': 'Container',
+                'aaz': 'Container',
+                'alp': 'Container',
+                'aad': 'Container',
+                'pag': 'Pallet',
+                'pmc': 'Pallet',
+                'fcc': 'FCC Nets',
+                'net': 'Cargo Nets',
+                'straps': 'Restraint Straps',
+                'trsl': 'Temporary Restraint Straps'
+            };
+
             Object.keys(dataset).forEach(key => {
                 const item = dataset[key];
                 if (activePage === 'uld' && currentCategory !== 'all' && item.category !== currentCategory) return;
@@ -846,12 +870,10 @@
                 
                 const hasTagBadge = item.sketchfabUid ? `<span class="text-[9px] ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-indigo-100 text-indigo-700'} px-1.5 py-0.2 rounded font-bold">標籤</span>` : '';
                 
-                // Specific Label Extensions for Straps & TRSL
+                // Specific Label Extensions
                 let extraText = '';
-                if (key === 'straps') {
-                    extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">Restraint Straps</span>`;
-                } else if (key === 'trsl') {
-                    extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">Temporary Restraint Straps</span>`;
+                if (activePage === 'uld' && extraLabels[key]) {
+                    extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">${extraLabels[key]}</span>`;
                 }
 
                 const badgeBg = isSelected ? "bg-white/90 text-[#2b1610]" : `bg-white ${item.color}`;
