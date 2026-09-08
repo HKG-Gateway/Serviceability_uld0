@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ULD Inspect360</title>
+    <title>ULD Inspect360 - 官方 3D ULD 適航檢查與快速查詢工具</title>
     
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#2b1610">
@@ -14,7 +14,7 @@
     <meta name="application-name" content="ULD Inspect360">
     <meta name="description" content="ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與適航快速查詢工具">
 
-    <!-- PWA Web App Manifest -->
+    <!-- Dynamic PWA Web App Manifest Placeholder -->
     <link rel="manifest" id="manifest-placeholder">
 
     <!-- iOS App Icons -->
@@ -100,8 +100,9 @@
                 </div>
                 
                 <div class="flex items-center gap-1.5 md:gap-2">
-                    <button id="pwa-install-btn" onclick="installPWA()" class="hidden px-2 md:px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow transition">
-                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">安裝 App</span>
+                    <!-- PWA 安裝按鈕 -->
+                    <button id="pwa-install-btn" onclick="installPWA()" class="hidden px-2 md:px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow transition animate-pulse">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">安裝 PWA App</span>
                     </button>
 
                     <button onclick="openCardModal()" class="px-2 md:px-3 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 rounded-lg text-[11px] sm:text-xs font-black flex items-center gap-1 shadow-md transition">
@@ -111,7 +112,7 @@
                 </div>
             </div>
 
-            <!-- Page Navigation Tabs Switcher (保留原 ULD 適航檢查，收板形狀說明改為適航查詢工具) -->
+            <!-- Page Navigation Tabs Switcher -->
             <div class="flex bg-slate-900/60 p-1 rounded-lg border border-amber-500/30 text-xs font-bold">
                 <button id="nav-tab-uld" onclick="switchPage('uld')" class="flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold">
                     <i class="fa-solid fa-boxes-packing"></i> 📦 ULD 適航檢查 (<span id="uld-count-badge">13</span>大類)
@@ -135,7 +136,7 @@
     <!-- Main Responsive Layout -->
     <main class="max-w-7xl mx-auto w-full p-2.5 sm:p-4 md:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5">
 
-        <!-- Selector List Column (在 ULD 頁面顯示項目列表，在 查詢工具頁面顯示篩選與搜尋面板) -->
+        <!-- Selector List Column -->
         <div class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
             
             <div id="left-panel-uld" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
@@ -159,7 +160,7 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-[220px] sm:max-h-[260px] lg:max-h-[290px] overflow-y-auto pr-1" id="item-selector-group"></div>
             </div>
 
-            <!-- 查詢工具左側篩選面板 (預設隱藏，切換至查詢工具頁面時顯示) -->
+            <!-- 查詢工具左側篩選面板 -->
             <div id="left-panel-search" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm hidden">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
@@ -173,6 +174,7 @@
                         <label class="block font-bold text-slate-700 mb-1">1. 選擇構件分類 (Component Category)</label>
                         <select id="search-category" onchange="runSearchEngine()" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
                             <option value="all">全部分類 (All Categories)</option>
+                            <option value="general">所有適航的 ULD / 板 (All Airworthy ULDs)</option>
                             <option value="panel">面板 / Container Body & Panel</option>
                             <option value="frame">骨架構件 / Frame Members & Fasteners</option>
                             <option value="door">門體與五金配件 / Roll-up Door & Hardware</option>
@@ -188,9 +190,9 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                                 <i class="fa-solid fa-ruler"></i>
                             </span>
-                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 3 吋, 7.62 cm, 凹陷, 穿孔..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: TSO, 箱重, Tare, FCC, 電池, DG, 3 吋..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入數值 (如 3, 7.62, 25%) 或關鍵字快速過濾檢查標準。</p>
+                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入關鍵字 (如 TSO, 箱重, 電池, DG, 3 吋) 快速過濾檢查標準。</p>
                     </div>
 
                     <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11px] text-amber-900">
@@ -199,7 +201,7 @@
                 </div>
             </div>
 
-            <!-- Details Panel (在 ULD 頁面顯示) -->
+            <!-- Details Panel -->
             <div id="details-panel-container" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
@@ -232,7 +234,7 @@
 
         </div>
 
-        <!-- Media Display Area (在 ULD 頁面顯示 3D 檢視器，在 查詢工具頁面顯示查詢結果互動列表) -->
+        <!-- Media Display Area -->
         <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
 
             <!-- ULD 3D 檢視面板 -->
@@ -265,7 +267,7 @@
                 <div class="bg-slate-50 border-t border-slate-200 p-2 flex flex-wrap gap-1.5 text-xs" id="hotspot-buttons"></div>
             </div>
 
-            <!-- 適航查詢工具結果面板 (預設隱藏，切換至查詢工具頁面時顯示) -->
+            <!-- 適航查詢工具結果面板 -->
             <div id="main-view-search" class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col flex-grow hidden overflow-hidden">
                 <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
                     <div class="flex items-center gap-2">
@@ -328,7 +330,7 @@
 
     <!-- Script Block -->
     <script>
-        // Dynamic Manifest Injection
+        // Dynamic Manifest Injection for Full PWA Standards
         const manifestObj = {
             "name": "ULD Inspect360",
             "short_name": "ULD Inspect360",
@@ -338,40 +340,97 @@
             "orientation": "any",
             "background_color": "#2b1610",
             "theme_color": "#2b1610",
-            "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232b1610'/><path d='M50 85 C20 72 8 50 8 18 L50 2 L92 18 C92 50 80 72 50 85 Z' fill='%23ffb500'/><path d='M50 78 C25 66 14 46 14 20 L50 6 L86 20 C86 46 75 66 50 78 Z' fill='%232b1610'/><text x='50' y='55' text-anchor='middle' fill='%23ffb500' font-family='Arial Black' font-weight='900' font-size='24'>UPS</text></svg>", "sizes": "192x192 512x512", "type": "image/svg+xml" }]
+            "icons": [{ 
+                "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232b1610'/><path d='M50 85 C20 72 8 50 8 18 L50 2 L92 18 C92 50 80 72 50 85 Z' fill='%23ffb500'/><path d='M50 78 C25 66 14 46 14 20 L50 6 L86 20 C86 46 75 66 50 78 Z' fill='%232b1610'/><text x='50' y='55' text-anchor='middle' fill='%23ffb500' font-family='Arial Black' font-weight='900' font-size='24'>UPS</text></svg>", 
+                "sizes": "192x192 512x512", 
+                "type": "image/svg+xml" 
+            }]
         };
         const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-        // Safely unregister legacy service workers to prevent cache lockup
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for(let registration of registrations) {
-                    registration.unregister();
-                }
+        // Inline Blob Service Worker Creation for full PWA Offline Caching
+        const swCode = `
+            const CACHE_NAME = 'uld-inspect360-v1';
+            const ASSETS = [
+                './',
+                'https://cdn.tailwindcss.com',
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
+                'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
+                'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js',
+                'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js'
+            ];
+
+            self.addEventListener('install', (e) => {
+                e.waitUntil(
+                    caches.open(CACHE_NAME)
+                        .then((cache) => cache.addAll(ASSETS))
+                        .then(() => self.skipWaiting())
+                );
             });
+
+            self.addEventListener('activate', (e) => {
+                e.waitUntil(
+                    caches.keys().then((keys) => Promise.all(
+                        keys.map((k) => { if (k !== CACHE_NAME) return caches.delete(k); })
+                    )).then(() => self.clients.claim())
+                );
+            });
+
+            self.addEventListener('fetch', (e) => {
+                e.respondWith(
+                    caches.match(e.request).then((res) => res || fetch(e.request).catch(() => caches.match('./')))
+                );
+            });
+        `;
+
+        if ('serviceWorker' in navigator) {
+            try {
+                const swBlob = new Blob([swCode], { type: 'text/javascript' });
+                const swUrl = URL.createObjectURL(swBlob);
+                navigator.serviceWorker.register(swUrl).then(reg => {
+                    console.log('PWA ServiceWorker Active:', reg.scope);
+                }).catch(err => {
+                    console.warn('PWA ServiceWorker Notice:', err);
+                });
+            } catch (err) {
+                console.warn('SW Blob error:', err);
+            }
         }
 
         // PWA Installation Handlers
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault(); deferredPrompt = e;
+            e.preventDefault(); 
+            deferredPrompt = e;
             const btn = document.getElementById('pwa-install-btn');
             if (btn) btn.classList.remove('hidden');
         });
+
         function installPWA() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((res) => {
-                    if (res.outcome === 'accepted') document.getElementById('pwa-install-btn').classList.add('hidden');
+                    if (res.outcome === 'accepted') {
+                        const btn = document.getElementById('pwa-install-btn');
+                        if (btn) btn.classList.add('hidden');
+                    }
                     deferredPrompt = null;
                 });
             }
         }
+
         const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
-        if (isIos && !isStandalone) document.getElementById('ios-pwa-banner').classList.remove('hidden');
-        function closeIosBanner() { document.getElementById('ios-pwa-banner').classList.add('hidden'); }
+        if (isIos && !isStandalone) {
+            const banner = document.getElementById('ios-pwa-banner');
+            if (banner) banner.classList.remove('hidden');
+        }
+        function closeIosBanner() { 
+            const banner = document.getElementById('ios-pwa-banner');
+            if (banner) banner.classList.add('hidden'); 
+        }
 
         // --- Common Unserviceable Standard Text Block for All Containers ---
         const containerFullCriteria = 
@@ -384,7 +443,7 @@
 📌 骨架構件與緊固件 (Frame Members & Fasteners):
 • 損壞長度超過 3 吋 (7.62 cm) 或寬度超過 0.5 吋 (1.27 cm)，不可接受。
 • 凹陷超過 2 吋 (5.08 cm)，不可接受。
-• 底條上方門框面板每側缺失超過一個緊固件，不可接受。
+• 底部上方面板每側缺失 1 個固定件，不可接受。
 
 📌 ULD 設備門體 / 五金配件 (Roll-up Door):
 • 部件缺失或損壞，導致門體無法固定，不可接受。
@@ -406,8 +465,8 @@
 
 📌 附屬配件 (Accessories):
 • 附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況：
-  - 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換。
-  - 雨擋門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。`;
+  • 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換。
+  • 雨擋門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。`;
 
         // --- Exact Full Criteria for PAG & PMC Pallets ---
         const palletFullCriteria = 
@@ -429,20 +488,69 @@
 `📌 軍帶 (Restraint Straps):
 🔵 主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色) -- 如出現以下任何情況，應判定為不可使用：
   註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用
-  - 未附有清晰可辨的 TSO 標籤
-  - 已超過有效期限
-  - 存在任何形式的損壞
+  • 未附有清晰可辨的 TSO 標籤
+  • 已超過有效期限
+  • 存在任何形式的損壞
 
 🟡 次要貨物綁固帶 (黃色) -- 如出現以下任何情況，應判定為不可使用：
-  - 已超過有效期限 (如適用)
-  - 扣環無法保持鎖定狀態
-  - 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受
-  - 綁帶材料存在以下情況：
+  • 已超過有效期限 (如適用)
+  • 扣環無法保持鎖定狀態
+  • 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受
+  • 綁帶材料存在以下情況：
     • 單一切口或磨損超過綁帶寬度的 25%
     • 存在一個或以上解不開的結`;
 
-        // --- Structured Search Engine Knowledge Base (按表列出各檢驗標準，供搜尋引擎精準過濾) ---
+        // --- Structured Search Engine Knowledge Base ---
         const searchKnowledgeBase = [
+            // --- 所有適航的 ULD / 板 (All Airworthy ULDs) ---
+            {
+                id: "general_tso",
+                category: "general",
+                categoryName: "所有適航的 ULD/板",
+                title: "TSO 標籤 (TSO Tag / Placard)",
+                condition: "TSO 標籤至少在 ULD 的某一處且清晰可讀。",
+                limitValue: "至少一處清晰可讀",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "符合此條件方可判定為適航可使用。"
+            },
+            {
+                id: "general_tare_weight",
+                category: "general",
+                categoryName: "所有適航的 ULD/板",
+                title: "箱重標籤 (Tare Weight Decal)",
+                condition: "箱重標籤 (Tare Weight Decal) 至少在一個位置清晰可見 (無魔術筆塗改痕跡)。",
+                limitValue: "至少一處清晰可見 (無手寫塗改)",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "不得使用魔術筆等手寫塗改。"
+            },
+            {
+                id: "general_id_code",
+                category: "general",
+                categoryName: "所有適航的 ULD/板",
+                title: "ULD 識別碼、箱/板號及所有者代碼",
+                condition: "ULD 識別碼、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆塗改痕跡)。",
+                limitValue: "至少一處清晰可見 (無手寫塗改)",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "包含 ULD 編號與所有者標記，不得有手寫塗改痕跡。"
+            },
+
+            // --- FCC 規範 ---
+            {
+                id: "fcc_dg_battery",
+                category: "general",
+                categoryName: "FCC / 配件 (Accessories)",
+                title: "FCC 使用規範 (電池貨品 / 危險品 DG)",
+                condition: "所有板裝含有電池貨品或危險品 (Dangerous Goods / DG) 之貨物。",
+                limitValue: "必須使用 FCC",
+                verdict: "強制使用 (Mandatory)",
+                verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
+                note: "所有板裝含有電池貨品 / 危險品 (DG) 均必須使用 FCC。"
+            },
+
+            // --- 面板 (Panel) ---
             {
                 id: "panel_edge",
                 category: "panel",
@@ -476,6 +584,8 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "可能碰撞機身內部結構，嚴禁使用。"
             },
+
+            // --- 骨架構件 (Frame Members) ---
             {
                 id: "frame_dmg",
                 category: "frame",
@@ -485,8 +595,21 @@
                 limitValue: "3 in / 0.5 in / 2 in",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "底條上方門框面板每側缺失超過一個緊固件亦屬不可接受。"
+                note: "適用於所有骨架構件、壓條與柱體之結構損壞與凹陷。"
             },
+            {
+                id: "frame_fasteners",
+                category: "frame",
+                categoryName: "骨架構件 / Frame Members",
+                title: "底部上方面板固定件缺失",
+                condition: "底部上方面板每側缺失 1 個固定件。",
+                limitValue: "1 個固定件 / 側",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "依據 FORM: 83-48-002 標準，底部上方面板每側缺失 1 個固定件即屬不可接受。"
+            },
+
+            // --- 門體與五金 (Roll-up Door) ---
             {
                 id: "door_canvas",
                 category: "door",
@@ -496,7 +619,18 @@
                 limitValue: "8 x 12 in / 96 sq in",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "部件缺失或導致門體無法固定亦不可接受。"
+                note: ""
+            },
+            {
+                id: "door_hardware",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "門體五金部件缺失與損壞",
+                condition: "部件缺失或損壞，導致門體無法固定。",
+                limitValue: "部件缺失 / 無法固定",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "包含五金扣件、鎖頭等影響門體固定功能之損壞。"
             },
             {
                 id: "door_cable",
@@ -507,8 +641,21 @@
                 limitValue: "25% / 12 in / 30.48 cm",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm) 亦不可接受。"
+                note: ""
             },
+            {
+                id: "door_bar",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "門檻 (Door Bar Extrusion) 裂縫",
+                condition: "門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm)。",
+                limitValue: "1 in (長) / 0.37 in (寬)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "門檻擠型結構裂縫超標即判定不可接受。"
+            },
+
+            // --- 底板與側軌 (Base & Rails) ---
             {
                 id: "base_bow",
                 category: "base",
@@ -521,6 +668,17 @@
                 note: "超過此曲度限制會影響機艙鎖扣安全。"
             },
             {
+                id: "base_missing_rail",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板邊軌或板邊緣軌缺失 (Missing Base Side Rail / Edge Rail)",
+                condition: "底板邊軌 (Base side rail) 或板邊緣軌 (Edge rail) 缺失。",
+                limitValue: "邊軌缺失 (Missing)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "底板邊軌或邊緣軌缺失會嚴重影響 ULD 結構完整性與機艙鎖扣固定安全。"
+            },
+            {
                 id: "base_tear",
                 category: "base",
                 categoryName: "底板與側軌 / Base & Rails",
@@ -529,7 +687,29 @@
                 limitValue: "3 in / 6 in",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "板角必須完好，底板與邊軌分離亦不可接受。"
+                note: "距離邊緣位置不同適用不同穿孔撕裂尺寸限制。"
+            },
+            {
+                id: "base_corner",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "板角完好性 (Corner Casting)",
+                condition: "板角 (Corner casting) 缺失或不完好。",
+                limitValue: "必須完好 (Must be present)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "注意：板角側軌焊接處之裂縫可接受 (Base side rail corner welds can be cracked)。"
+            },
+            {
+                id: "base_separation",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板與邊軌分離 (Separation of Base & Edge Rail)",
+                condition: "底板 (Base) 與邊軌 (Edge / Side Rail) 出現脫離或分離現象。",
+                limitValue: "不得分離 (No Separation)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "底板與邊軌分離嚴重的影響 ULD 結構強度與機艙鎖扣安全。"
             },
             {
                 id: "base_rivets",
@@ -542,16 +722,86 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘。"
             },
+
+            // --- 集裝網 (Cargo Nets) ---
             {
-                id: "net_roping",
+                id: "net_tso",
                 category: "net",
                 categoryName: "集裝網 / Cargo Nets",
-                title: "集裝網繩索斷裂與磨損 (Roping)",
+                title: "TSO 標籤 (TSO Tag / Placard)",
+                condition: "未附有或無法清晰辨識 TSO 標籤。",
+                limitValue: "必須清晰可見 (Present & Legible)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "TSO 標籤為集裝網適航與合法使用之必要標籤。"
+            },
+            {
+                id: "net_fittings",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "D-ring 雙腳鎖扣 (Double Stud Fittings)",
+                condition: "所有 D-ring 雙腳鎖扣不齊全或功能異常。",
+                limitValue: "必須齊全且功能正常",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "雙腳鎖扣不齊全或無法鎖定即判定為不可接受。"
+            },
+            {
+                id: "net_hooks",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "網鉤 (Adjusting Hooks)",
+                condition: "每側缺失或不可使用的網鉤超過一個 (即每側缺失/損壞不得超過 1 個)。",
+                limitValue: "每側 ≤ 1 個缺失/損壞",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "網鉤每側缺失或失效超過 1 個即判定不可接受。"
+            },
+            {
+                id: "net_lashing",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "網角繩 (Lashing Line / Corner Rope)",
+                condition: "網角繩單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)。",
+                limitValue: "25% / 0.25 in / 0.63 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "網角繩損壞超過 25% 或 0.25 吋即屬不可接受。"
+            },
+            {
+                id: "net_roping_bottom",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "集裝網最底層及底層上方兩排繩索 (Border & Lower 2 Rows Roping)",
                 condition: "最底層或底層上方兩排之單處斷裂/磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)。",
                 limitValue: "25% / 0.25 in / 0.63 cm",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "若出現三處或以上輕微磨損，即使未超過單處標準，該網仍不可使用。"
+            },
+            {
+                id: "net_roping_above",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "集裝網底層兩排以上繩索 (Above Bottom Two Rows Roping)",
+                condition: "底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)。若兩個繩結之間有超過 1 條完全斷裂/磨損，判定為不可接受。",
+                limitValue: "≤ 1 條斷裂繩索 / 兩繩結間",
+                verdict: "超過限制即不可接受 (Unserviceable)",
+                verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
+                note: "符合標準：底層兩排以上，兩個繩結之間不得有超過一條完全斷裂/磨損的繩索（不包含角繩）。"
+            },
+
+            // --- 軍帶與綁固帶 (Straps) ---
+            {
+                id: "strap_temporary",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "臨時綁帶 (Temporary Restraint Straps) 損壞",
+                condition: "存在任何形式的損壞 (不得有任何損壞)。",
+                limitValue: "不得有任何損壞 (No Damage)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "依據 FORM: 83-48-002 標準，臨時綁帶 (Temporary Restraint Straps / TRSL) 必須完好，不得有任何損壞。"
             },
             {
                 id: "strap_primary",
@@ -565,15 +815,48 @@
                 note: "僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用。"
             },
             {
-                id: "strap_secondary",
+                id: "strap_secondary_fray",
                 category: "strap",
                 categoryName: "軍帶與綁固帶 / Straps",
-                title: "次要貨物綁固帶 (黃色) 破損",
-                condition: "單一切口或磨損超過綁帶寬度的 25%，或存在一個或以上解不開的結。",
-                limitValue: "25% 寬度 / 有結",
+                title: "次要貨物綁固帶 (黃色) 切口與磨損",
+                condition: "單一切口或磨損超過綁帶寬度的 25%。",
+                limitValue: "25% 綁帶寬度",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "扣環無法保持鎖定或配件彎曲裂紋亦不可接受。"
+                note: "綁帶本體材料撕裂、切口或磨損超過寬度 25% 均判定不可接受。"
+            },
+            {
+                id: "strap_secondary_knot",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "次要貨物綁固帶 (黃色) 存在解不開的結",
+                condition: "存在一個或以上解不開的結。",
+                limitValue: "≥ 1 個解不開的結",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "綁帶存在任何無法解開的繩結均屬不可接受。"
+            },
+            {
+                id: "strap_secondary_lock",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "次要貨物綁固帶 (黃色) 扣環與配件損壞",
+                condition: "扣環無法保持鎖定狀態；或所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失。",
+                limitValue: "無法鎖定 / 配件損壞",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "扣環鎖定機制失效、無法保持鎖定狀態或金屬五金配件彎曲/裂紋/缺失均屬不可接受。"
+            },
+            {
+                id: "strap_secondary_expiry",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "次要貨物綁固帶 (黃色) 已超過有效期限",
+                condition: "已超過有效期限 (如適用)。",
+                limitValue: "超過有效期限",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "綁固帶若印有有效期限，逾期即判定不可接受。"
             }
         ];
 
@@ -581,7 +864,6 @@
         let activePage = 'uld', currentItemKey = 'amp', currentCategory = 'all';
         let sketchfabAPI = null, activeRenderer = 'three';
 
-        // Helper function to extract text safely from Sketchfab annotation names/objects
         function parseAnnotationTitle(rawName, fallbackIndex) {
             if (!rawName) return `標籤 #${fallbackIndex + 1}`;
             if (typeof rawName === 'string') return rawName;
@@ -704,7 +986,8 @@
                 fullCriteria: 
 `📌 FCC 適用範圍說明:
 • 🟡 黃色只適用於 96 吋以下 Contour (不包括 W2/H2)
-• 🟢 綠色適用於 118 吋以下 Contour (不包括 W2/H2)`
+• 🟢 綠色適用於 118 吋以下 Contour (不包括 W2/H2)
+• ⚠️ 所有板裝含有電池貨品 / 危險品 (DG) 均必須使用 FCC`
             },
             "net": { 
                 sketchfabUid: "548b86e14576402c90f358e14cb2ded0", 
@@ -713,8 +996,8 @@
                 title: "Cargo Net 集裝網", 
                 category: "accessory", 
                 color: "text-orange-700", 
-                headerLabel: "拒收標準 (Unserviceable Criteria)",
-                titleSuffix: "官方拒收標準 (83-48-002)",
+                headerLabel: "拒收標準與符合標準 (Serviceability Criteria)",
+                titleSuffix: "官方檢查標準 (83-48-002)",
                 fullCriteria: 
 `📌 網 (Cargo Nets):
 • TSO 標籤清晰可見。
@@ -722,9 +1005,9 @@
 • 網鉤：每側缺失或不可使用的網鉤不得超過一個。
 • 網角繩：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
 • 網繩 (Roping)：
-  - 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
-  - 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
-  - 底層兩排以上：兩個繩結之間不得有無一條完全斷裂 / 磨損的繩索 (不含網角繩)。
+  • 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
+  • 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
+  • 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)。
 ⚠️ 注意：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。`
             },
             "straps": { 
@@ -972,22 +1255,39 @@
             }
         }
 
-        // --- Search Engine Logic Implementation ---
+        // --- Smart Search Engine Logic Implementation ---
         function runSearchEngine() {
             const categoryVal = document.getElementById('search-category').value;
-            const keywordVal = document.getElementById('search-keyword').value.trim().toLowerCase();
+            const rawKeyword = document.getElementById('search-keyword').value.trim().toLowerCase();
+
+            // Split into distinct non-empty keyword tokens for multi-term search
+            const keywordTokens = rawKeyword.split(/\s+/).filter(Boolean);
 
             const filtered = searchKnowledgeBase.filter(item => {
                 const matchCategory = (categoryVal === 'all' || item.category === categoryVal);
-                const matchKeyword = (
-                    keywordVal === '' ||
-                    item.title.toLowerCase().includes(keywordVal) ||
-                    item.condition.toLowerCase().includes(keywordVal) ||
-                    item.limitValue.toLowerCase().includes(keywordVal) ||
-                    item.categoryName.toLowerCase().includes(keywordVal) ||
-                    (item.note && item.note.toLowerCase().includes(keywordVal))
-                );
-                return matchCategory && matchKeyword;
+                if (!matchCategory) return false;
+
+                if (keywordTokens.length === 0) return true;
+
+                // Combine item details into single searchable string
+                const combinedText = (
+                    item.title + " " + 
+                    item.condition + " " + 
+                    item.limitValue + " " + 
+                    item.categoryName + " " + 
+                    (item.note || "")
+                ).toLowerCase();
+
+                // Match every token safely
+                return keywordTokens.every(token => {
+                    // For short 1-3 letter English acronyms (e.g. DG, TSO, FCC), use word boundary matching
+                    // so that 'dg' won't accidentally match 'edge'
+                    if (/^[a-z]{1,3}$/.test(token)) {
+                        const regex = new RegExp(`\\b${token}\\b`, 'i');
+                        return regex.test(combinedText);
+                    }
+                    return combinedText.includes(token);
+                });
             });
 
             renderSearchResults(filtered);
@@ -1012,7 +1312,7 @@
                     <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
                         <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
                         <p class="text-xs font-bold text-slate-700">找不到符合條件的適航檢查標準</p>
-                        <p class="text-[11px] text-slate-400 mt-1">請嘗試放寬尺寸數值 (如輸入 3 或 7.62) 或更換構件分類再試。</p>
+                        <p class="text-[11px] text-slate-400 mt-1">請嘗試放寬尺寸數值 (如輸入 3 或 6) 或更換構件分類再試。</p>
                     </div>
                 `;
                 return;
@@ -1028,13 +1328,13 @@
                             <h4 class="font-extrabold text-xs md:text-sm text-slate-900">${item.title}</h4>
                         </div>
                         <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${item.verdictClass}">
-                            <i class="fa-solid fa-ban mr-1"></i>${item.verdict}
+                            <i class="fa-solid fa-circle-check mr-1"></i>${item.verdict}
                         </span>
                     </div>
                     <div class="space-y-1.5 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">損壞判定條件：</b>${item.condition}</p>
-                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">尺寸限制 (Inch/cm)：</b><span class="font-mono text-amber-700 font-bold">${item.limitValue}</span></p>
-                        ${item.note ? `<p class="text-[11px] text-slate-500 italic mt-1 border-t border-slate-200 pt-1">💡 <b class="font-semibold">備註 / 例外：</b>${item.note}</p>` : ''}
+                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">檢查判定條件：</b>${item.condition}</p>
+                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">尺寸 / 數量限制：</b><span class="font-mono text-amber-700 font-bold">${item.limitValue}</span></p>
+                        ${item.note ? `<p class="text-[11px] text-slate-500 italic mt-1 border-t border-slate-200 pt-1">💡 <b class="font-semibold">備註 / 說明：</b>${item.note}</p>` : ''}
                     </div>
                 `;
                 container.appendChild(card);
@@ -1177,7 +1477,7 @@
             { 
                 titleZh: "骨架構件與緊固件", 
                 titleEn: "Frame Members and Fasteners", 
-                zh: "• 損壞長度超過 <b>3 吋 (7.62 cm)</b> 或寬度超過 <b>0.5 吋 (1.27 cm)</b>，<b>不可接受</b>。<br>• 凹陷超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。<br>• 底條上方門框面板每側缺失超過一個緊固件，<b>不可接受</b>。", 
+                zh: "• 損壞長度超過 <b>3 吋 (7.62 cm)</b> 或寬度超過 <b>0.5 吋 (1.27 cm)</b>，<b>不可接受</b>。<br>• 凹陷超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。<br>• 底部上方面板每側缺失 <b>1 個固定件</b>，<b>不可接受</b>。", 
                 en: "• Damage <b>> 3-in (7.62-cm)</b> length or <b>.5-in (1.27-cm)</b> in width.<br>• Indention <b>> 2-in (5.08-cm)</b>.<br>• More than one fastener missing per side of panel above the base rail assembly." 
             },
             { 
@@ -1195,14 +1495,14 @@
             { 
                 titleZh: "網 (Cargo Nets)", 
                 titleEn: "Cargo Nets", 
-                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>• 網繩 (Roping)：<br>&nbsp;&nbsp;- 最底層：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>&nbsp;&nbsp;- 底層上方兩排：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>&nbsp;&nbsp;- 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩)。<br>⚠️ <b>注意</b>：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。", 
-                en: "• TSO Tag present and legible.<br>• All double stud fittings present and operable.<br>• Adjusting hooks - more than one per side missing or inoperative, not in conjunction with a cut rope/web.<br>• Lashing Line - One cut/fray <b>> 25%</b> of material or <b>.25-in (.63-cm)</b> of the rope/web.<br>• Roping:<br>&nbsp;&nbsp;- Border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;- Two rows above border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;- Above Bottom Two Rows - More than one completely cut/frayed rope between two knots (not to include edge rope).<br>⚠️ <b>NOTE</b>: Three or more damages not exceeding damage limitations above render a net unserviceable." 
+                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>• 網繩 (Roping)：<br>&nbsp;&nbsp;• 最底層：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 0.25 吋 (0.63 cm)，不可接受。<br>&nbsp;&nbsp;• 底層上方兩排：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 0.25 吋 (0.63 cm)，不可接受。<br>&nbsp;&nbsp;• <b>底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)</b>。<br>⚠️ <b>注意</b>：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。", 
+                en: "• TSO Tag present and legible.<br>• All double stud fittings present and operable.<br>• Adjusting hooks - more than one per side missing or inoperative, not in conjunction with a cut rope/web.<br>• Lashing Line - One cut/fray <b>> 25%</b> of material or <b>.25-in (.63-cm)</b> of the rope/web.<br>• Roping:<br>&nbsp;&nbsp;• Border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;• Two rows above border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;• <b>Above Bottom Two Rows - No more than one completely cut/frayed rope between two knots (not including corner rope)</b>.<br>⚠️ <b>NOTE</b>: Three or more damages not exceeding damage limitations above render a net unserviceable." 
             },
             { 
                 titleZh: "軍帶 (Restraint Straps)", 
                 titleEn: "Restraint Straps", 
-                zh: "• <b>主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;<i>註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用</i><br>&nbsp;&nbsp;- 未附有清晰可辨的 TSO 標籤<br>&nbsp;&nbsp;- 已超過有效期限<br>&nbsp;&nbsp;- 存在任何形式的損壞<br><br>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;- 已超過有效期限 (如適用)<br>&nbsp;&nbsp;- 扣環無法保持鎖定狀態<br>&nbsp;&nbsp;- 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>&nbsp;&nbsp;- 綁帶材料存在以下情況：<br>&nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>&nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結<br><br>📌 <b>臨時綁帶 (Temporary Restraint Straps)</b>：不得有任何損壞", 
-                en: "• <b>Primary SCAF Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;<i>NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</i><br>&nbsp;&nbsp;- No TSO placard present and legible<br>&nbsp;&nbsp;- Expiry date has been exceeded<br>&nbsp;&nbsp;- Any damage is present<br><br>• <b>Secondary Cargo Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;- Expiry date has been exceeded, if applicable<br>&nbsp;&nbsp;- Buckle latch mechanism will not lock or stay engaged<br>&nbsp;&nbsp;- Attached fittings, hooks and rings are bent, cracked, broken or missing<br>&nbsp;&nbsp;- Strapping material:<br>&nbsp;&nbsp;&nbsp;&nbsp;• One cut or fray which exceeds 25% of the strap material width<br>&nbsp;&nbsp;&nbsp;&nbsp;• One or more knots exist<br><br>📌 <b>Temporary Restraint Straps</b>: No damage" 
+                zh: "• <b>主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;<i>註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用</i><br>&nbsp;&nbsp;• 未附有清晰可辨的 TSO 標籤<br>&nbsp;&nbsp;• 已超過有效期限<br>&nbsp;&nbsp;• 存在任何形式的損壞<br><br>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;• 已超過有效期限 (如適用)<br>&nbsp;&nbsp;• 扣環無法保持鎖定狀態<br>&nbsp;&nbsp;• 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>&nbsp;&nbsp;• 綁帶材料存在以下情況：<br>&nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>&nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結", 
+                en: "• <b>Primary SCAF Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;<i>NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</i><br>&nbsp;&nbsp;• No TSO placard present and legible<br>&nbsp;&nbsp;• Expiry date has been exceeded<br>&nbsp;&nbsp;• Any damage is present<br><br>• <b>Secondary Cargo Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;• Expiry date has been exceeded, if applicable<br>&nbsp;&nbsp;• Buckle latch mechanism will not lock or stay engaged<br>&nbsp;&nbsp;• Attached fittings, hooks and rings are bent, cracked, broken or missing<br>&nbsp;&nbsp;• Strapping material:<br>&nbsp;&nbsp;&nbsp;&nbsp;• One cut or fray which exceeds 25% of the strap material width<br>&nbsp;&nbsp;&nbsp;&nbsp;• One or more knots exist" 
             },
             { 
                 titleZh: "附屬配件 (Accessories)", 
@@ -1233,7 +1533,7 @@
 
             cardSections.forEach(sec => {
                 const cardBox = document.createElement('div');
-                cardBox.className = "bg-white border border-slate-200 rounded-xl p-3.5 md:p-4 shadow-sm";
+                cardBox.className = "bg-[#ffffff] border border-slate-200 rounded-xl p-3.5 md:p-4 shadow-sm";
 
                 let contentHtml = '';
 
@@ -1274,7 +1574,7 @@
                     `;
                 }
 
-                cardBox.innerHTML = contentHtml;
+                cardBox.innerHTML = cardHtml = contentHtml;
                 container.appendChild(cardBox);
             });
         }
