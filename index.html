@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ULD Inspect360</title> <!-- 修改點 1: 瀏覽器標題 -->
+    <title>ULD Inspect360</title>
     
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#2b1610">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="ULD Inspect360"> <!-- 修改點 2 -->
-    <meta name="application-name" content="ULD Inspect360"> <!-- 修改點 3 -->
-    <meta name="description" content="ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App">
+    <meta name="apple-mobile-web-app-title" content="ULD Inspect360">
+    <meta name="application-name" content="ULD Inspect360">
+    <meta name="description" content="ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與適航快速查詢工具">
 
     <!-- PWA Web App Manifest -->
     <link rel="manifest" id="manifest-placeholder">
@@ -89,13 +89,13 @@
                     <div>
                         <div class="flex items-center gap-1.5 md:gap-2">
                             <h1 class="font-black text-xs sm:text-base md:text-lg leading-tight text-white">
-                                ULD Inspect360 <!-- 修改點 4: 頂部標題文字 -->
+                                ULD Inspect360
                             </h1>
                             <span id="header-badge" class="text-[8px] md:text-[9px] bg-[#ffb500] text-[#2b1610] px-1.5 py-0.2 rounded font-black tracking-wider uppercase shadow-sm flex items-center gap-1">
                                 <i class="fa-solid fa-cube text-[8px]"></i> 3D 適航檢查
                             </span>
                         </div>
-                        <p class="text-[8px] sm:text-[9px] md:text-[10px] text-amber-200/80">ULD 3D 檢驗與收板形狀說明</p>
+                        <p class="text-[8px] sm:text-[9px] md:text-[10px] text-amber-200/80">ULD 3D 檢驗與適航查詢工具</p>
                     </div>
                 </div>
                 
@@ -111,13 +111,13 @@
                 </div>
             </div>
 
-            <!-- Page Navigation Tabs Switcher -->
+            <!-- Page Navigation Tabs Switcher (保留原 ULD 適航檢查，收板形狀說明改為適航查詢工具) -->
             <div class="flex bg-slate-900/60 p-1 rounded-lg border border-amber-500/30 text-xs font-bold">
                 <button id="nav-tab-uld" onclick="switchPage('uld')" class="flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold">
                     <i class="fa-solid fa-boxes-packing"></i> 📦 ULD 適航檢查 (<span id="uld-count-badge">13</span>大類)
                 </button>
-                <button id="nav-tab-contour" onclick="switchPage('contour')" class="flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold">
-                    <i class="fa-solid fa-plane-arrival"></i> ✈️ 收板形狀說明
+                <button id="nav-tab-search" onclick="switchPage('search')" class="flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold">
+                    <i class="fa-solid fa-magnifying-glass"></i> 🔍 適航快速查詢工具
                 </button>
             </div>
         </div>
@@ -135,10 +135,10 @@
     <!-- Main Responsive Layout -->
     <main class="max-w-7xl mx-auto w-full p-2.5 sm:p-4 md:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5">
 
-        <!-- Selector List Column -->
+        <!-- Selector List Column (在 ULD 頁面顯示項目列表，在 查詢工具頁面顯示篩選與搜尋面板) -->
         <div class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
             
-            <div class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
+            <div id="left-panel-uld" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
                 <div class="flex items-center justify-between mb-2">
                     <h2 id="selector-title" class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
                         <i class="fa-solid fa-boxes-packing text-amber-600"></i>選擇 ULD 項目
@@ -159,8 +159,48 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-[220px] sm:max-h-[260px] lg:max-h-[290px] overflow-y-auto pr-1" id="item-selector-group"></div>
             </div>
 
-            <!-- Details Panel -->
-            <div class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
+            <!-- 查詢工具左側篩選面板 (預設隱藏，切換至查詢工具頁面時顯示) -->
+            <div id="left-panel-search" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
+                        <i class="fa-solid fa-filter text-amber-600"></i>適航查詢篩選條件
+                    </h2>
+                    <button onclick="resetSearchEngine()" class="text-[10px] text-blue-600 hover:underline font-bold">重設條件</button>
+                </div>
+                
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">1. 選擇構件分類 (Component Category)</label>
+                        <select id="search-category" onchange="runSearchEngine()" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                            <option value="all">全部分類 (All Categories)</option>
+                            <option value="panel">面板 / Container Body & Panel</option>
+                            <option value="frame">骨架構件 / Frame Members & Fasteners</option>
+                            <option value="door">門體與五金配件 / Roll-up Door & Hardware</option>
+                            <option value="base">底板與側軌 / Base & Side Rails</option>
+                            <option value="net">集裝網 / Cargo Nets</option>
+                            <option value="strap">軍帶與綁固帶 / Restraint Straps</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block font-bold text-slate-700 mb-1">2. 輸入損壞尺寸或數值 (Damage / Inch / cm)</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+                                <i class="fa-solid fa-ruler"></i>
+                            </span>
+                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 3 吋, 7.62 cm, 凹陷, 穿孔..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                        </div>
+                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入數值 (如 3, 7.62, 25%) 或關鍵字快速過濾檢查標準。</p>
+                    </div>
+
+                    <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11px] text-amber-900">
+                        <i class="fa-solid fa-circle-info text-amber-600 mr-1"></i> 系統會即時依據 <b class="font-bold">FORM: 83-48-002</b> 適航檢查卡標準進行比對判定。
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details Panel (在 ULD 頁面顯示) -->
+            <div id="details-panel-container" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
                         <h2 id="details-section-title" class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
@@ -192,10 +232,11 @@
 
         </div>
 
-        <!-- Media Display Area -->
+        <!-- Media Display Area (在 ULD 頁面顯示 3D 檢視器，在 查詢工具頁面顯示查詢結果互動列表) -->
         <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
 
-            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
+            <!-- ULD 3D 檢視面板 -->
+            <div id="main-view-uld" class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
                 
                 <!-- Toolbar -->
                 <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex justify-between items-center gap-2">
@@ -222,6 +263,21 @@
                 </div>
 
                 <div class="bg-slate-50 border-t border-slate-200 p-2 flex flex-wrap gap-1.5 text-xs" id="hotspot-buttons"></div>
+            </div>
+
+            <!-- 適航查詢工具結果面板 (預設隱藏，切換至查詢工具頁面時顯示) -->
+            <div id="main-view-search" class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col flex-grow hidden overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-amber-600"></i>
+                        <h3 class="font-extrabold text-xs md:text-sm text-slate-800">適航檢查判定結果與查詢對照</h3>
+                    </div>
+                    <span id="search-result-count" class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">顯示全部條目</span>
+                </div>
+
+                <div class="p-3 md:p-4 overflow-y-auto max-h-[580px] space-y-3 bg-slate-50/50" id="search-results-container">
+                    <!-- 動態填充搜尋結果 -->
+                </div>
             </div>
 
         </div>
@@ -274,9 +330,9 @@
     <script>
         // Dynamic Manifest Injection
         const manifestObj = {
-            "name": "ULD Inspect360", // 修改點 5: Manifest App 名稱
-            "short_name": "ULD Inspect360", // 修改點 6: Manifest 簡稱
-            "description": "ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App",
+            "name": "ULD Inspect360",
+            "short_name": "ULD Inspect360",
+            "description": "ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與適航快速查詢工具",
             "start_url": "./",
             "display": "standalone",
             "orientation": "any",
@@ -317,7 +373,7 @@
         if (isIos && !isStandalone) document.getElementById('ios-pwa-banner').classList.remove('hidden');
         function closeIosBanner() { document.getElementById('ios-pwa-banner').classList.add('hidden'); }
 
-        // --- Common Unserviceable Standard Text Block for All Containers (Updated with Accessories) ---
+        // --- Common Unserviceable Standard Text Block for All Containers ---
         const containerFullCriteria = 
 `📌 ULD 主體 (Container Body) - 面板 (Panel):
 • 面板損壞 (裂縫、斷裂、穿孔或切口) 若位於距離框架邊緣 3 吋 (7.62 cm) 以內，則不可接受。
@@ -384,6 +440,142 @@
   - 綁帶材料存在以下情況：
     • 單一切口或磨損超過綁帶寬度的 25%
     • 存在一個或以上解不開的結`;
+
+        // --- Structured Search Engine Knowledge Base (按表列出各檢驗標準，供搜尋引擎精準過濾) ---
+        const searchKnowledgeBase = [
+            {
+                id: "panel_edge",
+                category: "panel",
+                categoryName: "面板 / Panel",
+                title: "面板距離框架邊緣 3 吋 (7.62 cm) 以內損壞",
+                condition: "損壞 (裂縫、斷裂、穿孔或切口) 位於距離框架邊緣 3 吋 (7.62 cm) 以內。",
+                limitValue: "3 in / 7.62 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "例外：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。"
+            },
+            {
+                id: "panel_inner",
+                category: "panel",
+                categoryName: "面板 / Panel",
+                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞",
+                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，其損壞長度超過 7 吋 (17.78 cm)。",
+                limitValue: "7 in / 17.78 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "長度若在 7 吋以內則須評估無結構安全疑慮。"
+            },
+            {
+                id: "panel_contour",
+                category: "panel",
+                categoryName: "面板 / Panel",
+                title: "面板突出外部輪廓",
+                condition: "面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm)。",
+                limitValue: "2 in / 5.08 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "可能碰撞機身內部結構，嚴禁使用。"
+            },
+            {
+                id: "frame_dmg",
+                category: "frame",
+                categoryName: "骨架構件 / Frame Members",
+                title: "骨架結構與緊固件損壞/凹陷",
+                condition: "損壞長度超過 3 吋 (7.62 cm) 或寬度超過 0.5 吋 (1.27 cm)；或凹陷超過 2 吋 (5.08 cm)。",
+                limitValue: "3 in / 0.5 in / 2 in",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "底條上方門框面板每側缺失超過一個緊固件亦屬不可接受。"
+            },
+            {
+                id: "door_canvas",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "捲簾門帆布損壞面積",
+                condition: "帆布總損壞面積超過 8 × 12 吋 (20.32 × 30.48 cm) (即 96 平方吋 / 619.35 平方公分)。",
+                limitValue: "8 x 12 in / 96 sq in",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "部件缺失或導致門體無法固定亦不可接受。"
+            },
+            {
+                id: "door_cable",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "門纜磨損與鋼絲外露",
+                condition: "門纜磨損超過 25%，或門纜鋼絲外露超過 12 吋 (30.48 cm)。",
+                limitValue: "25% / 12 in / 30.48 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm) 亦不可接受。"
+            },
+            {
+                id: "base_bow",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "ULD 底板彎曲曲度 (Bow)",
+                condition: "已裝載貨物的 ULD 底板彎曲曲度超過 1.25 吋 (3.17 cm)；空 ULD 底板彎曲曲度超過 2 吋 (5.08 cm)。",
+                limitValue: "1.25 in (載貨) / 2 in (空)",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "超過此曲度限制會影響機艙鎖扣安全。"
+            },
+            {
+                id: "base_tear",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板穿孔或撕裂 (Puncture/Tear)",
+                condition: "距離板邊緣小於 3 吋處有穿孔/撕裂 (＞3 吋 × 1 吋)；距離板邊緣 3 吋以外有穿孔/撕裂 (＞6 吋 × 2 吋)。",
+                limitValue: "3 in / 6 in",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "板角必須完好，底板與邊軌分離亦不可接受。"
+            },
+            {
+                id: "base_rivets",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板鉚釘缺失或鬆動",
+                condition: "缺失或鬆動的鉚釘超過 5 個。",
+                limitValue: "> 5 個鉚釘",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘。"
+            },
+            {
+                id: "net_roping",
+                category: "net",
+                categoryName: "集裝網 / Cargo Nets",
+                title: "集裝網繩索斷裂與磨損 (Roping)",
+                condition: "最底層或底層上方兩排之單處斷裂/磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)。",
+                limitValue: "25% / 0.25 in / 0.63 cm",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "若出現三處或以上輕微磨損，即使未超過單處標準，該網仍不可使用。"
+            },
+            {
+                id: "strap_primary",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "主要 SCAF 藍色軍帶損壞/過期",
+                condition: "未附有清晰可辨 TSO 標籤、已超過有效期限、或存在任何形式損壞。",
+                limitValue: "任何損壞 / 過期",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用。"
+            },
+            {
+                id: "strap_secondary",
+                category: "strap",
+                categoryName: "軍帶與綁固帶 / Straps",
+                title: "次要貨物綁固帶 (黃色) 破損",
+                condition: "單一切口或磨損超過綁帶寬度的 25%，或存在一個或以上解不開的結。",
+                limitValue: "25% 寬度 / 有結",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "扣環無法保持鎖定或配件彎曲裂紋亦不可接受。"
+            }
+        ];
 
         // --- Datasets & Hybrid Engine State ---
         let activePage = 'uld', currentItemKey = 'amp', currentCategory = 'all';
@@ -562,39 +754,6 @@
             }
         };
 
-        // 2. Pallet Contour Dataset (H2 removed as requested)
-        const contourData = {
-            "q6": { sketchfabUid: "", glbFile: "q6.glb", label: "Q6", title: "Q6 Main Deck Contour (主艙單邊側斜)", color: "text-blue-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ Q6 輪廓說明:\n• 單邊頂部斜角設計，貼合 B747F / B777F 主艙機身內壁。" },
-            "q7": { 
-                sketchfabUid: "ec70024d162c48f78e4b59246c12f35e", 
-                glbFile: "q7.glb", 
-                label: "Q7", 
-                title: "Q7 Main Deck Center High (主艙中央高箱)", 
-                color: "text-purple-600", 
-                headerLabel: "輪廓說明 (Contour Limits)", 
-                titleSuffix: "收板輪廓說明", 
-                fullCriteria: 
-`✈️ Q7 輪廓說明:
-• 最高 105 吋 / 118 吋
-• 另一邊 96 吋收角` 
-            },
-            "x6": { 
-                sketchfabUid: "8b8afd58c6304017a1f8a440cb5b5f39", 
-                glbFile: "x6.glb", 
-                label: "X6", 
-                title: "X6 B767 Main Deck Contour (B767 雙邊斜頂)", 
-                color: "text-teal-600", 
-                headerLabel: "輪廓說明 (Contour Limits)", 
-                titleSuffix: "收板輪廓說明", 
-                fullCriteria: 
-`✈️ X6 輪廓說明:
-• 最高 96 吋
-• 另一邊 45 吋收角` 
-            },
-            "a2": { sketchfabUid: "", glbFile: "a2.glb", label: "A2", title: "A2 Main Deck Container (主艙面板標準)", color: "text-emerald-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ A2 輪廓與機艙說明:\n• 全機艙適用於 747-400 / 747-8F。" },
-            "w2": { sketchfabUid: "", glbFile: "w2.glb", label: "W2", title: "W2 Standard Lower Deck Box (下艙標準方體)", color: "text-cyan-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ W2 輪廓說明:\n• 標準平頂直壁方體輪廓，適用於腹艙中央直壁空間。" }
-        };
-
         // Three.js Engine Variables
         let scene, camera, renderer, controls, uldGroup;
         const gltfLoader = new THREE.GLTFLoader();
@@ -602,6 +761,7 @@
         function init3D() {
             renderCategoryButtons();
             renderBilingualCardModal();
+            renderSearchResults(searchKnowledgeBase);
 
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -639,8 +799,7 @@
 
         function switchItem(key) {
             currentItemKey = key;
-            const dataset = activePage === 'uld' ? uldData : contourData;
-            const data = dataset[key];
+            const data = uldData[key];
             if (!data) return;
 
             document.getElementById('current-item-title').innerText = data.title.toUpperCase();
@@ -683,7 +842,7 @@
                         });
                         
                         api.addEventListener('annotationSelect', function(index) {
-                            const currentData = activePage === 'uld' ? uldData[currentItemKey] : contourData[currentItemKey];
+                            const currentData = uldData[currentItemKey];
                             if (index !== -1) {
                                 api.getAnnotation(index, function(err, inf) {
                                     if (inf) {
@@ -755,8 +914,7 @@
 
         function renderCurrentULDModel() {
             clearGroup(uldGroup);
-            const dataset = activePage === 'uld' ? uldData : contourData;
-            const data = dataset[currentItemKey];
+            const data = uldData[currentItemKey];
             if (!data) return;
 
             const mat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.6 });
@@ -780,49 +938,135 @@
             activePage = page;
             
             const btnUld = document.getElementById('nav-tab-uld');
-            const btnContour = document.getElementById('nav-tab-contour');
+            const btnSearch = document.getElementById('nav-tab-search');
+
+            const leftUld = document.getElementById('left-panel-uld');
+            const leftSearch = document.getElementById('left-panel-search');
+            const detailsPanel = document.getElementById('details-panel-container');
+
+            const mainUld = document.getElementById('main-view-uld');
+            const mainSearch = document.getElementById('main-view-search');
 
             if (page === 'uld') {
                 btnUld.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
-                btnContour.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
+                btnSearch.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
+                
+                leftUld.classList.remove('hidden');
+                detailsPanel.classList.remove('hidden');
+                leftSearch.classList.add('hidden');
+
+                mainUld.classList.remove('hidden');
+                mainSearch.classList.add('hidden');
             } else {
-                btnContour.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
+                btnSearch.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
                 btnUld.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
+
+                leftUld.classList.add('hidden');
+                detailsPanel.classList.add('hidden');
+                leftSearch.classList.remove('hidden');
+
+                mainUld.classList.add('hidden');
+                mainSearch.classList.remove('hidden');
+
+                runSearchEngine();
+            }
+        }
+
+        // --- Search Engine Logic Implementation ---
+        function runSearchEngine() {
+            const categoryVal = document.getElementById('search-category').value;
+            const keywordVal = document.getElementById('search-keyword').value.trim().toLowerCase();
+
+            const filtered = searchKnowledgeBase.filter(item => {
+                const matchCategory = (categoryVal === 'all' || item.category === categoryVal);
+                const matchKeyword = (
+                    keywordVal === '' ||
+                    item.title.toLowerCase().includes(keywordVal) ||
+                    item.condition.toLowerCase().includes(keywordVal) ||
+                    item.limitValue.toLowerCase().includes(keywordVal) ||
+                    item.categoryName.toLowerCase().includes(keywordVal) ||
+                    (item.note && item.note.toLowerCase().includes(keywordVal))
+                );
+                return matchCategory && matchKeyword;
+            });
+
+            renderSearchResults(filtered);
+        }
+
+        function resetSearchEngine() {
+            document.getElementById('search-category').value = 'all';
+            document.getElementById('search-keyword').value = '';
+            runSearchEngine();
+        }
+
+        function renderSearchResults(results) {
+            const container = document.getElementById('search-results-container');
+            const countBadge = document.getElementById('search-result-count');
+            if (!container) return;
+
+            countBadge.innerText = `找到 ${results.length} 項符合標準`;
+            container.innerHTML = '';
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
+                        <p class="text-xs font-bold text-slate-700">找不到符合條件的適航檢查標準</p>
+                        <p class="text-[11px] text-slate-400 mt-1">請嘗試放寬尺寸數值 (如輸入 3 或 7.62) 或更換構件分類再試。</p>
+                    </div>
+                `;
+                return;
             }
 
-            renderCategoryButtons();
-            switchItem(page === 'uld' ? 'amp' : 'q6');
+            results.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm hover:border-amber-400 transition-all";
+                card.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded text-[10px] font-bold font-mono">${item.categoryName}</span>
+                            <h4 class="font-extrabold text-xs md:text-sm text-slate-900">${item.title}</h4>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${item.verdictClass}">
+                            <i class="fa-solid fa-ban mr-1"></i>${item.verdict}
+                        </span>
+                    </div>
+                    <div class="space-y-1.5 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">損壞判定條件：</b>${item.condition}</p>
+                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">尺寸限制 (Inch/cm)：</b><span class="font-mono text-amber-700 font-bold">${item.limitValue}</span></p>
+                        ${item.note ? `<p class="text-[11px] text-slate-500 italic mt-1 border-t border-slate-200 pt-1">💡 <b class="font-semibold">備註 / 例外：</b>${item.note}</p>` : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
         }
 
         function renderCategoryButtons() {
             const container = document.getElementById('item-selector-group');
             if (!container) return;
             container.innerHTML = '';
-            const dataset = activePage === 'uld' ? uldData : contourData;
 
-            const totalItems = Object.keys(dataset).length;
-            if (activePage === 'uld') {
-                const badge = document.getElementById('category-badge');
-                if (badge) badge.innerText = `${totalItems} 個全項目`;
-                const tabAll = document.getElementById('tab-all');
-                if (tabAll) tabAll.innerText = `全部 (${totalItems})`;
-                
-                let containerCount = 0, palletCount = 0, accessoryCount = 0;
-                Object.values(uldData).forEach(i => { 
-                    if (i.category === 'container') containerCount++; 
-                    if (i.category === 'pallet') palletCount++;
-                    if (i.category === 'accessory') accessoryCount++;
-                });
+            const totalItems = Object.keys(uldData).length;
+            const badge = document.getElementById('category-badge');
+            if (badge) badge.innerText = `${totalItems} 個全項目`;
+            const tabAll = document.getElementById('tab-all');
+            if (tabAll) tabAll.innerText = `全部 (${totalItems})`;
+            
+            let containerCount = 0, palletCount = 0, accessoryCount = 0;
+            Object.values(uldData).forEach(i => { 
+                if (i.category === 'container') containerCount++; 
+                if (i.category === 'pallet') palletCount++;
+                if (i.category === 'accessory') accessoryCount++;
+            });
 
-                const tabContainer = document.getElementById('tab-container');
-                if (tabContainer) tabContainer.innerText = `集裝箱 (${containerCount})`;
+            const tabContainer = document.getElementById('tab-container');
+            if (tabContainer) tabContainer.innerText = `集裝箱 (${containerCount})`;
 
-                const tabPallet = document.getElementById('tab-pallet');
-                if (tabPallet) tabPallet.innerText = `集裝板 (${palletCount})`;
+            const tabPallet = document.getElementById('tab-pallet');
+            if (tabPallet) tabPallet.innerText = `集裝板 (${palletCount})`;
 
-                const tabAccessory = document.getElementById('tab-accessory');
-                if (tabAccessory) tabAccessory.innerText = `配件 (${accessoryCount})`;
-            }
+            const tabAccessory = document.getElementById('tab-accessory');
+            if (tabAccessory) tabAccessory.innerText = `配件 (${accessoryCount})`;
 
             const extraLabels = {
                 'amp': 'Container',
@@ -840,9 +1084,9 @@
                 'trsl': 'Temporary Restraint Straps'
             };
 
-            Object.keys(dataset).forEach(key => {
-                const item = dataset[key];
-                if (activePage === 'uld' && currentCategory !== 'all' && item.category !== currentCategory) return;
+            Object.keys(uldData).forEach(key => {
+                const item = uldData[key];
+                if (currentCategory !== 'all' && item.category !== currentCategory) return;
 
                 const isSelected = key === currentItemKey;
 
@@ -858,7 +1102,7 @@
                 const hasTagBadge = item.sketchfabUid ? `<span class="text-[9px] ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-indigo-100 text-indigo-700'} px-1.5 py-0.2 rounded font-bold">標籤</span>` : '';
                 
                 let extraText = '';
-                if (activePage === 'uld' && extraLabels[key]) {
+                if (extraLabels[key]) {
                     extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">${extraLabels[key]}</span>`;
                 }
 
@@ -945,8 +1189,8 @@
             { 
                 titleZh: "Container / Pallet 底板與側軌", 
                 titleEn: "Container/Pallet Base and Side Rails", 
-                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• C 型槽損壞，導致 D-ring 無法正確均勻分布與固定。<br>• 固定 D-ring 的 C 型槽槽口損壞。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)<br>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，<b>不可接受</b>。", 
-                en: "• Loaded ULD base cannot bow <b>> 1.25-in (3.17-cm)</b>.<br>• Empty ULD base cannot bow <b>> 2-in (5.08-cm)</b>.<br>• Base side rail or edge rail missing.<br>• Seat track damage that does not allow for all net double stud fittings to be properly spaced and secured.<br>• Damage to the seat-track lips securing a double stud fitting.<br>• Corner casting must be present. NOTE: Base side rail corner welds can be cracked.<br>• Separation of base and edge rail.<br>• Puncture or tear (<b>> 3 × 1-in</b>) (7.62 × 2.54-cm) located <b>< 3-in (7.62-cm)</b> from frame edge.<br>• Puncture or tear (<b>> 6 × 2-in</b>) (15.24 × 5.08-cm) located <b>> 3-in (7.62-cm)</b> from frame edge.<br>• More than five missing or loose rivets. (Must have five good rivets between any two missing rivets).<br>• Damage to the point of preventing loading and securing or causing damage to the aircraft." 
+                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)<br>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，<b>不可接受</b>。", 
+                en: "• Loaded ULD base cannot bow <b>> 1.25-in (3.17-cm)</b>.<br>• Empty ULD base cannot bow <b>> 2-in (5.08-cm)</b>.<br>• Base side rail or edge rail missing.<br>• Corner casting must be present. NOTE: Base side rail corner welds can be cracked.<br>• Separation of base and edge rail.<br>• Puncture or tear (<b>> 3 × 1-in</b>) (7.62 × 2.54-cm) located <b>< 3-in (7.62-cm)</b> from frame edge.<br>• Puncture or tear (<b>> 6 × 2-in</b>) (15.24 × 5.08-cm) located <b>> 3-in (7.62-cm)</b> from frame edge.<br>• More than five missing or loose rivets. (Must have five good rivets between any two missing rivets).<br>• Damage to the point of preventing loading and securing or causing damage to the aircraft." 
             },
             { 
                 titleZh: "網 (Cargo Nets)", 
