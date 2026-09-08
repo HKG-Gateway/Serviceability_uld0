@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>UPS AeroULD Portal</title>
+    <title>UPS Inspect360</title> <!-- 修改點 1: 瀏覽器標題 -->
     
     <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#2b1610">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="UPS AeroULD">
-    <meta name="application-name" content="UPS AeroULD">
-    <meta name="description" content="UPS AeroULD 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App">
+    <meta name="apple-mobile-web-app-title" content="UPS Inspect360"> <!-- 修改點 2 -->
+    <meta name="application-name" content="UPS Inspect360"> <!-- 修改點 3 -->
+    <meta name="description" content="UPS Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App">
 
     <!-- PWA Web App Manifest -->
     <link rel="manifest" id="manifest-placeholder">
@@ -89,7 +89,7 @@
                     <div>
                         <div class="flex items-center gap-1.5 md:gap-2">
                             <h1 class="font-black text-xs sm:text-base md:text-lg leading-tight text-white">
-                                UPS AeroULD Portal
+                                UPS Inspect360 <!-- 修改點 4: 頂部標題文字 -->
                             </h1>
                             <span id="header-badge" class="text-[8px] md:text-[9px] bg-[#ffb500] text-[#2b1610] px-1.5 py-0.2 rounded font-black tracking-wider uppercase shadow-sm flex items-center gap-1">
                                 <i class="fa-solid fa-cube text-[8px]"></i> 3D 適航檢查
@@ -274,9 +274,9 @@
     <script>
         // Dynamic Manifest Injection
         const manifestObj = {
-            "name": "UPS AeroULD & Contour Portal",
-            "short_name": "UPS AeroULD",
-            "description": "UPS AeroULD 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App",
+            "name": "UPS Inspect360", // 修改點 5: Manifest App 名稱
+            "short_name": "UPS Inspect360", // 修改點 6: Manifest 簡稱
+            "description": "UPS Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App",
             "start_url": "./",
             "display": "standalone",
             "orientation": "any",
@@ -532,7 +532,7 @@
 • 網繩 (Roping)：
   - 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
   - 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
-  - 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩)。
+  - 底層兩排以上：兩個繩結之間不得有無一條完全斷裂 / 磨損的繩索 (不含網角繩)。
 ⚠️ 注意：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。`
             },
             "straps": { 
@@ -578,7 +578,6 @@
 • 最高 105 吋 / 118 吋
 • 另一邊 96 吋收角` 
             },
-            // 🌟 Updated: X6 fullCriteria updated as requested
             "x6": { 
                 sketchfabUid: "8b8afd58c6304017a1f8a440cb5b5f39", 
                 glbFile: "x6.glb", 
@@ -646,7 +645,6 @@
 
             document.getElementById('current-item-title').innerText = data.title.toUpperCase();
 
-            // Dynamic Header Label (Criteria / Instructions / Contour)
             const headerLabel = data.headerLabel || "拒收標準 (Unserviceable Criteria)";
             document.getElementById('criteria-box-header').innerText = headerLabel;
 
@@ -654,9 +652,7 @@
             document.getElementById('part-name').innerText = data.label + " " + titleSuffix;
             document.getElementById('part-limits').innerText = data.fullCriteria;
 
-            // Refresh button selection state so current active item turns golden yellow
             renderCategoryButtons();
-
             renderHotspotButtons(data.hotspots || {});
 
             if (data.sketchfabUid) {
@@ -666,7 +662,6 @@
             }
         }
 
-        // --- Enhanced Sketchfab Engine Loader with Fallback Embed ---
         function loadSketchfabModel(uid) {
             activeRenderer = 'sketchfab';
             document.getElementById('canvas-container').classList.add('hidden');
@@ -674,7 +669,6 @@
             iframe.classList.remove('hidden');
             showLoading('正在載入 Sketchfab 帶標籤 3D 模型...');
 
-            // Clean src to reset viewer state
             iframe.src = 'about:blank';
 
             setTimeout(() => {
@@ -688,7 +682,6 @@
                             updateStatusBadge('sketchfab');
                         });
                         
-                        // Safe Annotation Selection Handling
                         api.addEventListener('annotationSelect', function(index) {
                             const currentData = activePage === 'uld' ? uldData[currentItemKey] : contourData[currentItemKey];
                             if (index !== -1) {
@@ -717,7 +710,6 @@
                     },
                     error: function() {
                         hideLoading();
-                        // Direct embed iframe fallback if JS Viewer API fails
                         iframe.src = `https://sketchfab.com/models/${uid}/embed?autostart=1&ui_controls=1&ui_annotations=1`;
                         updateStatusBadge('sketchfab');
                     },
@@ -728,7 +720,6 @@
             }, 50);
         }
 
-        // --- Native Three.js Engine (.glb Loader) ---
         function useNativeThreeJS(data) {
             activeRenderer = 'three';
             document.getElementById('sketchfab-frame').classList.add('hidden');
@@ -785,7 +776,6 @@
             }
         }
 
-        // --- Dynamic Page Switcher with Inverted Active Tab Styling ---
         function switchPage(page) {
             activePage = page;
             
@@ -804,7 +794,6 @@
             switchItem(page === 'uld' ? 'amp' : 'q6');
         }
 
-        // --- Button Renderer with Active Item Highlighted in Golden Yellow ---
         function renderCategoryButtons() {
             const container = document.getElementById('item-selector-group');
             if (!container) return;
@@ -835,7 +824,6 @@
                 if (tabAccessory) tabAccessory.innerText = `配件 (${accessoryCount})`;
             }
 
-            // Mapping for extra label suffixes
             const extraLabels = {
                 'amp': 'Container',
                 'amj': 'Container',
@@ -861,7 +849,6 @@
                 const btn = document.createElement('button');
                 btn.onclick = () => switchItem(key);
 
-                // Dynamic Golden Yellow Class Assignment for Active Selected Button
                 const activeStyle = isSelected 
                     ? "bg-[#ffb500] text-[#2b1610] border-amber-500 shadow-md font-extrabold ring-2 ring-amber-400/50" 
                     : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200";
@@ -870,7 +857,6 @@
                 
                 const hasTagBadge = item.sketchfabUid ? `<span class="text-[9px] ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-indigo-100 text-indigo-700'} px-1.5 py-0.2 rounded font-bold">標籤</span>` : '';
                 
-                // Specific Label Extensions
                 let extraText = '';
                 if (activePage === 'uld' && extraLabels[key]) {
                     extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">${extraLabels[key]}</span>`;
@@ -918,20 +904,6 @@
         function onWindowResize() { const c = document.getElementById('viewport-container'); if (!c || !camera || !renderer) return; camera.aspect = c.clientWidth / c.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(c.clientWidth, c.clientHeight); }
         function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
 
-        function showNotification(msg) {
-            let toast = document.getElementById('app-notification');
-            if (!toast) {
-                toast = document.createElement('div');
-                toast.id = 'app-notification';
-                toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl z-50 transition-all duration-300 border border-slate-700 text-center max-w-[90vw]';
-                document.body.appendChild(toast);
-            }
-            toast.innerText = msg;
-            toast.style.opacity = '1';
-            setTimeout(() => { toast.style.opacity = '0'; }, 3500);
-        }
-
-        // --- Complete Bilingual Sections for ULD Inspection Card Modal ---
         let currentCardViewMode = 'both';
         const cardSections = [
             { 
