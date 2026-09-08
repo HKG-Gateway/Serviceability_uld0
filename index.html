@@ -190,9 +190,9 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                                 <i class="fa-solid fa-ruler"></i>
                             </span>
-                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: TSO, 箱重, Tare, FCC, 電池, DG, 3 吋..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: TSO, 箱重, Tare, FCC, 電池, DG, 3 吋, 裝載..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入關鍵字 (如 TSO, 箱重, 電池, DG, 3 吋) 快速過濾檢查標準。</p>
+                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入關鍵字 (如 TSO, 箱重, 電池, DG, 3 吋, 裝載) 快速過濾檢查標準。</p>
                     </div>
 
                     <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11px] text-amber-900">
@@ -349,7 +349,7 @@
         const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-        // Inline Blob Service Worker Creation for full PWA Offline Caching
+        // Inline Service Worker Creation for Offline PWA Capabilities
         const swCode = `
             const CACHE_NAME = 'uld-inspect360-v1';
             const ASSETS = [
@@ -461,7 +461,7 @@
 • 距離板邊緣小於 3 吋處 (7.62 cm) 有穿孔或撕裂 (＞3 吋 × 1 吋)，不可接受。
 • 距離板邊緣 3 吋以外 (7.62 cm) 有穿孔或撕裂 (＞6 吋 × 2 吋)，不可接受。
 • 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
-• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。
+• 損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。
 
 📌 附屬配件 (Accessories):
 • 附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況：
@@ -481,7 +481,7 @@
 • 距離板邊緣小於 3 吋處 (7.62 cm) 有穿孔或撕裂 (＞3 吋 × 1 吋)，不可接受。
 • 距離板邊緣 3 吋以外 (7.62 cm) 有穿孔或撕裂 (＞6 吋 × 2 吋)，不可接受。
 • 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
-• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。`;
+• 損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。`;
 
         // Straps Criteria Text
         const strapsFullCriteriaExact = 
@@ -500,9 +500,8 @@
     • 單一切口或磨損超過綁帶寬度的 25%
     • 存在一個或以上解不開的結`;
 
-        // --- Structured Search Engine Knowledge Base ---
+        // --- Structured Search Engine Knowledge Base (Includes Added Standard) ---
         const searchKnowledgeBase = [
-            // --- 所有適航的 ULD / 板 (All Airworthy ULDs) ---
             {
                 id: "general_tso",
                 category: "general",
@@ -536,8 +535,6 @@
                 verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
                 note: "包含 ULD 編號與所有者標記，不得有手寫塗改痕跡。"
             },
-
-            // --- FCC 規範 ---
             {
                 id: "fcc_dg_battery",
                 category: "general",
@@ -549,8 +546,6 @@
                 verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
                 note: "所有板裝含有電池貨品 / 危險品 (DG) 均必須使用 FCC。"
             },
-
-            // --- 面板 (Panel) ---
             {
                 id: "panel_edge",
                 category: "panel",
@@ -584,8 +579,6 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "可能碰撞機身內部結構，嚴禁使用。"
             },
-
-            // --- 骨架構件 (Frame Members) ---
             {
                 id: "frame_dmg",
                 category: "frame",
@@ -608,8 +601,6 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "依據 FORM: 83-48-002 標準，底部上方面板每側缺失 1 個固定件即屬不可接受。"
             },
-
-            // --- 門體與五金 (Roll-up Door) ---
             {
                 id: "door_canvas",
                 category: "door",
@@ -654,8 +645,6 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "門檻擠型結構裂縫超標即判定不可接受。"
             },
-
-            // --- 底板與側軌 (Base & Rails) ---
             {
                 id: "base_bow",
                 category: "base",
@@ -722,8 +711,17 @@
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
                 note: "任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘。"
             },
-
-            // --- 集裝網 (Cargo Nets) ---
+            {
+                id: "base_impact_safety",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "影響裝載固定或危害機身內部之損壞",
+                condition: "損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。",
+                limitValue: "影響裝載固定 / 危害機身",
+                verdict: "不可接受 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "若損壞程度已影響貨物裝載及鎖扣固定，或在運輸過程可能損害飛機內部結構，即判定不可接受。"
+            },
             {
                 id: "net_tso",
                 category: "net",
@@ -790,8 +788,6 @@
                 verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
                 note: "符合標準：底層兩排以上，兩個繩結之間不得有超過一條完全斷裂/磨損的繩索（不包含角繩）。"
             },
-
-            // --- 軍帶與綁固帶 (Straps) ---
             {
                 id: "strap_temporary",
                 category: "strap",
@@ -1260,7 +1256,6 @@
             const categoryVal = document.getElementById('search-category').value;
             const rawKeyword = document.getElementById('search-keyword').value.trim().toLowerCase();
 
-            // Split into distinct non-empty keyword tokens for multi-term search
             const keywordTokens = rawKeyword.split(/\s+/).filter(Boolean);
 
             const filtered = searchKnowledgeBase.filter(item => {
@@ -1269,7 +1264,6 @@
 
                 if (keywordTokens.length === 0) return true;
 
-                // Combine item details into single searchable string
                 const combinedText = (
                     item.title + " " + 
                     item.condition + " " + 
@@ -1278,10 +1272,7 @@
                     (item.note || "")
                 ).toLowerCase();
 
-                // Match every token safely
                 return keywordTokens.every(token => {
-                    // For short 1-3 letter English acronyms (e.g. DG, TSO, FCC), use word boundary matching
-                    // so that 'dg' won't accidentally match 'edge'
                     if (/^[a-z]{1,3}$/.test(token)) {
                         const regex = new RegExp(`\\b${token}\\b`, 'i');
                         return regex.test(combinedText);
@@ -1489,28 +1480,59 @@
             { 
                 titleZh: "Container / Pallet 底板與側軌", 
                 titleEn: "Container/Pallet Base and Side Rails", 
-                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)<br>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，<b>不可接受</b>。", 
-                en: "• Loaded ULD base cannot bow <b>> 1.25-in (3.17-cm)</b>.<br>• Empty ULD base cannot bow <b>> 2-in (5.08-cm)</b>.<br>• Base side rail or edge rail missing.<br>• Corner casting must be present. NOTE: Base side rail corner welds can be cracked.<br>• Separation of base and edge rail.<br>• Puncture or tear (<b>> 3 × 1-in</b>) (7.62 × 2.54-cm) located <b>< 3-in (7.62-cm)</b> from frame edge.<br>• Puncture or tear (<b>> 6 × 2-in</b>) (15.24 × 5.08-cm) located <b>> 3-in (7.62-cm)</b> from frame edge.<br>• More than five missing or loose rivets. (Must have five good rivets between any two missing rivets).<br>• Damage to the point of preventing loading and securing or causing damage to the aircraft." 
+                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。<br>• <b>損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。</b>", 
+                en: "• Loaded ULD base bow shall not exceed <b>1.25-in (3.17-cm)</b>.<br>• Empty ULD base bow shall not exceed <b>2-in (5.08-cm)</b>.<br>• Missing base side rail or edge rail.<br>• Corner casting must be present and intact (Note: corner welds cracked is acceptable).<br>• Separation of base and side/edge rail.<br>• Hole or tear <b>> 3-in x 1-in</b> within 3-in of edge.<br>• Hole or tear <b>> 6-in x 2-in</b> beyond 3-in of edge.<br>• Missing or loose rivets <b>> 5</b>.<br>• <b>Damage affecting loading and restraint, or posing risk of interior damage to aircraft is unserviceable.</b>" 
             },
             { 
-                titleZh: "網 (Cargo Nets)", 
+                titleZh: "集裝網 (Cargo Nets)", 
                 titleEn: "Cargo Nets", 
-                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>• 網繩 (Roping)：<br>&nbsp;&nbsp;• 最底層：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 0.25 吋 (0.63 cm)，不可接受。<br>&nbsp;&nbsp;• 底層上方兩排：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 0.25 吋 (0.63 cm)，不可接受。<br>&nbsp;&nbsp;• <b>底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)</b>。<br>⚠️ <b>注意</b>：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。", 
-                en: "• TSO Tag present and legible.<br>• All double stud fittings present and operable.<br>• Adjusting hooks - more than one per side missing or inoperative, not in conjunction with a cut rope/web.<br>• Lashing Line - One cut/fray <b>> 25%</b> of material or <b>.25-in (.63-cm)</b> of the rope/web.<br>• Roping:<br>&nbsp;&nbsp;• Border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;• Two rows above border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;• <b>Above Bottom Two Rows - No more than one completely cut/frayed rope between two knots (not including corner rope)</b>.<br>⚠️ <b>NOTE</b>: Three or more damages not exceeding damage limitations above render a net unserviceable." 
+                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。<br>• 網繩 (Roping)：最底層及上方兩排單處損壞 > 25% 或 0.25 吋不可接受；底層兩排以上兩繩結間不得有超過 1 條斷裂。", 
+                en: "• TSO Tag present and legible.<br>• All double stud fittings present and functional.<br>• Adjusting hooks: missing/damaged not to exceed 1 per side.<br>• Corner ropes: broken/frayed > 25% or 0.25-in is unserviceable.<br>• Roping: lower 2 rows broken > 25% or 0.25-in unserviceable; above lower 2 rows max 1 broken strand between knots." 
             },
             { 
-                titleZh: "軍帶 (Restraint Straps)", 
+                titleZh: "軍帶與綁固帶 (Restraint Straps)", 
                 titleEn: "Restraint Straps", 
-                zh: "• <b>主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;<i>註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用</i><br>&nbsp;&nbsp;• 未附有清晰可辨的 TSO 標籤<br>&nbsp;&nbsp;• 已超過有效期限<br>&nbsp;&nbsp;• 存在任何形式的損壞<br><br>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;• 已超過有效期限 (如適用)<br>&nbsp;&nbsp;• 扣環無法保持鎖定狀態<br>&nbsp;&nbsp;• 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>&nbsp;&nbsp;• 綁帶材料存在以下情況：<br>&nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>&nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結", 
-                en: "• <b>Primary SCAF Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;<i>NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</i><br>&nbsp;&nbsp;• No TSO placard present and legible<br>&nbsp;&nbsp;• Expiry date has been exceeded<br>&nbsp;&nbsp;• Any damage is present<br><br>• <b>Secondary Cargo Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;• Expiry date has been exceeded, if applicable<br>&nbsp;&nbsp;• Buckle latch mechanism will not lock or stay engaged<br>&nbsp;&nbsp;• Attached fittings, hooks and rings are bent, cracked, broken or missing<br>&nbsp;&nbsp;• Strapping material:<br>&nbsp;&nbsp;&nbsp;&nbsp;• One cut or fray which exceeds 25% of the strap material width<br>&nbsp;&nbsp;&nbsp;&nbsp;• One or more knots exist" 
-            },
-            { 
-                titleZh: "附屬配件 (Accessories)", 
-                titleEn: "Accessories", 
-                zh: "附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況：<br>• <b>拉箱帶</b>：如有缺失、磨損、磨耗或撕裂，應安排更換。<br>• <b>雨擋門簾</b>：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。", 
-                en: "Accessory items DO NOT determine airworthiness. Please evaluate during routine container evaluations:<br>• Pull straps - missing, frayed, worn, or torn pull straps should be replaced.<br>• Package door flaps - containers with damage extending beyond the overall envelope of the container, or that present potential hazard to the aircraft or ground handling personnel/equipment, should be sent for repair." 
+                zh: "🔵 主要 SCAF 軍帶 (藍色)：無 TSO 標籤、過期或有任何損壞均不可使用。<br>🟡 次要綁固帶 (黃色)：過期、扣環無法鎖定、配件彎曲/斷裂/缺失、切口/磨損 > 25% 寬度、或存在解不開的結均不可接受。", 
+                en: "🔵 Primary SCAF Straps (Blue): Missing TSO tag, expired, or any damage is unserviceable.<br>🟡 Secondary Cargo Straps (Yellow): Expired, buckle fails to lock, hardware damaged, cut/frayed > 25% width, or tight knots present are unserviceable." 
             }
         ];
+
+        function renderBilingualCardModal() {
+            const container = document.getElementById('modal-card-body');
+            if (!container) return;
+            container.innerHTML = '';
+
+            cardSections.forEach((sec, idx) => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3.5 md:p-4 rounded-xl border border-slate-200 shadow-sm space-y-2";
+                
+                let titleHtml = "";
+                if (currentCardViewMode === 'both') {
+                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-slate-900 flex items-center justify-between border-b border-slate-100 pb-1.5"><span class="text-amber-800"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleZh}</span><span class="text-slate-500 text-[11px] font-normal italic">${sec.titleEn}</span></h4>`;
+                } else if (currentCardViewMode === 'zh') {
+                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-amber-800 border-b border-slate-100 pb-1.5"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleZh}</h4>`;
+                } else {
+                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-slate-800 border-b border-slate-100 pb-1.5"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleEn}</h4>`;
+                }
+
+                let bodyHtml = "";
+                if (currentCardViewMode === 'both') {
+                    bodyHtml = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
+                            <div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-100 text-slate-800 text-[11px] leading-relaxed">${sec.zh}</div>
+                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-slate-700 text-[11px] font-sans leading-relaxed">${sec.en}</div>
+                        </div>
+                    `;
+                } else if (currentCardViewMode === 'zh') {
+                    bodyHtml = `<div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-100 text-slate-800 text-xs leading-relaxed mt-1">${sec.zh}</div>`;
+                } else {
+                    bodyHtml = `<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-slate-700 text-xs font-sans leading-relaxed mt-1">${sec.en}</div>`;
+                }
+
+                card.innerHTML = titleHtml + bodyHtml;
+                container.appendChild(card);
+            });
+        }
 
         function setCardViewMode(mode) {
             currentCardViewMode = mode;
@@ -1520,66 +1542,16 @@
                 if (m === mode) {
                     btn.className = "px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold";
                 } else {
-                    btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-normal font-sans";
+                    btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-normal";
                 }
             });
             renderBilingualCardModal();
         }
 
-        function renderBilingualCardModal() {
-            const container = document.getElementById('modal-card-body');
-            if (!container) return;
-            container.innerHTML = '';
-
-            cardSections.forEach(sec => {
-                const cardBox = document.createElement('div');
-                cardBox.className = "bg-[#ffffff] border border-slate-200 rounded-xl p-3.5 md:p-4 shadow-sm";
-
-                let contentHtml = '';
-
-                if (currentCardViewMode === 'both') {
-                    contentHtml = `
-                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2.5 border-b border-amber-300 pb-1.5 flex items-center justify-between">
-                            <span><i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleZh}</span>
-                            <span class="text-[11px] font-semibold text-slate-500">${sec.titleEn}</span>
-                        </h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-                            <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200/80">
-                                <p class="text-[10px] font-black text-amber-900 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> 中文版本 (Chinese)
-                                </p>
-                                <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed">${sec.zh}</div>
-                            </div>
-                            <div class="bg-slate-100/70 p-3 rounded-lg border border-slate-200">
-                                <p class="text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> English Version
-                                </p>
-                                <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed font-sans">${sec.en}</div>
-                            </div>
-                        </div>
-                    `;
-                } else if (currentCardViewMode === 'zh') {
-                    contentHtml = `
-                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2 border-b border-amber-300 pb-1">
-                            <i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleZh}
-                        </h4>
-                        <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed bg-amber-50/50 p-3 rounded-lg border border-amber-200/60">${sec.zh}</div>
-                    `;
-                } else {
-                    contentHtml = `
-                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2 border-b border-amber-300 pb-1">
-                            <i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleEn}
-                        </h4>
-                        <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed bg-slate-100/70 p-3 rounded-lg border border-slate-200">${sec.en}</div>
-                    `;
-                }
-
-                cardBox.innerHTML = cardHtml = contentHtml;
-                container.appendChild(cardBox);
-            });
-        }
-
-        window.onload = init3D;
+        // Initialize 3D Engine and app on page load
+        window.onload = function() {
+            init3D();
+        };
     </script>
 </body>
 </html>
