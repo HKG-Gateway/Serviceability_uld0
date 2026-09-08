@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>UPS AeroULD Portal</title>
+    
+    <!-- PWA Primary Meta Tags -->
+    <meta name="theme-color" content="#2b1610">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="UPS AeroULD">
+    <meta name="application-name" content="UPS AeroULD">
+    <meta name="description" content="UPS AeroULD 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App">
+
+    <!-- PWA Web App Manifest -->
+    <link rel="manifest" id="manifest-placeholder">
+
+    <!-- iOS App Icons -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 240'><defs><linearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ffe17d'/><stop offset='40%25' stop-color='%23ffb500'/><stop offset='80%25' stop-color='%23d48800'/><stop offset='100%25' stop-color='%238a5400'/></linearGradient><linearGradient id='bgBrown' x1='0%25' y1='0%25' x2='0%25' y2='100%25'><stop offset='0%25' stop-color='%233a1a10'/><stop offset='100%25' stop-color='%231a0b06'/></linearGradient></defs><rect width='200' height='240' fill='%232b1610'/><path d='M 100 230 C 30 200 5 150 5 30 L 100 5 L 195 30 C 195 150 170 200 100 230 Z' fill='url(%23gold)'/><path d='M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z' fill='url(%23bgBrown)'/><text x='100' y='145' text-anchor='middle' fill='url(%23gold)' font-family='Arial Black, sans-serif' font-weight='900' font-size='68' letter-spacing='-3'>UPS</text></svg>">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Three.js Library & Loaders -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <!-- Sketchfab Viewer API -->
+    <script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
+
+    <style>
+        #viewport-container {
+            width: 100%;
+            height: 480px;
+            touch-action: none;
+        }
+        @media (min-width: 768px) { #viewport-container { height: 600px; } }
+        @media (min-width: 1280px) { #viewport-container { height: 680px; } }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        
+        .ups-gold-gradient {
+            background: linear-gradient(135deg, #ffe17d 0%, #ffb500 50%, #d48800 100%);
+        }
+        
+        header {
+            padding-top: calc(env(safe-area-inset-top) + 0.5rem) !important;
+        }
+        
+        body {
+            padding-bottom: env(safe-area-inset-bottom);
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
+
+    <!-- Header Navigation -->
+    <header class="bg-[#2b1610] text-white sticky top-0 z-50 px-3 md:px-6 pb-2.5 shadow-md border-b-2 border-[#ffb500]">
+        <div class="max-w-7xl mx-auto flex flex-col gap-2">
+            <div class="flex justify-between items-center gap-2 md:gap-4">
+                <div class="flex items-center gap-2 md:gap-3">
+                    <!-- UPS GOLD SHIELD LOGO -->
+                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-md">
+                        <svg viewBox="0 0 200 240" class="w-full h-full">
+                            <defs>
+                                <linearGradient id="upsGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffe68d" />
+                                    <stop offset="35%" stop-color="#ffbe10" />
+                                    <stop offset="75%" stop-color="#d88c00" />
+                                    <stop offset="100%" stop-color="#8e5300" />
+                                </linearGradient>
+                                <linearGradient id="upsBrownGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                    <stop offset="0%" stop-color="#3d1b11" />
+                                    <stop offset="100%" stop-color="#1c0904" />
+                                </linearGradient>
+                            </defs>
+                            <path d="M 100 232 C 30 200 5 150 5 28 L 100 5 L 195 28 C 195 150 170 200 100 232 Z" fill="url(#upsGoldGrad)" />
+                            <path d="M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z" fill="url(#upsBrownGrad)" />
+                            <text x="100" y="148" text-anchor="middle" fill="url(#upsGoldGrad)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="70" letter-spacing="-3">UPS</text>
+                            <text x="160" y="215" fill="url(#upsGoldGrad)" font-family="Arial, sans-serif" font-weight="bold" font-size="16">TM</text>
+                        </svg>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-1.5 md:gap-2">
+                            <h1 class="font-black text-xs sm:text-base md:text-lg leading-tight text-white">
+                                UPS AeroULD Portal
+                            </h1>
+                            <span id="header-badge" class="text-[8px] md:text-[9px] bg-[#ffb500] text-[#2b1610] px-1.5 py-0.2 rounded font-black tracking-wider uppercase shadow-sm flex items-center gap-1">
+                                <i class="fa-solid fa-cube text-[8px]"></i> 3D 適航檢查
+                            </span>
+                        </div>
+                        <p class="text-[8px] sm:text-[9px] md:text-[10px] text-amber-200/80">ULD 3D 檢驗與收板形狀說明</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-1.5 md:gap-2">
+                    <button id="pwa-install-btn" onclick="installPWA()" class="hidden px-2 md:px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 shadow transition">
+                        <i class="fa-solid fa-download"></i> <span class="hidden sm:inline">安裝 App</span>
+                    </button>
+
+                    <button onclick="openCardModal()" class="px-2 md:px-3 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 rounded-lg text-[11px] sm:text-xs font-black flex items-center gap-1 shadow-md transition">
+                        <i class="fa-solid fa-id-card text-xs"></i> 
+                        <span>檢查卡</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page Navigation Tabs Switcher -->
+            <div class="flex bg-slate-900/60 p-1 rounded-lg border border-amber-500/30 text-xs font-bold">
+                <button id="nav-tab-uld" onclick="switchPage('uld')" class="flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold">
+                    <i class="fa-solid fa-boxes-packing"></i> 📦 ULD 適航檢查 (<span id="uld-count-badge">13</span>大類)
+                </button>
+                <button id="nav-tab-contour" onclick="switchPage('contour')" class="flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold">
+                    <i class="fa-solid fa-plane-arrival"></i> ✈️ 收板形狀說明
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- iOS Banner Tip -->
+    <div id="ios-pwa-banner" class="hidden bg-amber-500 text-[#2b1610] px-3 py-1.5 text-xs font-bold flex items-center justify-between border-b border-amber-600">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-mobile-screen-button text-sm flex-shrink-0"></i>
+            <span class="text-[11px] sm:text-xs">提示：Safari 點擊分享按鈕 <i class="fa-solid fa-arrow-up-from-bracket"></i>，選擇<b>「加至主畫面」</b>即可當作獨立 App 使用！</span>
+        </div>
+        <button onclick="closeIosBanner()" class="text-[#2b1610] hover:text-black font-extrabold px-1.5">✕</button>
+    </div>
+
+    <!-- Main Responsive Layout -->
+    <main class="max-w-7xl mx-auto w-full p-2.5 sm:p-4 md:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5">
+
+        <!-- Selector List Column -->
+        <div class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
+            
+            <div class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 id="selector-title" class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
+                        <i class="fa-solid fa-boxes-packing text-amber-600"></i>選擇 ULD 項目
+                    </h2>
+                    <span id="category-badge" class="text-[10px] bg-amber-50 text-amber-900 px-2 py-0.5 rounded font-mono font-bold border border-amber-200">
+                        13 個全項目
+                    </span>
+                </div>
+
+                <!-- ULD Filter -->
+                <div id="uld-filter-bar" class="flex gap-1 mb-2 border-b border-slate-200 pb-2 text-[10px] sm:text-[11px] font-bold overflow-x-auto">
+                    <button onclick="filterCategory('all')" id="tab-all" class="px-2 py-1 bg-amber-600 text-white rounded whitespace-nowrap">全部 (13)</button>
+                    <button onclick="filterCategory('container')" id="tab-container" class="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded whitespace-nowrap">集裝箱 (7)</button>
+                    <button onclick="filterCategory('pallet')" id="tab-pallet" class="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded whitespace-nowrap">集裝板 (2)</button>
+                    <button onclick="filterCategory('accessory')" id="tab-accessory" class="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded whitespace-nowrap">配件 (4)</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-[220px] sm:max-h-[260px] lg:max-h-[290px] overflow-y-auto pr-1" id="item-selector-group"></div>
+            </div>
+
+            <!-- Details Panel -->
+            <div class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 id="details-section-title" class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-600"></i><span id="criteria-box-header">拒收標準 (Unserviceable Criteria)</span>
+                        </h2>
+                        <span id="details-ref-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            FORM: 83-48-002
+                        </span>
+                    </div>
+
+                    <div id="inspector-details" class="space-y-2 bg-slate-50 p-2.5 md:p-3 rounded-lg border border-slate-200">
+                        <div class="flex justify-between items-center text-xs">
+                            <span class="text-slate-500 font-medium" id="part-name-label">當前項目：</span>
+                            <span class="font-bold text-[#2b1610] bg-amber-100 px-2 py-0.5 rounded border border-amber-300 max-w-[200px] truncate text-right" id="part-name">請選擇項目</span>
+                        </div>
+                        <hr class="border-slate-200">
+                        <!-- Full criteria text area -->
+                        <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed whitespace-pre-line max-h-[240px] md:max-h-[280px] overflow-y-auto pr-1 font-mono bg-white p-2.5 rounded border border-slate-200 shadow-inner" id="part-limits">
+                            請在上方點擊 ULD 項目檢視拒收標準準則。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-3 pt-2 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+                    <span id="manual-ref-text"><i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i> UCHPM Chapter 04</span>
+                    <button onclick="resetCamera()" class="text-blue-600 hover:text-blue-800 underline font-semibold">重置視角</button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Media Display Area -->
+        <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
+
+            <div class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
+                
+                <!-- Toolbar -->
+                <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex justify-between items-center gap-2">
+                    <div class="flex items-center gap-2">
+                        <span id="view-mode-indicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs font-extrabold text-slate-800" id="current-item-title">AMP CONTAINER</span>
+                        <span id="media-type-badge" class="text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold border border-emerald-300">3D 視角</span>
+                    </div>
+                </div>
+
+                <!-- Expanded Viewport Container -->
+                <div id="viewport-container" class="relative cursor-grab active:cursor-grabbing bg-slate-900 overflow-hidden">
+                    
+                    <!-- Native Three.js Container -->
+                    <div id="canvas-container" class="w-full h-full"></div>
+
+                    <!-- Sketchfab Frame Container -->
+                    <iframe id="sketchfab-frame" class="w-full h-full border-0 hidden" allow="autoplay; fullscreen; xr-spatial-tracking" execution-while-out-of-viewport execution-while-not-rendered webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+                    <div id="canvas-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-10 transition-opacity duration-300 text-white pointer-events-none">
+                        <i class="fa-solid fa-circle-notch fa-spin text-3xl text-amber-500 mb-2"></i>
+                        <p class="text-xs font-bold text-amber-300" id="loading-text">正在載入 3D 模型...</p>
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 border-t border-slate-200 p-2 flex flex-wrap gap-1.5 text-xs" id="hotspot-buttons"></div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- BILINGUAL INSPECTION CARD MODAL -->
+    <div id="card-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2.5 md:p-4">
+        <div class="bg-white border border-slate-200 rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            
+            <div class="bg-[#2b1610] px-4 md:px-6 py-3 border-b-2 border-[#ffb500] flex flex-wrap justify-between items-center text-white gap-2 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-9 flex-shrink-0">
+                        <svg viewBox="0 0 200 240" class="w-full h-full">
+                            <path d="M 100 232 C 30 200 5 150 5 28 L 100 5 L 195 28 C 195 150 170 200 100 232 Z" fill="#ffbe10" />
+                            <path d="M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z" fill="#2b1610" />
+                            <text x="100" y="148" text-anchor="middle" fill="#ffbe10" font-family="Arial Black" font-weight="900" font-size="70">UPS</text>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-[#ffb500] text-sm md:text-base flex items-center gap-2">
+                            <span>ULD 適航性檢查卡 (中英對照)</span>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded font-mono">FORM: 83-48-002</span>
+                        </h3>
+                        <p class="text-[10px] text-amber-200/70">DATE: 07/02/26 | Ref: UCHPM Chapter 04</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 md:gap-3">
+                    <div class="bg-slate-800 p-0.5 rounded-lg border border-amber-500/40 flex text-[10px] sm:text-[11px] font-bold">
+                        <button id="mode-btn-both" onclick="setCardViewMode('both')" class="px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow">中英平行對照</button>
+                        <button id="mode-btn-zh" onclick="setCardViewMode('zh')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition">中文</button>
+                        <button id="mode-btn-en" onclick="setCardViewMode('en')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition">English</button>
+                    </div>
+                    <button onclick="closeCardModal()" class="text-amber-200 hover:text-white text-xl font-bold px-1.5"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+            </div>
+
+            <!-- Scrollable Modal Body -->
+            <div class="p-3 md:p-6 overflow-y-auto space-y-4 text-xs text-slate-800 leading-relaxed bg-slate-50 max-h-[calc(85vh-100px)]" id="modal-card-body"></div>
+
+            <div class="bg-white px-4 md:px-6 py-2.5 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 flex-shrink-0">
+                <span class="truncate mr-2">如有疑問，請聯絡當班主管查閱操作手冊。 / Questions? Refer to UCHPM Chapter 04.</span>
+                <button onclick="closeCardModal()" class="px-4 py-1.5 ups-gold-gradient text-[#2b1610] font-black rounded text-xs shadow flex-shrink-0">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Block -->
+    <script>
+        // Dynamic Manifest Injection
+        const manifestObj = {
+            "name": "UPS AeroULD & Contour Portal",
+            "short_name": "UPS AeroULD",
+            "description": "UPS AeroULD 官方適航性檢查卡 (FORM: 83-48-002) 與收板形狀說明 App",
+            "start_url": "./",
+            "display": "standalone",
+            "orientation": "any",
+            "background_color": "#2b1610",
+            "theme_color": "#2b1610",
+            "icons": [{ "src": "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232b1610'/><path d='M50 85 C20 72 8 50 8 18 L50 2 L92 18 C92 50 80 72 50 85 Z' fill='%23ffb500'/><path d='M50 78 C25 66 14 46 14 20 L50 6 L86 20 C86 46 75 66 50 78 Z' fill='%232b1610'/><text x='50' y='55' text-anchor='middle' fill='%23ffb500' font-family='Arial Black' font-weight='900' font-size='24'>UPS</text></svg>", "sizes": "192x192 512x512", "type": "image/svg+xml" }]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
+        document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+
+        // Safely unregister legacy service workers to prevent cache lockup
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                for(let registration of registrations) {
+                    registration.unregister();
+                }
+            });
+        }
+
+        // PWA Installation Handlers
+        let deferredPrompt = null;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault(); deferredPrompt = e;
+            const btn = document.getElementById('pwa-install-btn');
+            if (btn) btn.classList.remove('hidden');
+        });
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((res) => {
+                    if (res.outcome === 'accepted') document.getElementById('pwa-install-btn').classList.add('hidden');
+                    deferredPrompt = null;
+                });
+            }
+        }
+        const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+        if (isIos && !isStandalone) document.getElementById('ios-pwa-banner').classList.remove('hidden');
+        function closeIosBanner() { document.getElementById('ios-pwa-banner').classList.add('hidden'); }
+
+        // --- Common Unserviceable Standard Text Block for All Containers (Updated with Accessories) ---
+        const containerFullCriteria = 
+`📌 ULD 主體 (Container Body) - 面板 (Panel):
+• 面板損壞 (裂縫、斷裂、穿孔或切口) 若位於距離框架邊緣 3 吋 (7.62 cm) 以內，則不可接受。
+  (例外情況：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。)
+• 面板損壞若位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，其損壞長度不得超過 7 吋 (17.78 cm)。
+• 面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm)，不可接受。
+
+📌 骨架構件與緊固件 (Frame Members & Fasteners):
+• 損壞長度超過 3 吋 (7.62 cm) 或寬度超過 0.5 吋 (1.27 cm)，不可接受。
+• 凹陷超過 2 吋 (5.08 cm)，不可接受。
+• 底條上方門框面板每側缺失超過一個緊固件，不可接受。
+
+📌 ULD 設備門體 / 五金配件 (Roll-up Door):
+• 部件缺失或損壞，導致門體無法固定，不可接受。
+• 帆布總損壞面積超過 8 × 12 吋 (20.32 × 30.48 cm) (即 96 平方吋 / 619.35 平方公分)，不可接受。
+• 門纜磨損超過 25%，不可接受。
+• 門纜鋼絲外露超過 12 吋 (30.48 cm)，不可接受。
+• 門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm)，不可接受。
+
+📌 Container / Pallet 底板與側軌 (Base & Side Rails):
+• 已裝載貨物的 ULD 底板彎曲曲度不得超過 1.25 吋 (3.17 cm)。
+• 空 ULD 底板彎曲曲度不得超過 2 吋 (5.08 cm)。
+• 底板邊軌或板邊緣軌缺失。
+• 板角必須完好。(注意：板角焊接形成的裂縫可接受)
+• 底板與邊軌分離。
+• 距離板邊緣小於 3 吋處 (7.62 cm) 有穿孔或撕裂 (＞3 吋 × 1 吋)，不可接受。
+• 距離板邊緣 3 吋以外 (7.62 cm) 有穿孔或撕裂 (＞6 吋 × 2 吋)，不可接受。
+• 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
+• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。
+
+📌 附屬配件 (Accessories):
+• 附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況：
+  - 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換。
+  - 雨擋門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。`;
+
+        // --- Exact Full Criteria for PAG & PMC Pallets ---
+        const palletFullCriteria = 
+`📌 Container / Pallet 底板與側軌 (Base & Side Rails):
+• 已裝載貨物的 ULD 底板彎曲曲度不得超過 1.25 吋 (3.17 cm)。
+• 空 ULD 底板彎曲曲度不得超過 2 吋 (5.08 cm)。
+• 底板邊軌或板邊緣軌缺失。
+• C 型槽損壞，導致 D-ring 無法正確均勻分布與固定。
+• 固定 D-ring 的 C 型槽槽口損壞。
+• 板角必須完好。(注意：板角焊接形成的裂縫可接受)
+• 底板與邊軌分離。
+• 距離板邊緣小於 3 吋處 (7.62 cm) 有穿孔或撕裂 (＞3 吋 × 1 吋)，不可接受。
+• 距離板邊緣 3 吋以外 (7.62 cm) 有穿孔或撕裂 (＞6 吋 × 2 吋)，不可接受。
+• 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
+• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。`;
+
+        // Straps Criteria Text
+        const strapsFullCriteriaExact = 
+`📌 軍帶 (Restraint Straps):
+🔵 主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色) -- 如出現以下任何情況，應判定為不可使用：
+  註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用
+  - 未附有清晰可辨的 TSO 標籤
+  - 已超過有效期限
+  - 存在任何形式的損壞
+
+🟡 次要貨物綁固帶 (黃色) -- 如出現以下任何情況，應判定為不可使用：
+  - 已超過有效期限 (如適用)
+  - 扣環無法保持鎖定狀態
+  - 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受
+  - 綁帶材料存在以下情況：
+    • 單一切口或磨損超過綁帶寬度的 25%
+    • 存在一個或以上解不開的結`;
+
+        // --- Datasets & Hybrid Engine State ---
+        let activePage = 'uld', currentItemKey = 'amp', currentCategory = 'all';
+        let sketchfabAPI = null, activeRenderer = 'three';
+
+        // Helper function to extract text safely from Sketchfab annotation names/objects
+        function parseAnnotationTitle(rawName, fallbackIndex) {
+            if (!rawName) return `標籤 #${fallbackIndex + 1}`;
+            if (typeof rawName === 'string') return rawName;
+            if (typeof rawName === 'object') {
+                return rawName.text || rawName.name || rawName.title || `標籤 #${fallbackIndex + 1}`;
+            }
+            return String(rawName);
+        }
+
+        // 1. ULD Dataset
+        const uldData = {
+            "amp": { 
+                sketchfabUid: "c15bfab448f64f9a9be7e7e2a9607d9d", 
+                glbFile: "amp.glb", 
+                label: "AMP", 
+                title: "AMP Main Deck Container", 
+                category: "container", 
+                color: "text-blue-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "amj": { 
+                sketchfabUid: "496b18139d1c499f83c5f17d97203691", 
+                glbFile: "amj.glb", 
+                label: "AMJ", 
+                title: "AMJ Contour Container", 
+                category: "container", 
+                color: "text-indigo-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "amd": { 
+                sketchfabUid: "13d0021c0b9a4035b09f185495b4dce5", 
+                glbFile: "amd.glb", 
+                label: "AMD", 
+                title: "AMD Main Deck Container", 
+                category: "container", 
+                color: "text-cyan-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "aay": { 
+                sketchfabUid: "5ee41d0375ad42b1948721faf1474c48", 
+                glbFile: "aay.glb", 
+                label: "AAY", 
+                title: "AAY Main Deck Igloo", 
+                category: "container", 
+                color: "text-emerald-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "aaz": { 
+                sketchfabUid: "45faa49757b4410db1505191360432af", 
+                glbFile: "aaz.glb", 
+                label: "AAZ", 
+                title: "AAZ Main Deck Container", 
+                category: "container", 
+                color: "text-amber-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "alp": { 
+                sketchfabUid: "28c7dcec199748e7800ff450e916a0c4", 
+                glbFile: "alp.glb", 
+                label: "ALP", 
+                title: "ALP Pallet Container / Igloo", 
+                category: "container", 
+                color: "text-rose-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "aad": { 
+                sketchfabUid: "f56d8e99abe94c038943b0affa7945c3", 
+                glbFile: "aad.glb", 
+                label: "AAD", 
+                title: "AAD Main Deck Container", 
+                category: "container", 
+                color: "text-teal-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: containerFullCriteria
+            },
+            "pag": { 
+                sketchfabUid: "d8d59f62dbec4a7bb35f7e02479f4752", 
+                glbFile: "pag.glb", 
+                label: "PAG", 
+                title: "PAG Standard Pallet", 
+                category: "pallet", 
+                color: "text-amber-800", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: palletFullCriteria
+            },
+            "pmc": { 
+                sketchfabUid: "c31463c6f20c4201804c7728a37181e6", 
+                glbFile: "pmc.glb", 
+                label: "PMC", 
+                title: "PMC Standard Pallet", 
+                category: "pallet", 
+                color: "text-purple-800", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: palletFullCriteria
+            },
+            "fcc": { 
+                sketchfabUid: "e388acf7e9424af7bccc29372286db66", 
+                glbFile: "fcc.glb", 
+                label: "FCC", 
+                title: "FCC Flexible Container / Igloo", 
+                category: "accessory", 
+                color: "text-fuchsia-700", 
+                headerLabel: "說明 (Instructions)",
+                titleSuffix: "說明",
+                fullCriteria: 
+`📌 FCC 適用範圍說明:
+• 🟡 黃色只適用於 96 吋以下 Contour (不包括 W2/H2)
+• 🟢 綠色適用於 118 吋以下 Contour (不包括 W2/H2)`
+            },
+            "net": { 
+                sketchfabUid: "548b86e14576402c90f358e14cb2ded0", 
+                glbFile: "net.glb", 
+                label: "NET", 
+                title: "Cargo Net 集裝網", 
+                category: "accessory", 
+                color: "text-orange-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: 
+`📌 網 (Cargo Nets):
+• TSO 標籤清晰可見。
+• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。
+• 網鉤：每側缺失或不可使用的網鉤不得超過一個。
+• 網角繩：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
+• 網繩 (Roping)：
+  - 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
+  - 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。
+  - 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩)。
+⚠️ 注意：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。`
+            },
+            "straps": { 
+                sketchfabUid: "7e3728f6a22948b6989ce52869099817", 
+                glbFile: "straps.glb", 
+                label: "STRAPS", 
+                title: "Restraint Straps 軍帶", 
+                category: "accessory", 
+                color: "text-red-700", 
+                headerLabel: "拒收標準 (Unserviceable Criteria)",
+                titleSuffix: "官方拒收標準 (83-48-002)",
+                fullCriteria: strapsFullCriteriaExact
+            },
+            "trsl": { 
+                sketchfabUid: "f2215f3870e54ddc98e32bc4915a06e2", 
+                glbFile: "trsl.glb", 
+                label: "TRSL", 
+                title: "TRSL Structural Lock Strap 三重鎖帶", 
+                category: "accessory", 
+                color: "text-emerald-800", 
+                headerLabel: "說明 (Instructions)",
+                titleSuffix: "說明",
+                fullCriteria: 
+`📌 TRSL 適用範圍說明:
+• 不能有任何損壞
+• 一塊板最多只能用 6 條（長：2 條 | 短：1 條）`
+            }
+        };
+
+        // 2. Pallet Contour Dataset (H2 removed as requested)
+        const contourData = {
+            "q6": { sketchfabUid: "", glbFile: "q6.glb", label: "Q6", title: "Q6 Main Deck Contour (主艙單邊側斜)", color: "text-blue-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ Q6 輪廓說明:\n• 單邊頂部斜角設計，貼合 B747F / B777F 主艙機身內壁。" },
+            "q7": { 
+                sketchfabUid: "ec70024d162c48f78e4b59246c12f35e", 
+                glbFile: "q7.glb", 
+                label: "Q7", 
+                title: "Q7 Main Deck Center High (主艙中央高箱)", 
+                color: "text-purple-600", 
+                headerLabel: "輪廓說明 (Contour Limits)", 
+                titleSuffix: "收板輪廓說明", 
+                fullCriteria: 
+`✈️ Q7 輪廓說明:
+• 最高 105 吋 / 118 吋
+• 另一邊 96 吋收角` 
+            },
+            // 🌟 Updated: X6 fullCriteria updated as requested
+            "x6": { 
+                sketchfabUid: "8b8afd58c6304017a1f8a440cb5b5f39", 
+                glbFile: "x6.glb", 
+                label: "X6", 
+                title: "X6 B767 Main Deck Contour (B767 雙邊斜頂)", 
+                color: "text-teal-600", 
+                headerLabel: "輪廓說明 (Contour Limits)", 
+                titleSuffix: "收板輪廓說明", 
+                fullCriteria: 
+`✈️ X6 輪廓說明:
+• 最高 96 吋
+• 另一邊 45 吋收角` 
+            },
+            "a2": { sketchfabUid: "", glbFile: "a2.glb", label: "A2", title: "A2 Main Deck Container (主艙面板標準)", color: "text-emerald-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ A2 輪廓與機艙說明:\n• 全機艙適用於 747-400 / 747-8F。" },
+            "w2": { sketchfabUid: "", glbFile: "w2.glb", label: "W2", title: "W2 Standard Lower Deck Box (下艙標準方體)", color: "text-cyan-600", headerLabel: "輪廓說明 (Contour Limits)", titleSuffix: "收板輪廓說明", fullCriteria: "✈️ W2 輪廓說明:\n• 標準平頂直壁方體輪廓，適用於腹艙中央直壁空間。" }
+        };
+
+        // Three.js Engine Variables
+        let scene, camera, renderer, controls, uldGroup;
+        const gltfLoader = new THREE.GLTFLoader();
+
+        function init3D() {
+            renderCategoryButtons();
+            renderBilingualCardModal();
+
+            const container = document.getElementById('canvas-container');
+            if (!container) return;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a);
+
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(4.2, 2.8, 5.0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+            const mainLight = new THREE.DirectionalLight(0xfffaed, 1.2);
+            mainLight.position.set(6, 12, 8);
+            scene.add(mainLight);
+
+            const gridHelper = new THREE.GridHelper(12, 24, 0x334155, 0x1e293b);
+            gridHelper.position.y = -1.01;
+            scene.add(gridHelper);
+
+            uldGroup = new THREE.Group();
+            scene.add(uldGroup);
+
+            switchItem('amp');
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function switchItem(key) {
+            currentItemKey = key;
+            const dataset = activePage === 'uld' ? uldData : contourData;
+            const data = dataset[key];
+            if (!data) return;
+
+            document.getElementById('current-item-title').innerText = data.title.toUpperCase();
+
+            // Dynamic Header Label (Criteria / Instructions / Contour)
+            const headerLabel = data.headerLabel || "拒收標準 (Unserviceable Criteria)";
+            document.getElementById('criteria-box-header').innerText = headerLabel;
+
+            const titleSuffix = data.titleSuffix || "官方拒收標準 (83-48-002)";
+            document.getElementById('part-name').innerText = data.label + " " + titleSuffix;
+            document.getElementById('part-limits').innerText = data.fullCriteria;
+
+            // Refresh button selection state so current active item turns golden yellow
+            renderCategoryButtons();
+
+            renderHotspotButtons(data.hotspots || {});
+
+            if (data.sketchfabUid) {
+                loadSketchfabModel(data.sketchfabUid);
+            } else {
+                useNativeThreeJS(data);
+            }
+        }
+
+        // --- Enhanced Sketchfab Engine Loader with Fallback Embed ---
+        function loadSketchfabModel(uid) {
+            activeRenderer = 'sketchfab';
+            document.getElementById('canvas-container').classList.add('hidden');
+            const iframe = document.getElementById('sketchfab-frame');
+            iframe.classList.remove('hidden');
+            showLoading('正在載入 Sketchfab 帶標籤 3D 模型...');
+
+            // Clean src to reset viewer state
+            iframe.src = 'about:blank';
+
+            setTimeout(() => {
+                const client = new Sketchfab('1.12.1', iframe);
+                client.init(uid, {
+                    success: function(api) {
+                        sketchfabAPI = api;
+                        api.start();
+                        api.addEventListener('viewerready', function() {
+                            hideLoading();
+                            updateStatusBadge('sketchfab');
+                        });
+                        
+                        // Safe Annotation Selection Handling
+                        api.addEventListener('annotationSelect', function(index) {
+                            const currentData = activePage === 'uld' ? uldData[currentItemKey] : contourData[currentItemKey];
+                            if (index !== -1) {
+                                api.getAnnotation(index, function(err, inf) {
+                                    if (inf) {
+                                        const titleStr = parseAnnotationTitle(inf.name, index);
+                                        document.getElementById('part-name').innerText = titleStr;
+
+                                        let contentStr = "";
+                                        if (inf.content) {
+                                            if (typeof inf.content === 'string') {
+                                                contentStr = `📍 【${titleStr}】說明:\n${inf.content}\n\n-------------------------\n`;
+                                            } else if (typeof inf.content === 'object' && inf.content.text) {
+                                                contentStr = `📍 【${titleStr}】說明:\n${inf.content.text}\n\n-------------------------\n`;
+                                            }
+                                        }
+                                        document.getElementById('part-limits').innerText = contentStr + currentData.fullCriteria;
+                                    }
+                                });
+                            } else {
+                                const titleSuffix = currentData.titleSuffix || "官方拒收標準 (83-48-002)";
+                                document.getElementById('part-name').innerText = currentData.label + " " + titleSuffix;
+                                document.getElementById('part-limits').innerText = currentData.fullCriteria;
+                            }
+                        });
+                    },
+                    error: function() {
+                        hideLoading();
+                        // Direct embed iframe fallback if JS Viewer API fails
+                        iframe.src = `https://sketchfab.com/models/${uid}/embed?autostart=1&ui_controls=1&ui_annotations=1`;
+                        updateStatusBadge('sketchfab');
+                    },
+                    ui_controls: 1,
+                    ui_annotations: 1,
+                    autostart: 1
+                });
+            }, 50);
+        }
+
+        // --- Native Three.js Engine (.glb Loader) ---
+        function useNativeThreeJS(data) {
+            activeRenderer = 'three';
+            document.getElementById('sketchfab-frame').classList.add('hidden');
+            document.getElementById('canvas-container').classList.remove('hidden');
+            
+            if (data.glbFile) {
+                tryLoadItemGLB(currentItemKey, data.glbFile);
+            } else {
+                renderCurrentULDModel();
+            }
+            updateStatusBadge('three');
+            resetCamera();
+        }
+
+        function tryLoadItemGLB(key, fileName) {
+            showLoading(`正在載入 ${fileName}...`);
+            gltfLoader.load(fileName, function (gltf) {
+                const model = gltf.scene;
+                const box = new THREE.Box3().setFromObject(model);
+                const size = box.getSize(new THREE.Vector3());
+                const scale = 3 / Math.max(size.x, size.y, size.z);
+                model.scale.set(scale, scale, scale);
+                model.position.sub(box.getCenter(new THREE.Vector3()).multiplyScalar(scale));
+
+                clearGroup(uldGroup);
+                uldGroup.add(model);
+                hideLoading();
+            }, undefined, function (error) {
+                hideLoading();
+                renderCurrentULDModel();
+            });
+        }
+
+        function renderCurrentULDModel() {
+            clearGroup(uldGroup);
+            const dataset = activePage === 'uld' ? uldData : contourData;
+            const data = dataset[currentItemKey];
+            if (!data) return;
+
+            const mat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.4, metalness: 0.6 });
+            const d = { w: 2.2, h: 2.0, d: 3.0 };
+            const mesh = new THREE.Mesh(new THREE.BoxGeometry(d.w, d.h, d.d), mat);
+            uldGroup.add(mesh);
+        }
+
+        function updateStatusBadge(type) {
+            const badge = document.getElementById('media-type-badge');
+            if (type === 'sketchfab') {
+                badge.innerText = '✨ Sketchfab 帶標籤 3D';
+                badge.className = 'text-[10px] bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded font-bold border border-indigo-300';
+            } else {
+                badge.innerText = '📦 原生 .GLB 3D';
+                badge.className = 'text-[10px] bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded font-bold border border-emerald-300';
+            }
+        }
+
+        // --- Dynamic Page Switcher with Inverted Active Tab Styling ---
+        function switchPage(page) {
+            activePage = page;
+            
+            const btnUld = document.getElementById('nav-tab-uld');
+            const btnContour = document.getElementById('nav-tab-contour');
+
+            if (page === 'uld') {
+                btnUld.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
+                btnContour.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
+            } else {
+                btnContour.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
+                btnUld.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
+            }
+
+            renderCategoryButtons();
+            switchItem(page === 'uld' ? 'amp' : 'q6');
+        }
+
+        // --- Button Renderer with Active Item Highlighted in Golden Yellow ---
+        function renderCategoryButtons() {
+            const container = document.getElementById('item-selector-group');
+            if (!container) return;
+            container.innerHTML = '';
+            const dataset = activePage === 'uld' ? uldData : contourData;
+
+            const totalItems = Object.keys(dataset).length;
+            if (activePage === 'uld') {
+                const badge = document.getElementById('category-badge');
+                if (badge) badge.innerText = `${totalItems} 個全項目`;
+                const tabAll = document.getElementById('tab-all');
+                if (tabAll) tabAll.innerText = `全部 (${totalItems})`;
+                
+                let containerCount = 0, palletCount = 0, accessoryCount = 0;
+                Object.values(uldData).forEach(i => { 
+                    if (i.category === 'container') containerCount++; 
+                    if (i.category === 'pallet') palletCount++;
+                    if (i.category === 'accessory') accessoryCount++;
+                });
+
+                const tabContainer = document.getElementById('tab-container');
+                if (tabContainer) tabContainer.innerText = `集裝箱 (${containerCount})`;
+
+                const tabPallet = document.getElementById('tab-pallet');
+                if (tabPallet) tabPallet.innerText = `集裝板 (${palletCount})`;
+
+                const tabAccessory = document.getElementById('tab-accessory');
+                if (tabAccessory) tabAccessory.innerText = `配件 (${accessoryCount})`;
+            }
+
+            // Mapping for extra label suffixes
+            const extraLabels = {
+                'amp': 'Container',
+                'amj': 'Container',
+                'amd': 'Container',
+                'aay': 'Container',
+                'aaz': 'Container',
+                'alp': 'Container',
+                'aad': 'Container',
+                'pag': 'Pallet',
+                'pmc': 'Pallet',
+                'fcc': 'FCC Nets',
+                'net': 'Cargo Nets',
+                'straps': 'Restraint Straps',
+                'trsl': 'Temporary Restraint Straps'
+            };
+
+            Object.keys(dataset).forEach(key => {
+                const item = dataset[key];
+                if (activePage === 'uld' && currentCategory !== 'all' && item.category !== currentCategory) return;
+
+                const isSelected = key === currentItemKey;
+
+                const btn = document.createElement('button');
+                btn.onclick = () => switchItem(key);
+
+                // Dynamic Golden Yellow Class Assignment for Active Selected Button
+                const activeStyle = isSelected 
+                    ? "bg-[#ffb500] text-[#2b1610] border-amber-500 shadow-md font-extrabold ring-2 ring-amber-400/50" 
+                    : "bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200";
+
+                btn.className = `uld-btn flex items-center justify-between p-2.5 rounded-lg border transition-all text-left ${activeStyle}`;
+                
+                const hasTagBadge = item.sketchfabUid ? `<span class="text-[9px] ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-indigo-100 text-indigo-700'} px-1.5 py-0.2 rounded font-bold">標籤</span>` : '';
+                
+                // Specific Label Extensions
+                let extraText = '';
+                if (activePage === 'uld' && extraLabels[key]) {
+                    extraText = `<span class="font-bold text-xs ${isSelected ? 'text-[#2b1610]' : 'text-slate-800'}">${extraLabels[key]}</span>`;
+                }
+
+                const badgeBg = isSelected ? "bg-white/90 text-[#2b1610]" : `bg-white ${item.color}`;
+                
+                btn.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <span class="px-2 py-0.5 border rounded font-mono font-bold text-[11px] ${badgeBg}">${item.label}</span>
+                        ${extraText}
+                        ${hasTagBadge}
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-[10px] ${isSelected ? 'text-[#2b1610]' : 'text-slate-400'}"></i>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function filterCategory(cat) {
+            currentCategory = cat;
+            ['all', 'container', 'pallet', 'accessory'].forEach(c => {
+                const tab = document.getElementById(`tab-${c}`);
+                if (!tab) return;
+                if (c === cat) {
+                    tab.className = "px-2 py-1 bg-amber-600 text-white rounded font-bold shadow-sm whitespace-nowrap";
+                } else {
+                    tab.className = "px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded whitespace-nowrap";
+                }
+            });
+            renderCategoryButtons();
+        }
+
+        function renderHotspotButtons(hotspots) {
+            const container = document.getElementById('hotspot-buttons');
+            container.innerHTML = '';
+        }
+
+        function clearGroup(g) { while (g.children.length > 0) g.remove(g.children[0]); }
+        function resetCamera() { if(camera && controls) { camera.position.set(4.2, 2.8, 5.0); controls.target.set(0, 0, 0); controls.update(); } }
+        function openCardModal() { document.getElementById('card-modal').classList.remove('hidden'); }
+        function closeCardModal() { document.getElementById('card-modal').classList.add('hidden'); }
+        function showLoading(t) { document.getElementById('loading-text').innerText = t; document.getElementById('canvas-loading').style.display = 'flex'; }
+        function hideLoading() { document.getElementById('canvas-loading').style.display = 'none'; }
+        function onWindowResize() { const c = document.getElementById('viewport-container'); if (!c || !camera || !renderer) return; camera.aspect = c.clientWidth / c.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(c.clientWidth, c.clientHeight); }
+        function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
+
+        function showNotification(msg) {
+            let toast = document.getElementById('app-notification');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'app-notification';
+                toast.className = 'fixed bottom-4 left-1/2 -translate-x-1/2 bg-slate-900/95 text-white text-xs font-bold px-4 py-2.5 rounded-full shadow-2xl z-50 transition-all duration-300 border border-slate-700 text-center max-w-[90vw]';
+                document.body.appendChild(toast);
+            }
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+        }
+
+        // --- Complete Bilingual Sections for ULD Inspection Card Modal ---
+        let currentCardViewMode = 'both';
+        const cardSections = [
+            { 
+                titleZh: "基本定義與簡介", 
+                titleEn: "ULD Definition & Overview", 
+                zh: "<b>ULD</b> 是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD 屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的 ULD 必須具備足夠的結構強度，能在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。", 
+                en: "A Unit Load Device (ULD) is either an aircraft pallet and pallet net combination, or an aircraft container. ULDs are removable aircraft parts subject to strict civil aviation authorities' requirements from design, testing, production, and operations, to repair and maintenance. An airworthy ULD must be structurally capable of restraining the loads and providing adequate protection to the aircraft systems and structure during flight." 
+            },
+            { 
+                titleZh: "所有適航的 ULD / 板", 
+                titleEn: "All Airworthy ULDs", 
+                zh: "• <b>TSO 標籤</b>至少在 ULD 的某一處且清晰可讀。<br>• <b>箱重標籤 (Tare Weight Decal)</b>至少在一個位置清晰可見 (無魔術筆塗改痕跡)。<br>• <b>ULD 識別碼</b>、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆塗改痕跡)。<br>• 任何已集裝於 ULD 底板上但未使用集裝網固定的貨物，均被視為特殊貨物。該貨物必須附有 <b>SCAF (Special Cargo Analysis Function) 報告</b>，並由 <b>SCD (Special Cargo Designee)</b> 全程監督及管理相關操作程序。", 
+                en: "• TSO Tags affixed in at least one location and legible.<br>• Tare weight decal present and legible in at least one location (not handwritten).<br>• Identification code, ULD number, and owner's code present and legible in at least one location (not handwritten).<br>• Palletized cargo, without a net, is considered Special Cargo and must be accompanied by a SCAF report and overseen by an SCD (Special Cargo Designee)." 
+            },
+            { 
+                titleZh: "所有非-UPS ULD 設備 (含冷鏈/醫藥貨運設備)", 
+                titleEn: "All Non-UPS Containers Including Cold Chain / Pharma", 
+                zh: "• <b>ODLN (Operational Damage Limits Notice)</b>：所有非-UPS ULD 設備均必須貼有清晰可辨且易於閱讀的 ODLN。<br>• 貼附於任何 ULD 上的 ODLN 標籤，均被視為評估該 ULD 是否適航 / 可正常使用的認可方法。<br>• 所有 ODLN 相關要求均必須符合，方可接受該設備並安排空運運輸。", 
+                en: "• ODLN - An affixed and legible ODLN is required for all non-UPS containers.<br>• An ODLN decal affixed to any ULD is recognized as an approved method to assess the serviceability of the ULD.<br>• All ODLN criteria must be met to accept and move in the Air." 
+            },
+            { 
+                titleZh: "ULD 主體 (Container Body) - 面板 (Panel)", 
+                titleEn: "Container Body - Panel", 
+                zh: "• 面板損壞 (裂縫、斷裂、穿孔或切口) 若位於<b>距離框架邊緣 3 吋 (7.62 cm) 以內</b>，則<b>不可接受</b>。<br><i>例外情況：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。</i><br>• 面板損壞若位於<b>距離骨架邊緣超過 3 吋 (7.62 cm)</b> 的位置，其損壞長度不得超過 <b>7 吋 (17.78 cm)</b>。<br>• 面板突出原有 ULD 外部輪廓超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。", 
+                en: "• Damage (crack, tear, puncture or cut) within <b>3-in (7.62-cm)</b> of the frame edge is unserviceable.<br><i>Exception: If the crack originates at the frame edge not to exceed 3-in (7.62-cm) in length.</i><br>• Damage (crack, tear, puncture or cut) beyond <b>3-in (7.62-cm)</b> of the frame edge, shall not exceed <b>7-in (17.78-cm)</b>.<br>• Panels protruding more than <b>2-in (5.08-cm)</b> exceeding the original outer contour of the ULD profile." 
+            },
+            { 
+                titleZh: "骨架構件與緊固件", 
+                titleEn: "Frame Members and Fasteners", 
+                zh: "• 損壞長度超過 <b>3 吋 (7.62 cm)</b> 或寬度超過 <b>0.5 吋 (1.27 cm)</b>，<b>不可接受</b>。<br>• 凹陷超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。<br>• 底條上方門框面板每側缺失超過一個緊固件，<b>不可接受</b>。", 
+                en: "• Damage <b>> 3-in (7.62-cm)</b> length or <b>.5-in (1.27-cm)</b> in width.<br>• Indention <b>> 2-in (5.08-cm)</b>.<br>• More than one fastener missing per side of panel above the base rail assembly." 
+            },
+            { 
+                titleZh: "ULD 設備門體 / 五金配件 (捲簾門)", 
+                titleEn: "Container Door / Hardware (Roll-up Door)", 
+                zh: "• 部件缺失或損壞，導致門體無法固定，不可接受。<br>• 帆布總損壞面積超過 <b>8 × 12 吋 (20.32 × 30.48 cm)</b> (即 96 平方吋 / 619.35 平方公分)，<b>不可接受</b>。<br>• 門纜磨損超過 <b>25%</b>，<b>不可接受</b>。<br>• 門纜鋼絲外露超過 <b>12 吋 (30.48 cm)</b>，<b>不可接受</b>。<br>• 門檻裂縫長度超過 <b>1 吋 (2.54 cm)</b> 或寬度超過 <b>0.37 吋 (0.94 cm)</b>，<b>不可接受</b>。", 
+                en: "• Missing or damaged components that prevent securing.<br>• Total canvas damage area(s) <b>> 8 × 12-in (20.32 × 30.48-cm)</b> (96 square in / 619.35 Square cm).<br>• Cable frayed <b>> 25%</b> of wire strands.<br>• Cable exposed <b>> 12-in (30.48-cm)</b>.<br>• Door bar extrusion crack <b>> 1-in (2.54-cm)</b> length or <b>.37-in (.94-cm)</b> in width." 
+            },
+            { 
+                titleZh: "Container / Pallet 底板與側軌", 
+                titleEn: "Container/Pallet Base and Side Rails", 
+                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• C 型槽損壞，導致 D-ring 無法正確均勻分布與固定。<br>• 固定 D-ring 的 C 型槽槽口損壞。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)<br>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，<b>不可接受</b>。", 
+                en: "• Loaded ULD base cannot bow <b>> 1.25-in (3.17-cm)</b>.<br>• Empty ULD base cannot bow <b>> 2-in (5.08-cm)</b>.<br>• Base side rail or edge rail missing.<br>• Seat track damage that does not allow for all net double stud fittings to be properly spaced and secured.<br>• Damage to the seat-track lips securing a double stud fitting.<br>• Corner casting must be present. NOTE: Base side rail corner welds can be cracked.<br>• Separation of base and edge rail.<br>• Puncture or tear (<b>> 3 × 1-in</b>) (7.62 × 2.54-cm) located <b>< 3-in (7.62-cm)</b> from frame edge.<br>• Puncture or tear (<b>> 6 × 2-in</b>) (15.24 × 5.08-cm) located <b>> 3-in (7.62-cm)</b> from frame edge.<br>• More than five missing or loose rivets. (Must have five good rivets between any two missing rivets).<br>• Damage to the point of preventing loading and securing or causing damage to the aircraft." 
+            },
+            { 
+                titleZh: "網 (Cargo Nets)", 
+                titleEn: "Cargo Nets", 
+                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>• 網繩 (Roping)：<br>&nbsp;&nbsp;- 最底層：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>&nbsp;&nbsp;- 底層上方兩排：單處斷裂 / 磨損超過材料 <b>25%</b> 或超過 <b>0.25 吋 (0.63 cm)</b>，<b>不可接受</b>。<br>&nbsp;&nbsp;- 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩)。<br>⚠️ <b>注意</b>：若出現三處或以上輕微磨損，即使未超過標準，該網仍不可使用。", 
+                en: "• TSO Tag present and legible.<br>• All double stud fittings present and operable.<br>• Adjusting hooks - more than one per side missing or inoperative, not in conjunction with a cut rope/web.<br>• Lashing Line - One cut/fray <b>> 25%</b> of material or <b>.25-in (.63-cm)</b> of the rope/web.<br>• Roping:<br>&nbsp;&nbsp;- Border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;- Two rows above border cord - One cut/fray <b>> 25%</b> or <b>.25-in (.63-cm)</b> of material.<br>&nbsp;&nbsp;- Above Bottom Two Rows - More than one completely cut/frayed rope between two knots (not to include edge rope).<br>⚠️ <b>NOTE</b>: Three or more damages not exceeding damage limitations above render a net unserviceable." 
+            },
+            { 
+                titleZh: "軍帶 (Restraint Straps)", 
+                titleEn: "Restraint Straps", 
+                zh: "• <b>主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;<i>註：僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用</i><br>&nbsp;&nbsp;- 未附有清晰可辨的 TSO 標籤<br>&nbsp;&nbsp;- 已超過有效期限<br>&nbsp;&nbsp;- 存在任何形式的損壞<br><br>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;- 已超過有效期限 (如適用)<br>&nbsp;&nbsp;- 扣環無法保持鎖定狀態<br>&nbsp;&nbsp;- 所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>&nbsp;&nbsp;- 綁帶材料存在以下情況：<br>&nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>&nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結<br><br>📌 <b>臨時綁帶 (Temporary Restraint Straps)</b>：不得有任何損壞", 
+                en: "• <b>Primary SCAF Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;<i>NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</i><br>&nbsp;&nbsp;- No TSO placard present and legible<br>&nbsp;&nbsp;- Expiry date has been exceeded<br>&nbsp;&nbsp;- Any damage is present<br><br>• <b>Secondary Cargo Restraint Straps</b> - unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;- Expiry date has been exceeded, if applicable<br>&nbsp;&nbsp;- Buckle latch mechanism will not lock or stay engaged<br>&nbsp;&nbsp;- Attached fittings, hooks and rings are bent, cracked, broken or missing<br>&nbsp;&nbsp;- Strapping material:<br>&nbsp;&nbsp;&nbsp;&nbsp;• One cut or fray which exceeds 25% of the strap material width<br>&nbsp;&nbsp;&nbsp;&nbsp;• One or more knots exist<br><br>📌 <b>Temporary Restraint Straps</b>: No damage" 
+            },
+            { 
+                titleZh: "附屬配件 (Accessories)", 
+                titleEn: "Accessories", 
+                zh: "附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況：<br>• <b>拉箱帶</b>：如有缺失、磨損、磨耗或撕裂，應安排更換。<br>• <b>雨擋門簾</b>：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。", 
+                en: "Accessory items DO NOT determine airworthiness. Please evaluate during routine container evaluations:<br>• Pull straps - missing, frayed, worn, or torn pull straps should be replaced.<br>• Package door flaps - containers with damage extending beyond the overall envelope of the container, or that present potential hazard to the aircraft or ground handling personnel/equipment, should be sent for repair." 
+            }
+        ];
+
+        function setCardViewMode(mode) {
+            currentCardViewMode = mode;
+            ['both', 'zh', 'en'].forEach(m => {
+                const btn = document.getElementById(`mode-btn-${m}`);
+                if (!btn) return;
+                if (m === mode) {
+                    btn.className = "px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold";
+                } else {
+                    btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-normal font-sans";
+                }
+            });
+            renderBilingualCardModal();
+        }
+
+        function renderBilingualCardModal() {
+            const container = document.getElementById('modal-card-body');
+            if (!container) return;
+            container.innerHTML = '';
+
+            cardSections.forEach(sec => {
+                const cardBox = document.createElement('div');
+                cardBox.className = "bg-white border border-slate-200 rounded-xl p-3.5 md:p-4 shadow-sm";
+
+                let contentHtml = '';
+
+                if (currentCardViewMode === 'both') {
+                    contentHtml = `
+                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2.5 border-b border-amber-300 pb-1.5 flex items-center justify-between">
+                            <span><i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleZh}</span>
+                            <span class="text-[11px] font-semibold text-slate-500">${sec.titleEn}</span>
+                        </h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="bg-amber-50/60 p-3 rounded-lg border border-amber-200/80">
+                                <p class="text-[10px] font-black text-amber-900 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span> 中文版本 (Chinese)
+                                </p>
+                                <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed">${sec.zh}</div>
+                            </div>
+                            <div class="bg-slate-100/70 p-3 rounded-lg border border-slate-200">
+                                <p class="text-[10px] font-black text-slate-700 uppercase tracking-wider mb-1 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span> English Version
+                                </p>
+                                <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed font-sans">${sec.en}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentCardViewMode === 'zh') {
+                    contentHtml = `
+                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2 border-b border-amber-300 pb-1">
+                            <i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleZh}
+                        </h4>
+                        <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed bg-amber-50/50 p-3 rounded-lg border border-amber-200/60">${sec.zh}</div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <h4 class="font-black text-[#2b1610] text-xs md:text-sm mb-2 border-b border-amber-300 pb-1">
+                            <i class="fa-solid fa-bookmark text-amber-600 mr-1.5"></i>${sec.titleEn}
+                        </h4>
+                        <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed bg-slate-100/70 p-3 rounded-lg border border-slate-200">${sec.en}</div>
+                    `;
+                }
+
+                cardBox.innerHTML = contentHtml;
+                container.appendChild(cardBox);
+            });
+        }
+
+        window.onload = init3D;
+    </script>
+</body>
+</html>
