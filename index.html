@@ -20,15 +20,14 @@
     <!-- iOS App Icons -->
     <link rel="apple-touch-icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 240'><defs><linearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ffe17d'/><stop offset='40%25' stop-color='%23ffb500'/><stop offset='80%25' stop-color='%23d48800'/><stop offset='100%25' stop-color='%238a5400'/></linearGradient><linearGradient id='bgBrown' x1='0%25' y1='0%25' x2='0%25' y2='100%25'><stop offset='0%25' stop-color='%233a1a10'/><stop offset='100%25' stop-color='%231a0b06'/></linearGradient></defs><rect width='200' height='240' fill='%232b1610'/><path d='M 100 230 C 30 200 5 150 5 30 L 100 5 L 195 30 C 195 150 170 200 100 230 Z' fill='url(%23gold)'/><path d='M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z' fill='url(%23bgBrown)'/><text x='100' y='145' text-anchor='middle' fill='url(%23gold)' font-family='Arial Black, sans-serif' font-weight='900' font-size='68' letter-spacing='-3'>UPS</text></svg>">
 
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS & FontAwesome Icons -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Three.js Library & Loaders -->
+    
+    <!-- Three.js & OrbitControls Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
-    <!-- Sketchfab Viewer API -->
     <script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
 
     <style>
@@ -59,7 +58,6 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
 
-    <!-- Header Navigation -->
     <header class="bg-[#2b1610] text-white sticky top-0 z-50 px-3 md:px-6 pb-2.5 shadow-md border-b-2 border-[#ffb500]">
         <div class="max-w-7xl mx-auto flex flex-col gap-2">
             <div class="flex justify-between items-center gap-2 md:gap-4">
@@ -124,7 +122,6 @@
         </div>
     </header>
 
-    <!-- iOS Banner Tip -->
     <div id="ios-pwa-banner" class="hidden bg-amber-500 text-[#2b1610] px-3 py-1.5 text-xs font-bold flex items-center justify-between border-b border-amber-600">
         <div class="flex items-center gap-2">
             <i class="fa-solid fa-mobile-screen-button text-sm flex-shrink-0"></i>
@@ -133,10 +130,9 @@
         <button onclick="closeIosBanner()" class="text-[#2b1610] hover:text-black font-extrabold px-1.5">✕</button>
     </div>
 
-    <!-- Main Responsive Layout -->
     <main class="max-w-7xl mx-auto w-full p-2.5 sm:p-4 md:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5">
 
-        <!-- Selector List Column -->
+        <!-- Left Selector & Criteria Column -->
         <div class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
             
             <div id="left-panel-uld" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
@@ -149,7 +145,7 @@
                     </span>
                 </div>
 
-                <!-- ULD Filter -->
+                <!-- ULD Category Filter -->
                 <div id="uld-filter-bar" class="flex gap-1 mb-2 border-b border-slate-200 pb-2 text-[10px] sm:text-[11px] font-bold overflow-x-auto">
                     <button onclick="filterCategory('all')" id="tab-all" class="px-2 py-1 bg-amber-600 text-white rounded whitespace-nowrap">全部 (13)</button>
                     <button onclick="filterCategory('container')" id="tab-container" class="px-2 py-1 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded whitespace-nowrap">集裝箱 (7)</button>
@@ -160,7 +156,6 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-[220px] sm:max-h-[260px] lg:max-h-[290px] overflow-y-auto pr-1" id="item-selector-group"></div>
             </div>
 
-            <!-- 查詢工具左側篩選面板 -->
             <div id="left-panel-search" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm hidden">
                 <div class="flex items-center justify-between mb-3">
                     <h2 class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
@@ -185,14 +180,14 @@
                     </div>
 
                     <div>
-                        <label class="block font-bold text-slate-700 mb-1">2. 輸入損壞尺寸或數值 (Damage / Inch / cm)</label>
+                        <label class="block font-bold text-slate-700 mb-1">2. 輸入損壞尺寸或數值 (Damage / Inch / cm / %)</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                                 <i class="fa-solid fa-ruler"></i>
                             </span>
-                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: TSO, 箱重, Tare, FCC, 電池, DG, 3 吋, 裝載..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 1, 2, 3, 11, 12, 撕裂, 穿孔..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
                         </div>
-                        <p class="text-[10px] text-slate-400 mt-1">提示：可直接輸入關鍵字 (如 TSO, 箱重, 電池, DG, 3 吋, 裝載) 快速過濾檢查標準。</p>
+                        <p class="text-[10px] text-slate-400 mt-1">提示：可輸入關鍵字或數字（如 1、2、3、11、12 吋、撕裂、穿孔、門纜）比對判定標準。</p>
                     </div>
 
                     <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11px] text-amber-900">
@@ -201,7 +196,6 @@
                 </div>
             </div>
 
-            <!-- Details Panel -->
             <div id="details-panel-container" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
                 <div>
                     <div class="flex items-center justify-between mb-2">
@@ -219,7 +213,6 @@
                             <span class="font-bold text-[#2b1610] bg-amber-100 px-2 py-0.5 rounded border border-amber-300 max-w-[200px] truncate text-right" id="part-name">請選擇項目</span>
                         </div>
                         <hr class="border-slate-200">
-                        <!-- Full criteria text area -->
                         <div class="text-[11px] md:text-xs text-slate-800 leading-relaxed whitespace-pre-line max-h-[240px] md:max-h-[280px] overflow-y-auto pr-1 font-mono bg-white p-2.5 rounded border border-slate-200 shadow-inner" id="part-limits">
                             請在上方點擊 ULD 項目檢視拒收標準準則。
                         </div>
@@ -234,13 +227,11 @@
 
         </div>
 
-        <!-- Media Display Area -->
+        <!-- Right 3D & Search Results Panel -->
         <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
 
             <!-- ULD 3D 檢視面板 -->
             <div id="main-view-uld" class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
-                
-                <!-- Toolbar -->
                 <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex justify-between items-center gap-2">
                     <div class="flex items-center gap-2">
                         <span id="view-mode-indicator" class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -249,13 +240,8 @@
                     </div>
                 </div>
 
-                <!-- Expanded Viewport Container -->
                 <div id="viewport-container" class="relative cursor-grab active:cursor-grabbing bg-slate-900 overflow-hidden">
-                    
-                    <!-- Native Three.js Container -->
                     <div id="canvas-container" class="w-full h-full"></div>
-
-                    <!-- Sketchfab Frame Container -->
                     <iframe id="sketchfab-frame" class="w-full h-full border-0 hidden" allow="autoplay; fullscreen; xr-spatial-tracking" execution-while-out-of-viewport execution-while-not-rendered webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 
                     <div id="canvas-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-slate-900/90 z-10 transition-opacity duration-300 text-white pointer-events-none">
@@ -278,7 +264,7 @@
                 </div>
 
                 <div class="p-3 md:p-4 overflow-y-auto max-h-[580px] space-y-3 bg-slate-50/50" id="search-results-container">
-                    <!-- 動態填充搜尋結果 -->
+                    <!-- Dynamic Search Results Injected Here -->
                 </div>
             </div>
 
@@ -286,7 +272,6 @@
 
     </main>
 
-    <!-- BILINGUAL INSPECTION CARD MODAL -->
     <div id="card-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2.5 md:p-4">
         <div class="bg-white border border-slate-200 rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
             
@@ -310,15 +295,14 @@
                 
                 <div class="flex items-center gap-2 md:gap-3">
                     <div class="bg-slate-800 p-0.5 rounded-lg border border-amber-500/40 flex text-[10px] sm:text-[11px] font-bold">
-                        <button id="mode-btn-both" onclick="setCardViewMode('both')" class="px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow">中英平行對照</button>
-                        <button id="mode-btn-zh" onclick="setCardViewMode('zh')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition">中文</button>
-                        <button id="mode-btn-en" onclick="setCardViewMode('en')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition">English</button>
+                        <button id="mode-btn-both" onclick="setCardViewMode('both')" class="px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold">中英平行對照</button>
+                        <button id="mode-btn-zh" onclick="setCardViewMode('zh')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold">中文</button>
+                        <button id="mode-btn-en" onclick="setCardViewMode('en')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold">English</button>
                     </div>
                     <button onclick="closeCardModal()" class="text-amber-200 hover:text-white text-xl font-bold px-1.5"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- Scrollable Modal Body -->
             <div class="p-3 md:p-6 overflow-y-auto space-y-4 text-xs text-slate-800 leading-relaxed bg-slate-50 max-h-[calc(85vh-100px)]" id="modal-card-body"></div>
 
             <div class="bg-white px-4 md:px-6 py-2.5 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 flex-shrink-0">
@@ -328,9 +312,7 @@
         </div>
     </div>
 
-    <!-- Script Block -->
     <script>
-        // Dynamic Manifest Injection for Full PWA Standards
         const manifestObj = {
             "name": "ULD Inspect360",
             "short_name": "ULD Inspect360",
@@ -349,9 +331,8 @@
         const manifestBlob = new Blob([JSON.stringify(manifestObj)], { type: 'application/json' });
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
-        // Inline Service Worker Creation for Offline PWA Capabilities
         const swCode = `
-            const CACHE_NAME = 'uld-inspect360-v1';
+            const CACHE_NAME = 'uld-inspect360-v9';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -399,7 +380,6 @@
             }
         }
 
-        // PWA Installation Handlers
         let deferredPrompt = null;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault(); 
@@ -432,12 +412,12 @@
             if (banner) banner.classList.add('hidden'); 
         }
 
-        // --- Common Unserviceable Standard Text Block for All Containers ---
         const containerFullCriteria = 
 `📌 ULD 主體 (Container Body) - 面板 (Panel):
 • 面板損壞 (裂縫、斷裂、穿孔或切口) 若位於距離框架邊緣 3 吋 (7.62 cm) 以內，則不可接受。
   (例外情況：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。)
-• 面板損壞若位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，其損壞長度不得超過 7 吋 (17.78 cm)。
+• 面板損壞若位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置：
+  • 損壞長度達 7 吋 (17.78 cm) 或以上，不可接受。
 • 面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm)，不可接受。
 
 📌 骨架構件與緊固件 (Frame Members & Fasteners):
@@ -448,8 +428,7 @@
 📌 ULD 設備門體 / 五金配件 (Roll-up Door):
 • 部件缺失或損壞，導致門體無法固定，不可接受。
 • 帆布總損壞面積超過 8 × 12 吋 (20.32 × 30.48 cm) (即 96 平方吋 / 619.35 平方公分)，不可接受。
-• 門纜磨損超過 25%，不可接受。
-• 門纜鋼絲外露超過 12 吋 (30.48 cm)，不可接受。
+• 門纜磨損超過 25% 或外露超過 12 吋，不可接受。
 • 門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm)，不可接受。
 
 📌 Container / Pallet 底板與側軌 (Base & Side Rails):
@@ -468,7 +447,6 @@
   • 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換。
   • 雨擋門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修。`;
 
-        // --- Exact Full Criteria for PAG & PMC Pallets ---
         const palletFullCriteria = 
 `📌 Container / Pallet 底板與側軌 (Base & Side Rails):
 • 已裝載貨物的 ULD 底板彎曲曲度不得超過 1.25 吋 (3.17 cm)。
@@ -483,7 +461,6 @@
 • 缺失或鬆動的鉚釘超過 5 個，不可接受。(任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘)
 • 損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。`;
 
-        // Straps Criteria Text
         const strapsFullCriteriaExact = 
 `📌 軍帶 (Restraint Straps):
 🔵 主要 SCAF (Special Cargo Analysis Function) 軍帶 (藍色) -- 如出現以下任何情況，應判定為不可使用：
@@ -500,7 +477,6 @@
     • 單一切口或磨損超過綁帶寬度的 25%
     • 存在一個或以上解不開的結`;
 
-        // --- Structured Search Engine Knowledge Base (Includes Added Standard) ---
         const searchKnowledgeBase = [
             {
                 id: "general_tso",
@@ -543,7 +519,7 @@
                 condition: "所有板裝含有電池貨品或危險品 (Dangerous Goods / DG) 之貨物。",
                 limitValue: "必須使用 FCC",
                 verdict: "強制使用 (Mandatory)",
-                verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
+                verdictClass: "bg-amber-100 text-[#2b1610] border-amber-300",
                 note: "所有板裝含有電池貨品 / 危險品 (DG) 均必須使用 FCC。"
             },
             {
@@ -558,26 +534,48 @@
                 note: "例外：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。"
             },
             {
-                id: "panel_inner",
+                id: "panel_inner_serviceable",
                 category: "panel",
                 categoryName: "面板 / Panel",
-                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞",
-                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，其損壞長度超過 7 吋 (17.78 cm)。",
-                limitValue: "7 in / 17.78 cm",
+                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞 (長度 7 吋以內)",
+                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，且損壞長度在 7 吋 (17.78 cm) 以內 (包含 1, 2, 3, 4, 5, 6 吋)。",
+                limitValue: "< 7 in / 17.78 cm",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "距離骨架邊緣 > 3 吋時，只要損壞長度在 7 吋以內 (如 1 吋、2 吋、3 吋、4 吋、5 吋、6 吋) 均判定為符合標準。"
+            },
+            {
+                id: "panel_inner_unserviceable",
+                category: "panel",
+                categoryName: "面板 / Panel",
+                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞 (長度 7 吋及以上)",
+                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，且損壞長度達 7 吋 (17.78 cm) 或以上 (含 7 吋)。",
+                limitValue: "≥ 7 in / 17.78 cm",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "長度若在 7 吋以內則須評估無結構安全疑慮。"
+                note: "損壞長度若達 7 吋或以上則屬結構安全疑慮，判定為不可接受。"
+            },
+            {
+                id: "panel_contour_serviceable",
+                category: "panel",
+                categoryName: "面板 / Panel",
+                title: "面板突出外部輪廓 2 吋 (5.08 cm) 以內 (面板凸輪廓)",
+                condition: "面板突出原有 ULD 外部輪廓在 2 吋 (5.08 cm) 以內 (包含 1 吋、2 吋)。",
+                limitValue: "≤ 2 in / 5.08 cm",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "面板突出未超過 2 吋 (5.08 cm) 為可接受範圍，判定為符合標準。"
             },
             {
                 id: "panel_contour",
                 category: "panel",
                 categoryName: "面板 / Panel",
-                title: "面板突出外部輪廓",
-                condition: "面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm)。",
-                limitValue: "2 in / 5.08 cm",
+                title: "面板突出外部輪廓超過 2 吋 (5.08 cm) (面板輪廓)",
+                condition: "面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm) (例如 2 吋、3 吋、4 吋及大於 2 吋的數字)。",
+                limitValue: "> 2 in / 5.08 cm",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "可能碰撞機身內部結構，嚴禁使用。"
+                note: "突出超過 2 吋可能碰撞機身內部結構，嚴禁使用，判定為不符合標準。"
             },
             {
                 id: "frame_dmg",
@@ -602,15 +600,26 @@
                 note: "依據 FORM: 83-48-002 標準，底部上方面板每側缺失 1 個固定件即屬不可接受。"
             },
             {
-                id: "door_canvas",
+                id: "door_canvas_serviceable",
                 category: "door",
                 categoryName: "門體與五金 / Roll-up Door",
-                title: "捲簾門帆布損壞面積",
-                condition: "帆布總損壞面積超過 8 × 12 吋 (20.32 × 30.48 cm) (即 96 平方吋 / 619.35 平方公分)。",
-                limitValue: "8 x 12 in / 96 sq in",
-                verdict: "不可接受 (Unserviceable)",
+                title: "捲簾門帆布總損壞面積 (1-7 吋 / 1-95 平方吋)",
+                condition: "帆布總損壞面積在 1-7 吋以下，或 1-95 平方吋 (1-95 sq in) 以下。",
+                limitValue: "1-7 in / 1-95 sq in",
+                verdict: "符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "帆布總損壞面積 1-7 吋以下同 1-95 sq 平方吋以下顯示帆布總損壞面積可符合標準。"
+            },
+            {
+                id: "door_canvas_unserviceable",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "捲簾門帆布總損壞面積 (8 吋或以上 / 96 平方吋或以上)",
+                condition: "帆布總損壞面積達 8 吋或以上，或 96 平方吋 (96 sq in) 或以上 (即 8 × 12 吋 / 619.35 平方公分)。",
+                limitValue: "≥ 8 in / ≥ 96 sq in",
+                verdict: "不符合標準 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: ""
+                note: "8 吋或以上同 96 sq 平方吋或以上顯示不符合標準。"
             },
             {
                 id: "door_hardware",
@@ -624,15 +633,26 @@
                 note: "包含五金扣件、鎖頭等影響門體固定功能之損壞。"
             },
             {
-                id: "door_cable",
+                id: "door_cable_serviceable",
                 category: "door",
                 categoryName: "門體與五金 / Roll-up Door",
-                title: "門纜磨損與鋼絲外露",
-                condition: "門纜磨損超過 25%，或門纜鋼絲外露超過 12 吋 (30.48 cm)。",
-                limitValue: "25% / 12 in / 30.48 cm",
-                verdict: "不可接受 (Unserviceable)",
+                title: "門纜磨損與鋼絲外露 (1-11 吋以下 / 1-24% 以下)",
+                condition: "門纜磨損在 1-24% 以下，或門纜鋼絲外露在 1-11 吋 (27.94 cm) 以下。",
+                limitValue: "1-11 in / 1-24%",
+                verdict: "門纜磨損可符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "輸入 1-11 吋以下同 1-24% 以下顯示門纜磨損可符合標準。"
+            },
+            {
+                id: "door_cable_unserviceable",
+                category: "door",
+                categoryName: "門體與五金 / Roll-up Door",
+                title: "門纜磨損與鋼絲外露 (12 吋或以上 / 25% 或以上)",
+                condition: "門纜磨損達 25% 或以上，或門纜鋼絲外露達 12 吋 (30.48 cm) 或以上。",
+                limitValue: "≥ 25% / ≥ 12 in",
+                verdict: "不符合標準 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: ""
+                note: "輸入 12 吋或以上同 25% 或以上顯示不符合標準。"
             },
             {
                 id: "door_bar",
@@ -646,15 +666,48 @@
                 note: "門檻擠型結構裂縫超標即判定不可接受。"
             },
             {
-                id: "base_bow",
+                id: "base_bow_loaded_serviceable",
                 category: "base",
                 categoryName: "底板與側軌 / Base & Rails",
-                title: "ULD 底板彎曲曲度 (Bow)",
-                condition: "已裝載貨物的 ULD 底板彎曲曲度超過 1.25 吋 (3.17 cm)；空 ULD 底板彎曲曲度超過 2 吋 (5.08 cm)。",
-                limitValue: "1.25 in (載貨) / 2 in (空)",
-                verdict: "不可接受 (Unserviceable)",
+                title: "已裝載貨物 ULD 底板彎曲曲度 (1.24 吋或以下)",
+                condition: "已裝載貨物的 ULD 底板彎曲曲度在 1.24 吋 (3.15 cm) 或以下。",
+                limitValue: "≤ 1.24 in / 3.15 cm",
+                verdict: "已裝載貨物可符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "輸入 1.24 吋或以下數字顯示已裝載貨物可符合標準。"
+            },
+            {
+                id: "base_bow_loaded_unserviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "已裝載貨物 ULD 底板彎曲曲度 (1.25 吋或以上)",
+                condition: "已裝載貨物的 ULD 底板彎曲曲度達 1.25 吋 (3.17 cm) 或以上。",
+                limitValue: "≥ 1.25 in / 3.17 cm",
+                verdict: "已裝載貨物不符合標準 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "超過此曲度限制會影響機艙鎖扣安全。"
+                note: "輸入 1.25 吋或以上數字顯示已裝載貨物不符合標準。"
+            },
+            {
+                id: "base_bow_empty_serviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "空 ULD 底板彎曲曲度 (1.9 吋或以下)",
+                condition: "空 ULD 底板彎曲曲度在 1.9 吋 (4.82 cm) 或以下。",
+                limitValue: "≤ 1.9 in / 4.82 cm",
+                verdict: "空 ULD 底板彎曲曲度可符合標準 (Serviceable)",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "輸入 1.9 吋或以下數字顯示空 ULD 底板彎曲曲度可符合標準。"
+            },
+            {
+                id: "base_bow_empty_unserviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "空 ULD 底板彎曲曲度 (2 吋或以上)",
+                condition: "空 ULD 底板彎曲曲度達 2 吋 (5.08 cm) 或以上。",
+                limitValue: "≥ 2 in / 5.08 cm",
+                verdict: "不符合標準 (Unserviceable)",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "輸入 2 吋或以上數字顯示不符合標準。"
             },
             {
                 id: "base_missing_rail",
@@ -665,19 +718,55 @@
                 limitValue: "邊軌缺失 (Missing)",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "底板邊軌或邊緣軌缺失會嚴重影響 ULD 結構完整性與機艙鎖扣固定安全。"
+                note: "底板邊軌或邊緣軌缺失會嚴重影響 ULD 結構完整性與機艙鎖扣安全。"
             },
+
+            /* 【更新項目】底板與側軌：底板穿孔或撕裂 判定項目 */
             {
-                id: "base_tear",
+                id: "base_tear_edge_serviceable",
                 category: "base",
                 categoryName: "底板與側軌 / Base & Rails",
-                title: "底板穿孔或撕裂 (Puncture/Tear)",
-                condition: "距離板邊緣小於 3 吋處有穿孔/撕裂 (＞3 吋 × 1 吋)；距離板邊緣 3 吋以外有穿孔/撕裂 (＞6 吋 × 2 吋)。",
-                limitValue: "3 in / 6 in",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "距離邊緣位置不同適用不同穿孔撕裂尺寸限制。"
+                title: "底板穿孔或撕裂 - 距離板邊緣小於 3 吋 (1-2 吋或以下)",
+                condition: "距離板邊緣小於 3 吋 (7.62 cm) 處，底板穿孔或撕裂尺寸在 1-2 吋或以下。",
+                limitValue: "1-2 in (距離板邊緣 < 3 in)",
+                verdict: "距離板邊緣小於3吋可符合標準",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "輸入 1-2 吋或以下數顯示距離板邊緣小於3吋可符合標準。"
             },
+            {
+                id: "base_tear_edge_unserviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板穿孔或撕裂 - 距離板邊緣小於 3 吋 (3 吋或以上)",
+                condition: "距離板邊緣小於 3 吋 (7.62 cm) 處，底板穿孔或撕裂尺寸達 3 吋或以上。",
+                limitValue: "≥ 3 in (距離板邊緣 < 3 in)",
+                verdict: "距離板邊緣小於3吋不符合標準",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "輸入 3 吋或以上顯示距離板邊緣小於3吋不符合標準。"
+            },
+            {
+                id: "base_tear_outer_serviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板穿孔或撕裂 - 距離板邊緣 3 吋以外 (1-11 吋或以下)",
+                condition: "距離板邊緣 3 吋以外 (7.62 cm 外)，底板穿孔或撕裂尺寸在 1-11 吋或以下。",
+                limitValue: "1-11 in (距離板邊緣 > 3 in)",
+                verdict: "距離板邊緣3吋以外可符合標準",
+                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+                note: "輸入 1-11 吋或以下距離板邊緣3吋以外可符合標準。"
+            },
+            {
+                id: "base_tear_outer_unserviceable",
+                category: "base",
+                categoryName: "底板與側軌 / Base & Rails",
+                title: "底板穿孔或撕裂 - 距離板邊緣 3 吋以外 (12 吋或以上)",
+                condition: "距離板邊緣 3 吋以外 (7.62 cm 外)，底板穿孔或撕裂尺寸達 12 吋或以上。",
+                limitValue: "≥ 12 in (距離板邊緣 > 3 in)",
+                verdict: "不符合標準",
+                verdictClass: "bg-red-100 text-red-800 border-red-300",
+                note: "12 吋或以上顯示不符合標準。"
+            },
+
             {
                 id: "base_corner",
                 category: "base",
@@ -856,7 +945,6 @@
             }
         ];
 
-        // --- Datasets & Hybrid Engine State ---
         let activePage = 'uld', currentItemKey = 'amp', currentCategory = 'all';
         let sketchfabAPI = null, activeRenderer = 'three';
 
@@ -869,7 +957,6 @@
             return String(rawName);
         }
 
-        // 1. ULD Dataset
         const uldData = {
             "amp": { 
                 sketchfabUid: "c15bfab448f64f9a9be7e7e2a9607d9d", 
@@ -1033,7 +1120,6 @@
             }
         };
 
-        // Three.js Engine Variables
         let scene, camera, renderer, controls, uldGroup;
         const gltfLoader = new THREE.GLTFLoader();
 
@@ -1223,7 +1309,6 @@
             const leftSearch = document.getElementById('left-panel-search');
             const detailsPanel = document.getElementById('details-panel-container');
 
-            const mainUld = document.getElementById('main-view-uld');
             const mainSearch = document.getElementById('main-view-search');
 
             if (page === 'uld') {
@@ -1234,7 +1319,7 @@
                 detailsPanel.classList.remove('hidden');
                 leftSearch.classList.add('hidden');
 
-                mainUld.classList.remove('hidden');
+                document.getElementById('main-view-uld').classList.remove('hidden');
                 mainSearch.classList.add('hidden');
             } else {
                 btnSearch.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
@@ -1244,25 +1329,22 @@
                 detailsPanel.classList.add('hidden');
                 leftSearch.classList.remove('hidden');
 
-                mainUld.classList.add('hidden');
+                document.getElementById('main-view-uld').classList.add('hidden');
                 mainSearch.classList.remove('hidden');
 
                 runSearchEngine();
             }
         }
 
-        // --- Smart Search Engine Logic Implementation ---
         function runSearchEngine() {
             const categoryVal = document.getElementById('search-category').value;
-            const rawKeyword = document.getElementById('search-keyword').value.trim().toLowerCase();
-
-            const keywordTokens = rawKeyword.split(/\s+/).filter(Boolean);
+            const rawKeyword = document.getElementById('search-keyword').value.trim();
 
             const filtered = searchKnowledgeBase.filter(item => {
                 const matchCategory = (categoryVal === 'all' || item.category === categoryVal);
                 if (!matchCategory) return false;
 
-                if (keywordTokens.length === 0) return true;
+                if (!rawKeyword) return true;
 
                 const combinedText = (
                     item.title + " " + 
@@ -1272,11 +1354,193 @@
                     (item.note || "")
                 ).toLowerCase();
 
-                return keywordTokens.every(token => {
-                    if (/^[a-z]{1,3}$/.test(token)) {
+                const normalizedQuery = rawKeyword
+                    .replace(/[,，]/g, ' ')
+                    .replace(/(\d+(?:\.\d+)?)\s*(吋|時|in|inch|inches)/gi, '$1吋')
+                    .replace(/(\d+(?:\.\d+)?)\s*(cm|公分)/gi, '$1cm')
+                    .replace(/(\d+(?:\.\d+)?)\s*%/gi, '$1%')
+                    .toLowerCase();
+
+                const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
+
+                const hasGteSevenToken = queryTokens.some(t => {
+                    const dMatch = t.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
+                    if (dMatch) {
+                        const val = parseFloat(dMatch[1]);
+                        return val >= 7;
+                    }
+                    return false;
+                });
+
+                if (hasGteSevenToken && item.id === 'panel_inner_serviceable') {
+                    return false;
+                }
+
+                const hasLessThanSevenToken = queryTokens.some(t => {
+                    const dMatch = t.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
+                    if (dMatch) {
+                        const val = parseFloat(dMatch[1]);
+                        return val > 0 && val < 7;
+                    }
+                    return false;
+                });
+
+                if (hasLessThanSevenToken && item.id === 'panel_inner_unserviceable') {
+                    return false;
+                }
+
+                return queryTokens.every(token => {
+                    let numVal = null;
+                    let pctVal = null;
+
+                    const pctMatch = token.match(/^(\d+(?:\.\d+)?)%$/);
+                    if (pctMatch) {
+                        pctVal = parseFloat(pctMatch[1]);
+                    }
+
+                    const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分|sq|sqin|平方吋|%)?$/i);
+                    if (dimMatch && !pctMatch) {
+                        numVal = parseFloat(dimMatch[1]);
+                    } else if (/^\d+(\.\d+)?$/.test(token)) {
+                        numVal = parseFloat(token);
+                    }
+
+                    /* 【新增處理】底板與側軌：底板穿孔或撕裂 判定邏輯 */
+                    if (item.id === 'base_tear_edge_serviceable') {
+                        if (numVal !== null) {
+                            if (numVal <= 2 && numVal > 0) return true;
+                            if (numVal >= 3) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_tear_edge_unserviceable') {
+                        if (numVal !== null) {
+                            if (numVal >= 3) return true;
+                            if (numVal <= 2 && numVal > 0) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_tear_outer_serviceable') {
+                        if (numVal !== null) {
+                            if (numVal >= 1 && numVal <= 11) return true;
+                            if (numVal >= 12) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_tear_outer_unserviceable') {
+                        if (numVal !== null) {
+                            if (numVal >= 12) return true;
+                            if (numVal < 12 && numVal > 0) return false;
+                        }
+                    }
+
+                    /* 底板與側軌：ULD底板彎曲曲度判定邏輯 */
+                    if (item.id === 'base_bow_loaded_serviceable') {
+                        if (numVal !== null) {
+                            if (numVal <= 1.24 && numVal > 0) return true;
+                            if (numVal >= 1.25) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_bow_loaded_unserviceable') {
+                        if (numVal !== null) {
+                            if (numVal >= 1.25) return true;
+                            if (numVal <= 1.24 && numVal > 0) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_bow_empty_serviceable') {
+                        if (numVal !== null) {
+                            if (numVal <= 1.9 && numVal > 0) return true;
+                            if (numVal >= 2.0) return false;
+                        }
+                    }
+
+                    if (item.id === 'base_bow_empty_unserviceable') {
+                        if (numVal !== null) {
+                            if (numVal >= 2.0) return true;
+                            if (numVal <= 1.9 && numVal > 0) return false;
+                        }
+                    }
+
+                    /* 門體與五金配件：門纜磨損與鋼絲外露判定邏輯 */
+                    if (item.id === 'door_cable_serviceable') {
+                        if (pctVal !== null) {
+                            return pctVal >= 1 && pctVal <= 24;
+                        }
+                        if (numVal !== null) {
+                            if (numVal >= 1 && numVal <= 11) return true;
+                            if (numVal >= 12 || numVal >= 25) return false;
+                        }
+                    }
+
+                    if (item.id === 'door_cable_unserviceable') {
+                        if (pctVal !== null) {
+                            return pctVal >= 25;
+                        }
+                        if (numVal !== null) {
+                            if (numVal >= 12) return true;
+                            if (numVal < 12 && numVal > 0) return false;
+                        }
+                    }
+
+                    if (item.id === 'door_canvas_serviceable' && numVal !== null && ((numVal >= 1 && numVal <= 7) || (numVal >= 1 && numVal <= 95))) {
+                        return true;
+                    }
+
+                    if (item.id === 'door_canvas_unserviceable' && numVal !== null && (numVal >= 8 || numVal >= 96)) {
+                        return true;
+                    }
+
+                    if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal >= 2) {
+                        return false;
+                    }
+
+                    if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal < 2 && numVal > 0) {
+                        return true;
+                    }
+
+                    if (item.id === 'panel_contour' && numVal !== null && numVal >= 2) {
+                        return true;
+                    }
+
+                    if (hasGteSevenToken && (item.id === 'panel_edge' || item.id === 'panel_inner_unserviceable')) {
+                        return true;
+                    }
+
+                    if (dimMatch && !pctMatch) {
+                        const unit = dimMatch[2] ? dimMatch[2].toLowerCase() : '';
+
+                        if (['吋', '時', 'in', 'inch', 'inches'].includes(unit)) {
+                            const inchPattern = new RegExp(`(?<!\\d)${numVal}\\s*(吋|時|in|inch)`, 'i');
+                            const cmVal = (numVal * 2.54).toFixed(2).replace(/\.00$/, '');
+                            const cmPattern = new RegExp(`(?<!\\d)${cmVal}\\s*cm`, 'i');
+                            
+                            if (inchPattern.test(combinedText) || cmPattern.test(combinedText)) return true;
+                        } else if (['cm', '公分'].includes(unit)) {
+                            const cmPattern = new RegExp(`(?<!\\d)${numVal}\\s*(cm|公分)`, 'i');
+                            if (cmPattern.test(combinedText)) return true;
+                        }
+                    }
+
+                    if (/^\d+(\.\d+)?$/.test(token)) {
+                        const numPattern = new RegExp(`(?<![\\d.])${token}(?![\\d.])`, 'i');
+                        if (numPattern.test(combinedText)) return true;
+                    }
+
+                    if (item.id === 'panel_inner_serviceable' && numVal !== null && numVal > 0 && numVal < 7) {
+                        return true;
+                    }
+
+                    if (item.id === 'panel_edge' && numVal !== null && [1, 4, 5].includes(numVal)) {
+                        return true;
+                    }
+
+                    if (/^[a-z]{1,3}$/i.test(token)) {
                         const regex = new RegExp(`\\b${token}\\b`, 'i');
                         return regex.test(combinedText);
                     }
+
                     return combinedText.includes(token);
                 });
             });
@@ -1303,7 +1567,7 @@
                     <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
                         <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
                         <p class="text-xs font-bold text-slate-700">找不到符合條件的適航檢查標準</p>
-                        <p class="text-[11px] text-slate-400 mt-1">請嘗試放寬尺寸數值 (如輸入 3 或 6) 或更換構件分類再試。</p>
+                        <p class="text-[11px] text-slate-400 mt-1">請嘗試輸入不同尺寸數值（例如 1, 2, 3, 11, 12, 撕裂, 穿孔）或更換分類再試。</p>
                     </div>
                 `;
                 return;
@@ -1440,97 +1704,89 @@
         function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
 
         let currentCardViewMode = 'both';
+
         const cardSections = [
             { 
                 titleZh: "基本定義與簡介", 
                 titleEn: "ULD Definition & Overview", 
-                zh: "<b>ULD</b> 是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD 屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的 ULD 必須具備足夠的結構強度，能在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。", 
-                en: "A Unit Load Device (ULD) is either an aircraft pallet and pallet net combination, or an aircraft container. ULDs are removable aircraft parts subject to strict civil aviation authorities' requirements from design, testing, production, and operations, to repair and maintenance. An airworthy ULD must be structurally capable of restraining the loads and providing adequate protection to the aircraft systems and structure during flight." 
+                zh: "<b>ULD</b> 是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD 屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的 ULD 必須具備足夠的結構強度，在預期發生的飛行與地勤環境中安全裝載及固定貨物。", 
+                en: "<b>ULD (Unit Load Device)</b> refers to a pallet and net assembly, or a container.<br>ULDs are removable aircraft cargo components subject to strict civil aviation regulations for design, testing, production, operation, repair, and maintenance. Airworthy ULDs must maintain sufficient structural integrity to safely hold and secure cargo under expected flight and handling conditions." 
             },
             { 
-                titleZh: "所有適航的 ULD / 板", 
-                titleEn: "All Airworthy ULDs", 
-                zh: "• <b>TSO 標籤</b>至少在 ULD 的某一處且清晰可讀。<br>• <b>箱重標籤 (Tare Weight Decal)</b>至少在一個位置清晰可見 (無魔術筆塗改痕跡)。<br>• <b>ULD 識別碼</b>、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆塗改痕跡)。<br>• 任何已集裝於 ULD 底板上但未使用集裝網固定的貨物，均被視為特殊貨物。該貨物必須附有 <b>SCAF (Special Cargo Analysis Function) 報告</b>，並由 <b>SCD (Special Cargo Designee)</b> 全程監督及管理相關操作程序。", 
-                en: "• TSO Tags affixed in at least one location and legible.<br>• Tare weight decal present and legible in at least one location (not handwritten).<br>• Identification code, ULD number, and owner's code present and legible in at least one location (not handwritten).<br>• Palletized cargo, without a net, is considered Special Cargo and must be accompanied by a SCAF report and overseen by an SCD (Special Cargo Designee)." 
+                titleZh: "ULD 適航與拒收一般準則", 
+                titleEn: "General Airworthiness & Unserviceability Criteria", 
+                zh: "<b>1. 標籤與標記 (TSO Placards & Decals):</b><br>• TSO 標籤至少在一處清晰可讀。<br>• 箱重標籤 (Tare Weight Decal) 及 ULD 識別碼無魔術筆塗改。<br><b>2. 結構安全 (Structural Safety):</b><br>• 結構無影響裝載與固定或對機身內部造成損害之重大缺陷。<br>• 任何無法符合手冊標準之損壞均屬拒收 (Unserviceable) 範圍。", 
+                en: "<b>1. Placards & Markings:</b><br>• TSO placard present and legible in at least one location.<br>• Tare weight decals and ID codes fully visible without marker overwriting.<br><b>2. Structural Safety:</b><br>• No severe structural defects affecting restraint or risking aircraft interior damage.<br>• Any damage exceeding manual thresholds is classified as Unserviceable." 
             },
             { 
-                titleZh: "所有非-UPS ULD 設備 (含冷鏈/醫藥貨運設備)", 
-                titleEn: "All Non-UPS Containers Including Cold Chain / Pharma", 
-                zh: "• <b>ODLN (Operational Damage Limits Notice)</b>：所有非-UPS ULD 設備均必須貼有清晰可辨且易於閱讀的 ODLN。<br>• 貼附於任何 ULD 上的 ODLN 標籤，均被視為評估該 ULD 是否適航 / 可正常使用的認可方法。<br>• 所有 ODLN 相關要求均必須符合，方可接受該設備並安排空運運輸。", 
-                en: "• ODLN - An affixed and legible ODLN is required for all non-UPS containers.<br>• An ODLN decal affixed to any ULD is recognized as an approved method to assess the serviceability of the ULD.<br>• All ODLN criteria must be met to accept and move in the Air." 
+                titleZh: "Container 集裝箱拒收標準", 
+                titleEn: "Container Damage Limits", 
+                zh: "<b>• 面板 (Panel):</b><br>&nbsp;&nbsp;- 距離框架邊緣 3 吋 (7.62 cm) 以內損壞不可接受 (起始於框架且長度 ≤ 3 吋之裂紋除外)。<br>&nbsp;&nbsp;- 距離框架邊緣超過 3 吋處：損壞長度 ≥ 7 吋 (17.78 cm) 不可接受。<br>&nbsp;&nbsp;- 面板突出原有 ULD 外部輪廓 > 2 吋 (5.08 cm) 不可接受。<br><b>• 骨架構件與緊固件 (Frame & Fasteners):</b><br>&nbsp;&nbsp;- 損壞長度 > 3 吋或寬度 > 0.5 吋不可接受。<br>&nbsp;&nbsp;- 凹陷 > 2 吋不可接受。<br>&nbsp;&nbsp;- 底部上方面板每側缺失 1 個固定件不可接受。<br><b>• 捲簾門與五金 (Roll-up Door & Hardware):</b><br>&nbsp;&nbsp;- 部件缺失或損壞導致門體無法固定，不可接受。<br>&nbsp;&nbsp;- 帆布總損壞面積 ≥ 8 吋 (96 平方吋 / 619.35 cm²) 不可接受。<br>&nbsp;&nbsp;- 門纜磨損 ≥ 25% 或外露 ≥ 12 吋不可接受。<br>&nbsp;&nbsp;- 門檻裂縫長度 > 1 吋或寬度 > 0.37 吋不可接受。", 
+                en: "<b>• Panels:</b><br>&nbsp;&nbsp;- Damage within 3 in (7.62 cm) of frame is unserviceable (except edge-origin cracks ≤ 3 in).<br>&nbsp;&nbsp;- Damage > 3 in from frame: length ≥ 7 in (17.78 cm) is unserviceable.<br>&nbsp;&nbsp;- Panel bow/protrusion > 2 in (5.08 cm) beyond profile is unserviceable.<br><b>• Frame & Fasteners:</b><br>&nbsp;&nbsp;- Member damage length > 3 in or width > 0.5 in is unserviceable.<br>&nbsp;&nbsp;- Bow/dent > 2 in is unserviceable.<br>&nbsp;&nbsp;- Missing 1 fastener per side above base is unserviceable.<br><b>• Roll-up Door & Hardware:</b><br>&nbsp;&nbsp;- Missing/damaged parts preventing secure door closure is unserviceable.<br>&nbsp;&nbsp;- Canvas damage area ≥ 8 in (96 sq in / 619.35 cm²) is unserviceable.<br>&nbsp;&nbsp;- Door cable fraying ≥ 25% or wire exposed ≥ 12 in is unserviceable.<br>&nbsp;&nbsp;- Door bar crack length > 1 in or width > 0.37 in is unserviceable." 
             },
             { 
-                titleZh: "ULD 主體 (Container Body) - 面板 (Panel)", 
-                titleEn: "Container Body - Panel", 
-                zh: "• 面板損壞 (裂縫、斷裂、穿孔或切口) 若位於<b>距離框架邊緣 3 吋 (7.62 cm) 以內</b>，則<b>不可接受</b>。<br><i>例外情況：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。</i><br>• 面板損壞若位於<b>距離骨架邊緣超過 3 吋 (7.62 cm)</b> 的位置，其損壞長度不得超過 <b>7 吋 (17.78 cm)</b>。<br>• 面板突出原有 ULD 外部輪廓超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。", 
-                en: "• Damage (crack, tear, puncture or cut) within <b>3-in (7.62-cm)</b> of the frame edge is unserviceable.<br><i>Exception: If the crack originates at the frame edge not to exceed 3-in (7.62-cm) in length.</i><br>• Damage (crack, tear, puncture or cut) beyond <b>3-in (7.62-cm)</b> of the frame edge, shall not exceed <b>7-in (17.78-cm)</b>.<br>• Panels protruding more than <b>2-in (5.08-cm)</b> exceeding the original outer contour of the ULD profile." 
+                titleZh: "Base & Side Rails 底板與側軌", 
+                titleEn: "Base & Side Rails Damage Limits", 
+                zh: "<b>• 底板彎曲 (Base Bowing):</b><br>&nbsp;&nbsp;- 已裝載貨物 ULD 底板彎曲曲度 > 1.25 吋 (3.17 cm) 不可接受 (≤ 1.24 吋可符合標準)。<br>&nbsp;&nbsp;- 空 ULD 底板彎曲曲度 ≥ 2 吋 (5.08 cm) 不可接受 (≤ 1.9 吋可符合標準)。<br><b>• 底板邊軌與板角:</b><br>&nbsp;&nbsp;- 底板邊軌或板邊緣軌缺失，不可接受。<br>&nbsp;&nbsp;- 板角必須完好 (焊接形成的裂縫可接受)。<br>&nbsp;&nbsp;- 底板與邊軌分離，不可接受。<br><b>• 穿孔與撕裂 (Puncture / Tear):</b><br>&nbsp;&nbsp;- 距離板邊緣小於 3 吋處：1-2 吋或以下數可符合標準；3 吋或以上不符合標準。<br>&nbsp;&nbsp;- 距離板邊緣 3 吋以外：1-11 吋或以下可符合標準；12 吋或以上不符合標準。<br><b>• 鉚釘 (Rivets):</b><br>&nbsp;&nbsp;- 缺失或鬆動的鉚釘超過 5 個，不可接受 (任意兩個缺失釘扣之間至少須有 5 個完好鉚釘)。", 
+                en: "<b>• Base Bowing:</b><br>&nbsp;&nbsp;- Loaded ULD base bow > 1.25 in (3.17 cm) is unserviceable (≤ 1.24 in is serviceable).<br>&nbsp;&nbsp;- Empty ULD base bow ≥ 2 in (5.08 cm) is unserviceable (≤ 1.9 in is serviceable).<br><b>• Side Rails & Corners:</b><br>&nbsp;&nbsp;- Missing base side rail or edge rail is unserviceable.<br>&nbsp;&nbsp;- Corner castings must be intact (corner weld cracks acceptable).<br>&nbsp;&nbsp;- Separation of base plate and edge rail is unserviceable.<br><b>• Puncture & Tear:</b><br>&nbsp;&nbsp;- Distance < 3 in from edge: ≤ 2 in is serviceable; ≥ 3 in is unserviceable.<br>&nbsp;&nbsp;- Distance > 3 in from edge: 1–11 in is serviceable; ≥ 12 in is unserviceable.<br><b>• Rivets:</b><br>&nbsp;&nbsp;- Missing or loose rivets > 5 is unserviceable (minimum 5 intact rivets required between missing ones)." 
             },
             { 
-                titleZh: "骨架構件與緊固件", 
-                titleEn: "Frame Members and Fasteners", 
-                zh: "• 損壞長度超過 <b>3 吋 (7.62 cm)</b> 或寬度超過 <b>0.5 吋 (1.27 cm)</b>，<b>不可接受</b>。<br>• 凹陷超過 <b>2 吋 (5.08 cm)</b>，<b>不可接受</b>。<br>• 底部上方面板每側缺失 <b>1 個固定件</b>，<b>不可接受</b>。", 
-                en: "• Damage <b>> 3-in (7.62-cm)</b> length or <b>.5-in (1.27-cm)</b> in width.<br>• Indention <b>> 2-in (5.08-cm)</b>.<br>• More than one fastener missing per side of panel above the base rail assembly." 
-            },
-            { 
-                titleZh: "ULD 設備門體 / 五金配件 (捲簾門)", 
-                titleEn: "Container Door / Hardware (Roll-up Door)", 
-                zh: "• 部件缺失或損壞，導致門體無法固定，不可接受。<br>• 帆布總損壞面積超過 <b>8 × 12 吋 (20.32 × 30.48 cm)</b> (即 96 平方吋 / 619.35 平方公分)，<b>不可接受</b>。<br>• 門纜磨損超過 <b>25%</b>，<b>不可接受</b>。<br>• 門纜鋼絲外露超過 <b>12 吋 (30.48 cm)</b>，<b>不可接受</b>。<br>• 門檻裂縫長度超過 <b>1 吋 (2.54 cm)</b> 或寬度超過 <b>0.37 吋 (0.94 cm)</b>，<b>不可接受</b>。", 
-                en: "• Missing or damaged components that prevent securing.<br>• Total canvas damage area(s) <b>> 8 × 12-in (20.32 × 30.48-cm)</b> (96 square in / 619.35 Square cm).<br>• Cable frayed <b>> 25%</b> of wire strands.<br>• Cable exposed <b>> 12-in (30.48-cm)</b>.<br>• Door bar extrusion crack <b>> 1-in (2.54-cm)</b> length or <b>.37-in (.94-cm)</b> in width." 
-            },
-            { 
-                titleZh: "Container / Pallet 底板與側軌", 
-                titleEn: "Container/Pallet Base and Side Rails", 
-                zh: "• 已裝載貨物的 ULD 底板彎曲曲度不得超過 <b>1.25 吋 (3.17 cm)</b>。<br>• 空 ULD 底板彎曲曲度不得超過 <b>2 吋 (5.08 cm)</b>。<br>• 底板邊軌或板邊緣軌缺失。<br>• 板角必須完好。(注意：板角焊接形成的裂縫可接受)<br>• 底板與邊軌分離。<br>• 距離板邊緣小於 <b>3 吋處 (7.62 cm)</b> 有穿孔或撕裂 (＞3 吋 × 1 吋)，<b>不可接受</b>。<br>• 距離板邊緣 <b>3 吋以外 (7.62 cm)</b> 有穿孔或撕裂 (＞6 吋 × 2 吋)，<b>不可接受</b>。<br>• 缺失或鬆動的鉚釘超過 <b>5 個</b>，<b>不可接受</b>。<br>• <b>損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。</b>", 
-                en: "• Loaded ULD base bow shall not exceed <b>1.25-in (3.17-cm)</b>.<br>• Empty ULD base bow shall not exceed <b>2-in (5.08-cm)</b>.<br>• Missing base side rail or edge rail.<br>• Corner casting must be present and intact (Note: corner welds cracked is acceptable).<br>• Separation of base and side/edge rail.<br>• Hole or tear <b>> 3-in x 1-in</b> within 3-in of edge.<br>• Hole or tear <b>> 6-in x 2-in</b> beyond 3-in of edge.<br>• Missing or loose rivets <b>> 5</b>.<br>• <b>Damage affecting loading and restraint, or posing risk of interior damage to aircraft is unserviceable.</b>" 
-            },
-            { 
-                titleZh: "集裝網 (Cargo Nets)", 
-                titleEn: "Cargo Nets", 
-                zh: "• TSO 標籤清晰可見。<br>• 所有 D-ring 雙腳鎖扣不齊全或功能異常，不可接受。<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個。<br>• 網角繩：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)，不可接受。<br>• 網繩 (Roping)：最底層及上方兩排單處損壞 > 25% 或 0.25 吋不可接受；底層兩排以上兩繩結間不得有超過 1 條斷裂。", 
-                en: "• TSO Tag present and legible.<br>• All double stud fittings present and functional.<br>• Adjusting hooks: missing/damaged not to exceed 1 per side.<br>• Corner ropes: broken/frayed > 25% or 0.25-in is unserviceable.<br>• Roping: lower 2 rows broken > 25% or 0.25-in unserviceable; above lower 2 rows max 1 broken strand between knots." 
-            },
-            { 
-                titleZh: "軍帶與綁固帶 (Restraint Straps)", 
-                titleEn: "Restraint Straps", 
-                zh: "🔵 主要 SCAF 軍帶 (藍色)：無 TSO 標籤、過期或有任何損壞均不可使用。<br>🟡 次要綁固帶 (黃色)：過期、扣環無法鎖定、配件彎曲/斷裂/缺失、切口/磨損 > 25% 寬度、或存在解不開的結均不可接受。", 
-                en: "🔵 Primary SCAF Straps (Blue): Missing TSO tag, expired, or any damage is unserviceable.<br>🟡 Secondary Cargo Straps (Yellow): Expired, buckle fails to lock, hardware damaged, cut/frayed > 25% width, or tight knots present are unserviceable." 
+                titleZh: "Cargo Nets & Straps 集裝網與綁固帶", 
+                titleEn: "Cargo Nets & Restraint Straps Criteria", 
+                zh: "<b>• 集裝網 (Cargo Nets):</b><br>&nbsp;&nbsp;- 未附 TSO 標籤、D-ring 鎖扣損壞/不齊全，不可接受。<br>&nbsp;&nbsp;- 每側缺失/損壞網鉤 > 1 個，不可接受。<br>&nbsp;&nbsp;- 最底層及底層上方兩排繩索：單處斷裂/磨損 > 25% 或 > 0.25 吋，不可接受。<br>&nbsp;&nbsp;- 底層兩排以上：兩個繩結之間不得有超過 1 條完全斷裂/磨損繩索。<br><b>• 軍帶與綁固帶 (Straps):</b><br>&nbsp;&nbsp;- 主要 SCAF 藍色軍帶：缺 TSO 標籤、過期或有任何損壞均不可接受。<br>&nbsp;&nbsp;- 次要黃色綁帶：切口/磨損 > 綁帶寬度 25%、存在解不開的結、扣環無法鎖定、或已過期均不可接受。<br>&nbsp;&nbsp;- TRSL 臨時綁帶：不得有任何損壞。", 
+                en: "<b>• Cargo Nets:</b><br>&nbsp;&nbsp;- Missing TSO tag or missing/broken double stud fittings is unserviceable.<br>&nbsp;&nbsp;- Missing/damaged hooks > 1 per side is unserviceable.<br>&nbsp;&nbsp;- Bottom & lower 2 rows roping: single cut/fray > 25% or > 0.25 in is unserviceable.<br>&nbsp;&nbsp;- Above lower 2 rows: max 1 broken strand permitted between adjacent knots.<br><b>• Straps:</b><br>&nbsp;&nbsp;- Primary SCAF Blue Straps: unserviceable if missing TSO tag, expired, or damaged.<br>&nbsp;&nbsp;- Secondary Yellow Straps: unserviceable if cut/fray > 25% width, tied knots present, lock mechanism defective, or expired.<br>&nbsp;&nbsp;- TRSL Structural Lock Straps: must have zero damage." 
             }
         ];
 
         function renderBilingualCardModal() {
-            const container = document.getElementById('modal-card-body');
-            if (!container) return;
-            container.innerHTML = '';
+            const body = document.getElementById('modal-card-body');
+            if (!body) return;
+            body.innerHTML = '';
 
-            cardSections.forEach((sec, idx) => {
+            cardSections.forEach(sec => {
                 const card = document.createElement('div');
-                card.className = "bg-white p-3.5 md:p-4 rounded-xl border border-slate-200 shadow-sm space-y-2";
-                
-                let titleHtml = "";
-                if (currentCardViewMode === 'both') {
-                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-slate-900 flex items-center justify-between border-b border-slate-100 pb-1.5"><span class="text-amber-800"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleZh}</span><span class="text-slate-500 text-[11px] font-normal italic">${sec.titleEn}</span></h4>`;
-                } else if (currentCardViewMode === 'zh') {
-                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-amber-800 border-b border-slate-100 pb-1.5"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleZh}</h4>`;
-                } else {
-                    titleHtml = `<h4 class="font-extrabold text-xs md:text-sm text-slate-800 border-b border-slate-100 pb-1.5"><i class="fa-solid fa-square-check mr-1.5 text-amber-600"></i>${sec.titleEn}</h4>`;
-                }
+                card.className = "bg-white p-3.5 md:p-4 rounded-xl border border-slate-200 shadow-sm";
 
-                let bodyHtml = "";
+                let contentHtml = '';
                 if (currentCardViewMode === 'both') {
-                    bodyHtml = `
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 pt-1">
-                            <div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-100 text-slate-800 text-[11px] leading-relaxed">${sec.zh}</div>
-                            <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-slate-700 text-[11px] font-sans leading-relaxed">${sec.en}</div>
+                    contentHtml = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                <h4 class="font-extrabold text-amber-900 border-b border-amber-200 pb-1 mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-book-bookmark text-amber-600"></i>${sec.titleZh}
+                                </h4>
+                                <div class="text-slate-700 leading-relaxed space-y-1">${sec.zh}</div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-sans">
+                                <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-language text-slate-500"></i>${sec.titleEn}
+                                </h4>
+                                <div class="text-slate-600 leading-relaxed space-y-1">${sec.en}</div>
+                            </div>
                         </div>
                     `;
                 } else if (currentCardViewMode === 'zh') {
-                    bodyHtml = `<div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-100 text-slate-800 text-xs leading-relaxed mt-1">${sec.zh}</div>`;
+                    contentHtml = `
+                        <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                            <h4 class="font-extrabold text-amber-900 border-b border-amber-200 pb-1 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-bookmark text-amber-600"></i>${sec.titleZh}
+                            </h4>
+                            <div class="text-slate-700 leading-relaxed space-y-1">${sec.zh}</div>
+                        </div>
+                    `;
                 } else {
-                    bodyHtml = `<div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 text-slate-700 text-xs font-sans leading-relaxed mt-1">${sec.en}</div>`;
+                    contentHtml = `
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-sans">
+                            <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-language text-slate-500"></i>${sec.titleEn}
+                            </h4>
+                            <div class="text-slate-600 leading-relaxed space-y-1">${sec.en}</div>
+                        </div>
+                    `;
                 }
 
-                card.innerHTML = titleHtml + bodyHtml;
-                container.appendChild(card);
+                card.innerHTML = contentHtml;
+                body.appendChild(card);
             });
         }
 
@@ -1538,17 +1794,17 @@
             currentCardViewMode = mode;
             ['both', 'zh', 'en'].forEach(m => {
                 const btn = document.getElementById(`mode-btn-${m}`);
-                if (!btn) return;
-                if (m === mode) {
-                    btn.className = "px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold";
-                } else {
-                    btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-normal";
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold";
+                    } else {
+                        btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold";
+                    }
                 }
             });
             renderBilingualCardModal();
         }
 
-        // Initialize 3D Engine and app on page load
         window.onload = function() {
             init3D();
         };
