@@ -74,21 +74,63 @@
         <div class="max-w-7xl mx-auto flex flex-col gap-2">
             <div class="flex justify-between items-center gap-2 md:gap-4">
                 <div class="flex items-center gap-2.5 md:gap-3 cursor-pointer" onclick="switchPage('uld')">
-                    <!-- UPS SHIELD LOGO EXACT AS IMAGE -->
-                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-md">
-                        <svg viewBox="0 0 200 240" class="w-full h-full">
+                    <!-- UPS 3D 立體金屬盾牌 LOGO (100% 完美內嵌，絕不破圖，重現金屬反光與立體金色斜角) -->
+                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
+                        <svg viewBox="0 0 200 240" class="w-full h-full overflow-visible" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <linearGradient id="upsGoldEdge" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#ffe68d" />
-                                    <stop offset="40%" stop-color="#ffbe10" />
-                                    <stop offset="85%" stop-color="#d88c00" />
-                                    <stop offset="100%" stop-color="#8e5300" />
+                                <!-- 金屬邊框渐变 (立體金色倒角反射光) -->
+                                <linearGradient id="shieldGoldBevel" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff8db" />
+                                    <stop offset="25%" stop-color="#ffdc73" />
+                                    <stop offset="50%" stop-color="#d6910a" />
+                                    <stop offset="75%" stop-color="#9a6200" />
+                                    <stop offset="100%" stop-color="#ffd566" />
                                 </linearGradient>
+                                <!-- 盾牌本體高光渐变 (上淺金下深金) -->
+                                <linearGradient id="shieldBodyGradient" x1="50%" y1="0%" x2="50%" y2="100%">
+                                    <stop offset="0%" stop-color="#ffea9f" />
+                                    <stop offset="35%" stop-color="#e6a928" />
+                                    <stop offset="70%" stop-color="#b8780c" />
+                                    <stop offset="100%" stop-color="#734700" />
+                                </linearGradient>
+                                <!-- 上方深色折光面 (深棕金屬反光) -->
+                                <linearGradient id="shieldFacetDark" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#4e2609" />
+                                    <stop offset="60%" stop-color="#2a1403" />
+                                    <stop offset="100%" stop-color="#190a02" />
+                                </linearGradient>
+                                <!-- UPS 金屬字體立體渐变 -->
+                                <linearGradient id="upsTextMetallic" x1="50%" y1="0%" x2="50%" y2="100%">
+                                    <stop offset="0%" stop-color="#fff6cf" />
+                                    <stop offset="45%" stop-color="#f5ba3b" />
+                                    <stop offset="85%" stop-color="#b57303" />
+                                    <stop offset="100%" stop-color="#784800" />
+                                </linearGradient>
+                                <!-- 內陰影濾鏡 -->
+                                <filter id="bevelFilter" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.6"/>
+                                </filter>
                             </defs>
-                            <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="url(#upsGoldEdge)" />
-                            <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
-                            <text x="100" y="146" text-anchor="middle" fill="url(#upsGoldEdge)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
-                            <text x="156" y="210" fill="url(#upsGoldEdge)" font-family="Arial, sans-serif" font-weight="bold" font-size="14">TM</text>
+
+                            <!-- 外層金屬厚邊框 (金色倒角) -->
+                            <path d="M 100 234 C 24 200 6 146 6 28 L 100 6 L 194 28 C 194 146 176 200 100 234 Z" fill="url(#shieldGoldBevel)" />
+
+                            <!-- 內層盾面主體 (金色高光) -->
+                            <path d="M 100 220 C 34 188 18 138 18 36 L 100 16 L 182 36 C 182 138 166 188 100 220 Z" fill="url(#shieldBodyGradient)" />
+
+                            <!-- 標誌上方經典深褐色光影折面 (立體弧面) -->
+                            <path d="M 100 16 L 182 36 C 182 92 165 132 142 152 C 112 128 68 116 20 128 C 19 86 18 42 18 36 Z" fill="url(#shieldFacetDark)" />
+
+                            <!-- 立體弧面下緣金色反光線 -->
+                            <path d="M 20 128 C 68 116 112 128 142 152" fill="none" stroke="url(#shieldGoldBevel)" stroke-width="2.5" opacity="0.85" />
+
+                            <!-- UPS 專屬經典立體字體 (帶金色金屬厚度與反光質感) -->
+                            <g filter="url(#bevelFilter)">
+                                <text x="100" y="152" text-anchor="middle" fill="url(#upsTextMetallic)" stroke="#ffeeb8" stroke-width="1.2" font-family="'Arial Black', Impact, 'Helvetica Neue', sans-serif" font-weight="900" font-size="70" letter-spacing="-4">UPS</text>
+                            </g>
+
+                            <!-- 右下角商標標記 TM -->
+                            <text x="162" y="214" fill="url(#shieldGoldBevel)" font-family="Arial, sans-serif" font-weight="bold" font-size="13" opacity="0.95">TM</text>
                         </svg>
                     </div>
 
@@ -448,7 +490,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v11-pwa';
+            const CACHE_NAME = 'uld-inspect360-v12-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -1855,7 +1897,6 @@
 
         let currentCardViewMode = 'both';
 
-        /* 嚴格按照官方 FORM: 83-48-002 中英對照圖檔文本設定 */
         const cardSections = [
             { 
                 titleZh: "ULD基本定義與概述", 
