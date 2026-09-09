@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>ULD Inspect360 - ULD 3D 檢驗與適航查詢工具</title>
+    <title>ULD Inspect360 - 官方 3D ULD 適航檢查與快速查詢工具</title>
     
     <!-- PWA & Mobile Web App Meta Tags -->
     <meta name="theme-color" content="#2b1610">
@@ -61,40 +61,6 @@
         .animate-install-glow {
             animation: pulse-subtle 2s infinite ease-in-out;
         }
-
-        /* 實體檢查卡掃描件高擬真排版樣式 */
-        .card-sheet {
-            background: #ffffff;
-            color: #111111;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            border: 2px solid #000000;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
-        }
-        .card-inner-border {
-            border: 1px solid #1e293b;
-        }
-        .card-header-title {
-            font-size: 15px;
-            font-weight: 800;
-            letter-spacing: 0.2px;
-            text-align: center;
-        }
-        .card-sec-title {
-            font-weight: 800;
-            text-decoration: underline;
-            margin-top: 6px;
-            margin-bottom: 2px;
-            display: inline-block;
-        }
-        .card-sec-box {
-            background: #333333;
-            color: #ffffff;
-            font-weight: 800;
-            padding: 1px 4px;
-            display: block;
-            margin-top: 6px;
-            margin-bottom: 3px;
-        }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
@@ -107,39 +73,35 @@
     <header class="bg-[#2b1610] text-white sticky top-0 z-40 px-3 md:px-6 pb-2.5 shadow-md border-b-2 border-[#ffb500]">
         <div class="max-w-7xl mx-auto flex flex-col gap-2">
             <div class="flex justify-between items-center gap-2 md:gap-4">
-                <div class="flex items-center gap-2.5 md:gap-3.5 cursor-pointer" onclick="switchPage('uld')">
-                    <!-- UPS GOLD SHIELD LOGO (嚴格符合圖片金色細框外觀) -->
-                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow">
+                <div class="flex items-center gap-2.5 md:gap-3 cursor-pointer" onclick="switchPage('uld')">
+                    <!-- UPS SHIELD LOGO EXACT AS IMAGE -->
+                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-md">
                         <svg viewBox="0 0 200 240" class="w-full h-full">
                             <defs>
-                                <linearGradient id="upsGoldBorder" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <linearGradient id="upsGoldEdge" x1="0%" y1="0%" x2="100%" y2="100%">
                                     <stop offset="0%" stop-color="#ffe68d" />
                                     <stop offset="40%" stop-color="#ffbe10" />
-                                    <stop offset="80%" stop-color="#d88c00" />
+                                    <stop offset="85%" stop-color="#d88c00" />
                                     <stop offset="100%" stop-color="#8e5300" />
                                 </linearGradient>
                             </defs>
-                            <!-- 盾牌外圍金邊 -->
-                            <path d="M 100 234 C 32 202 6 152 6 30 L 100 6 L 194 30 C 194 152 168 202 100 234 Z" fill="url(#upsGoldBorder)" />
-                            <!-- 盾牌內部深底色 -->
-                            <path d="M 100 220 C 38 190 18 144 18 36 L 100 16 L 182 36 C 182 144 162 190 100 220 Z" fill="#2b1610" />
-                            <!-- UPS 粗體金色標誌 -->
-                            <text x="100" y="146" text-anchor="middle" fill="url(#upsGoldBorder)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="68" letter-spacing="-2">UPS</text>
-                            <text x="156" y="206" fill="url(#upsGoldBorder)" font-family="Arial, sans-serif" font-weight="bold" font-size="14">TM</text>
+                            <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="url(#upsGoldEdge)" />
+                            <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
+                            <text x="100" y="146" text-anchor="middle" fill="url(#upsGoldEdge)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
+                            <text x="156" y="210" fill="url(#upsGoldEdge)" font-family="Arial, sans-serif" font-weight="bold" font-size="14">TM</text>
                         </svg>
                     </div>
 
-                    <!-- 左上角文字 (嚴格按照圖片) -->
                     <div>
                         <div class="flex items-center gap-2">
-                            <h1 class="font-black text-sm sm:text-base md:text-lg leading-tight text-white tracking-normal font-sans">
+                            <h1 class="font-extrabold text-sm sm:text-lg md:text-xl leading-none text-white tracking-normal font-sans">
                                 ULD Inspect360
                             </h1>
-                            <span class="bg-[#ffb500] text-[#2b1610] px-2 py-0.5 rounded-full font-bold text-[10px] sm:text-[11px] flex items-center gap-1 shadow-sm leading-none">
-                                <i class="fa-solid fa-cube text-[10px]"></i> 3D 適航檢查
+                            <span class="text-[10px] sm:text-[11px] md:text-xs bg-[#ffb500] text-[#2b1610] px-2 py-0.5 rounded-full font-bold shadow-sm flex items-center gap-1 font-sans">
+                                <i class="fa-solid fa-cube text-[9px]"></i> 3D 適航檢查
                             </span>
                         </div>
-                        <p class="text-[9px] sm:text-[10px] md:text-[11px] text-[#ffbe10] font-sans font-medium tracking-wide mt-0.5">
+                        <p class="text-[10px] sm:text-xs text-[#ffb500] font-sans font-semibold tracking-normal mt-1">
                             ULD 3D 檢驗與適航查詢工具
                         </p>
                     </div>
@@ -343,56 +305,42 @@
 
     </main>
 
-    <!-- Inspection Card Modal (FORM: 83-48-002 完全還原原圖格式) -->
-    <div id="card-modal" class="fixed inset-0 bg-slate-900/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2 sm:p-3 md:p-4">
-        <div class="bg-white rounded-xl max-w-6xl w-full max-h-[96vh] flex flex-col shadow-2xl overflow-hidden border border-slate-300">
+    <!-- Inspection Card Modal (FORM: 83-48-002) -->
+    <div id="card-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2.5 md:p-4">
+        <div class="bg-white border border-slate-200 rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
             
-            <!-- Modal 頂部操作列 -->
-            <div class="bg-[#2b1610] px-4 py-2.5 border-b-2 border-[#ffb500] flex flex-wrap justify-between items-center text-white gap-2 flex-shrink-0">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-6 h-8 flex-shrink-0">
+            <div class="bg-[#2b1610] px-4 md:px-6 py-3 border-b-2 border-[#ffb500] flex flex-wrap justify-between items-center text-white gap-2 flex-shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="w-7 h-9 flex-shrink-0">
                         <svg viewBox="0 0 200 240" class="w-full h-full">
-                            <path d="M 100 234 C 32 202 6 152 6 30 L 100 6 L 194 30 C 194 152 168 202 100 234 Z" fill="#ffbe10" />
-                            <path d="M 100 220 C 38 190 18 144 18 36 L 100 16 L 182 36 C 182 144 162 190 100 220 Z" fill="#2b1610" />
-                            <text x="100" y="146" text-anchor="middle" fill="#ffbe10" font-family="Arial Black" font-weight="900" font-size="68">UPS</text>
+                            <path d="M 100 232 C 30 200 5 150 5 28 L 100 5 L 195 28 C 195 150 170 200 100 232 Z" fill="#ffbe10" />
+                            <path d="M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z" fill="#2b1610" />
+                            <text x="100" y="148" text-anchor="middle" fill="#ffbe10" font-family="Arial Black" font-weight="900" font-size="70">UPS</text>
                         </svg>
                     </div>
                     <div>
-                        <h3 class="font-extrabold text-[#ffb500] text-xs sm:text-sm flex items-center gap-1.5">
-                            <span>FORM: 83-48-002 官方適航性檢查卡</span>
-                            <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.2 rounded font-mono">100% 正式卡片掃描規格</span>
+                        <h3 class="font-bold text-[#ffb500] text-sm md:text-base flex items-center gap-2">
+                            <span>ULD 適航性檢查卡 (中英對照)</span>
+                            <span class="text-[10px] bg-amber-500/20 text-amber-300 border border-amber-400/40 px-1.5 py-0.5 rounded font-mono">FORM: 83-48-002</span>
                         </h3>
-                        <p class="text-[9px] text-amber-200/70 font-mono">DATE: 07/02/26 | Ref: UCHPM Chapter 04</p>
+                        <p class="text-[10px] text-amber-200/70 font-mono">DATE: 07/02/26 | Ref: UCHPM Chapter 04</p>
                     </div>
                 </div>
                 
-                <!-- 頁面與語言切換控制器 -->
-                <div class="flex items-center gap-2">
-                    <!-- 頁碼切換 -->
-                    <div class="bg-slate-800 p-0.5 rounded-lg border border-amber-500/40 flex text-[10px] font-bold">
-                        <button id="card-page-1-btn" onclick="setCardPage('p1')" class="px-2 py-1 bg-[#ffb500] text-[#2b1610] rounded transition shadow">第 1 頁</button>
-                        <button id="card-page-2-btn" onclick="setCardPage('p2')" class="px-2 py-1 text-slate-300 hover:text-white rounded transition">第 2 頁</button>
-                        <button id="card-page-all-btn" onclick="setCardPage('all')" class="px-2 py-1 text-slate-300 hover:text-white rounded transition">全部兩頁</button>
+                <div class="flex items-center gap-2 md:gap-3">
+                    <div class="bg-slate-800 p-0.5 rounded-lg border border-amber-500/40 flex text-[10px] sm:text-[11px] font-bold">
+                        <button id="mode-btn-both" onclick="setCardViewMode('both')" class="px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold">中英平行對照</button>
+                        <button id="mode-btn-zh" onclick="setCardViewMode('zh')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold">中文</button>
+                        <button id="mode-btn-en" onclick="setCardViewMode('en')" class="px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold">English</button>
                     </div>
-
-                    <!-- 語言檢視切換 -->
-                    <div class="hidden sm:flex bg-slate-800 p-0.5 rounded-lg border border-amber-500/40 text-[10px] font-bold">
-                        <button id="mode-btn-both" onclick="setCardViewMode('both')" class="px-2 py-1 bg-[#ffb500] text-[#2b1610] rounded transition shadow">中英對照</button>
-                        <button id="mode-btn-zh" onclick="setCardViewMode('zh')" class="px-2 py-1 text-slate-300 hover:text-white rounded transition">中文</button>
-                        <button id="mode-btn-en" onclick="setCardViewMode('en')" class="px-2 py-1 text-slate-300 hover:text-white rounded transition">English</button>
-                    </div>
-                    
                     <button onclick="closeCardModal()" class="text-amber-200 hover:text-white text-xl font-bold px-1.5"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
 
-            <!-- 卡片正文容器（完全模擬掃描件版型） -->
-            <div class="p-2 sm:p-4 md:p-6 overflow-y-auto space-y-6 bg-slate-200/90 max-h-[calc(92vh-90px)]" id="modal-card-body">
-                <!-- 動態注入 Page 1 與 Page 2 -->
-            </div>
+            <div class="p-3 md:p-6 overflow-y-auto space-y-4 text-xs text-slate-800 leading-relaxed bg-slate-50 max-h-[calc(85vh-100px)]" id="modal-card-body"></div>
 
-            <div class="bg-white px-4 py-2 border-t border-slate-300 flex justify-between items-center text-xs text-slate-500 flex-shrink-0">
-                <span>如有疑問，請聯絡當班主管查閱操作手冊。 / Questions? Refer to the UCHPM, Chapter 04.</span>
+            <div class="bg-white px-4 md:px-6 py-2.5 border-t border-slate-200 flex justify-between items-center text-xs text-slate-500 flex-shrink-0">
+                <span class="truncate mr-2">如有疑問，請聯絡當班主管查閱操作手冊。 / Questions? Refer to UCHPM Chapter 04.</span>
                 <button onclick="closeCardModal()" class="px-4 py-1.5 ups-gold-gradient text-[#2b1610] font-black rounded text-xs shadow flex-shrink-0">關閉</button>
             </div>
         </div>
@@ -442,15 +390,18 @@
         const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
             <defs>
                 <linearGradient id="pwaGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffe68d" />
-                    <stop offset="40%" stop-color="#ffbe10" />
-                    <stop offset="80%" stop-color="#d88c00" />
-                    <stop offset="100%" stop-color="#8e5300" />
+                    <stop offset="0%" stop-color="#ffe17d" />
+                    <stop offset="50%" stop-color="#ffb500" />
+                    <stop offset="100%" stop-color="#d48800" />
+                </linearGradient>
+                <linearGradient id="pwaBg" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#3d1b11" />
+                    <stop offset="100%" stop-color="#1c0904" />
                 </linearGradient>
             </defs>
             <rect width="512" height="512" rx="96" fill="#2b1610" />
-            <path d="M 256 468 C 96 398 38 298 38 68 L 256 20 L 474 68 C 474 298 416 398 256 468 Z" fill="url(#pwaGold)" />
-            <path d="M 256 438 C 114 374 64 282 64 84 L 256 42 L 448 84 C 448 282 398 374 256 438 Z" fill="#2b1610" />
+            <path d="M 256 470 C 100 400 40 300 40 70 L 256 25 L 472 70 C 472 300 412 400 256 470 Z" fill="url(#pwaGold)" />
+            <path d="M 256 440 C 120 375 65 285 65 85 L 256 45 L 447 85 C 447 285 392 375 256 440 Z" fill="url(#pwaBg)" />
             <text x="256" y="295" text-anchor="middle" fill="url(#pwaGold)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="140" letter-spacing="-6">UPS</text>
         </svg>`;
 
@@ -497,7 +448,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v14-pwa';
+            const CACHE_NAME = 'uld-inspect360-v11-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -546,11 +497,17 @@
             try {
                 const swBlob = new Blob([swWorkerScript], { type: 'text/javascript' });
                 const swBlobUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swBlobUrl).catch(() => {});
-            } catch (err) {}
+                navigator.serviceWorker.register(swBlobUrl).then(reg => {
+                    console.log('ULD PWA Service Worker Registered Successfully.');
+                }).catch(err => {
+                    console.warn('SW registration fallback:', err);
+                });
+            } catch (err) {
+                console.warn('SW Blob not permitted:', err);
+            }
         }
 
-        /* PWA Install Prompts */
+        /* PWA Install Prompts Logic */
         let deferredPwaPrompt = null;
         const pwaInstallBtn = document.getElementById('pwa-install-btn');
         const iosGuideBtn = document.getElementById('pwa-ios-guide-btn');
@@ -576,7 +533,7 @@
 
         window.addEventListener('appinstalled', () => {
             if (pwaInstallBtn) pwaInstallBtn.classList.add('hidden');
-            showToast('ULD Inspect360 PWA 已成功安裝至主畫面！');
+            showToast('ULD Inspect360 PWA 已成功安裝至您的裝置！');
         });
 
         /* Detect iOS Safari */
@@ -587,9 +544,15 @@
             if (iosGuideBtn) iosGuideBtn.classList.remove('hidden');
         }
 
-        function openIosModal() { document.getElementById('ios-guide-modal').classList.remove('hidden'); }
-        function closeIosModal() { document.getElementById('ios-guide-modal').classList.add('hidden'); }
+        function openIosModal() {
+            document.getElementById('ios-guide-modal').classList.remove('hidden');
+        }
 
+        function closeIosModal() {
+            document.getElementById('ios-guide-modal').classList.add('hidden');
+        }
+
+        /* Network Status Detection */
         function checkNetworkStatus() {
             const bar = document.getElementById('offline-bar');
             if (!navigator.onLine) {
@@ -617,10 +580,11 @@
         }
 
         function shareAppPrompt() {
-            const title = "ULD Inspect360 - ULD 3D 檢驗與適航查詢工具";
+            const title = "ULD Inspect360 - ULD 適航檢查工具";
             const url = window.location.href;
             if (navigator.share) {
-                navigator.share({ title, text: "ULD 適航性檢查卡 (FORM: 83-48-002) 檢驗與查詢工具", url }).catch(() => {});
+                navigator.share({ title, text: "ULD 適航性檢查卡 (FORM: 83-48-002) 檢驗與查詢工具", url })
+                    .catch(() => {});
             } else {
                 copyTextToClipboard(url);
                 showToast('應用網址已複製至剪貼簿！');
@@ -635,7 +599,9 @@
             document.body.appendChild(ta);
             ta.focus();
             ta.select();
-            try { document.execCommand('copy'); } catch (err) {}
+            try {
+                document.execCommand('copy');
+            } catch (err) {}
             document.body.removeChild(ta);
         }
 
@@ -1357,7 +1323,7 @@
 
         function init3D() {
             renderCategoryButtons();
-            renderOfficialCardSheets();
+            renderBilingualCardModal();
             renderSearchResults(searchKnowledgeBase);
 
             const container = document.getElementById('canvas-container');
@@ -1887,389 +1853,141 @@
         function onWindowResize() { const c = document.getElementById('viewport-container'); if (!c || !camera || !renderer) return; camera.aspect = c.clientWidth / c.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(c.clientWidth, c.clientHeight); }
         function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
 
-        /* ================= 官方檢查卡 (FORM: 83-48-002) 100% 掃描原圖排版 ================= */
-        let currentCardPage = 'p1';
         let currentCardViewMode = 'both';
 
-        function setCardPage(p) {
-            currentCardPage = p;
-            if (navigator.vibrate) navigator.vibrate(15);
-            ['p1', 'p2', 'all'].forEach(k => {
-                const btn = document.getElementById(`card-page-${k}-btn`);
-                if (btn) {
-                    if (k === p) {
-                        btn.className = "px-2 py-1 bg-[#ffb500] text-[#2b1610] rounded transition shadow font-bold";
-                    } else {
-                        btn.className = "px-2 py-1 text-slate-300 hover:text-white rounded transition font-bold";
-                    }
-                }
-            });
-            renderOfficialCardSheets();
-        }
+        /* 嚴格按照官方 FORM: 83-48-002 中英對照圖檔文本設定 */
+        const cardSections = [
+            { 
+                titleZh: "ULD基本定義與概述", 
+                titleEn: "ULD Serviceability Card Overview", 
+                zh: "ULD是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的ULD必須具備足夠的結構強度，能夠在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。", 
+                en: "A Unit Load Device (ULD) is either an aircraft pallet and pallet net combination, or an aircraft container. ULDs are removable aircraft parts subject to strict civil aviation authorities' requirements from design, testing, production, and operations, to repair and maintenance. An airworthy ULD must be structurally capable of restraining the loads and providing adequate protection to the aircraft systems and structure during flight." 
+            },
+            { 
+                titleZh: "所有適航的 ULD / 板", 
+                titleEn: "All Airworthy ULDs", 
+                zh: "• TSO 標籤至少在 ULD 的某一處且清晰可讀<br>• 箱重標籤至少在一個位置清晰可見(無魔術筆改動痕跡)<br>• ULD識別碼、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆改動痕跡)<br>• 任何已集裝於ULD底板上但未使用集裝網固定的貨物，均被視為特殊貨物。該類貨物必須附有 SCAF(Special Cargo Analysis Function) 報告，並由 SCD (Special Cargo Designee) 全程監督及管理相關操作程序。", 
+                en: "• TSO Tags affixed in at least one location and legible<br>• Tare weight decal present and legible in at least one location (not handwritten)<br>• Identification code, ULD number, and owner's code present and legible in at least one location (not handwritten)<br>• Palletized cargo, without a net, is considered Special Cargo and must be accompanied by a SCAF report and overseen by an SCD" 
+            },
+            { 
+                titleZh: "所有非-UPS ULD設備（包括冷鏈 / 醫藥貨運設備）", 
+                titleEn: "All Non-UPS Containers Including Cold Chain / Pharma", 
+                zh: "• ODLN (Operational Damage Limits Notice)：所有非-UPS ULD 設備均必須貼有清晰可辨且易於閱讀的 ODLN<br>• 貼附於任何 ULD上的ODLN 標籤，均被視為評估該 ULD 是否適航 / 可正常使用的認可方法<br>• 所有 ODLN 相關要求均必須符合，方可接受該設備並安排空運運輸", 
+                en: "• ODLN - An affixed and legible ODLN is required for all non-UPS containers.<br>• An ODLN decal affixed to any ULD is recognized as an approved method to assess the serviceability of the ULD<br>• All ODLN criteria must be met to accept and move in the Air" 
+            },
+            { 
+                titleZh: "ULD 主體", 
+                titleEn: "Container Body", 
+                zh: "<b>面板</b><br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離框架邊緣3吋 ( 7.62 cm ) 以內，則不可接受<br>• 例外情況：若裂縫起始於框架邊緣，且長度不超過 3 吋 ( 7.62 cm )，則可接受<br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離骨架邊緣超過 3 吋( 7.62cm ) 的位置，其損壞長度不得超過 7 吋 ( 17.78cm )<br>• 面板突出原有 ULD 外部輪廓超過 2 吋 ( 5.08 cm )，不可接受<br><br><b>骨架構件與緊固件</b><br>• 損壞長度超過 3 吋 ( 7.62 cm ) 或寬度超過 0.5 吋 ( 1.27 cm )，不可接受<br>• 凹陷超過 2 吋 ( 5.08 cm )，不可接受<br>• 底部上方面板每側缺失超過一個緊固件，不可接受", 
+                en: "<b>Panel</b><br>• Damage (crack, tear, puncture or cut) within 3-in (7.62-cm) of the frame edge<br>&nbsp;&nbsp;<i>Exception: If the crack originates at the frame edge not to exceed 3-in (7.62-cm) in length</i><br>• Damage (crack, tear, puncture or cut) beyond 3-in (7.62-cm) of the frame edge, shall not exceed 7-in (17.78-cm)<br>• Panels protruding more than 2-in (5.08-cm) exceeding the original outer contour of the ULD profile<br><br><b>Frame Members and Fasteners</b><br>• Damage > 3-in (7.62-cm) length or .5-in (1.27-cm) in width<br>• Indention >2-in (5.08-cm)<br>• More than one fastener missing per side of panel above the base rail assembly" 
+            },
+            { 
+                titleZh: "ULD設備門體 / 五金配件", 
+                titleEn: "Container Door/Hardware", 
+                zh: "<b>捲簾門配置</b><br>• 部件缺失或損壞，導致門無法固定，不可接受<br>• 帆布總損壞面積超過 8 × 12 吋 ( 20.32 × 30.48cm ) ( 即 96 平方吋 / 619.35 平方公分 )，不可接受<br>• 門纜繩磨損超過 25%，不可接受<br>• 門纜繩外露超過 12 吋 ( 30.48 cm )，不可接受<br>• 門檻裂縫長度超過 1 吋 ( 2.54 cm ) 或寬度超過 0.37 吋 ( 0.94 cm )，不可接受", 
+                en: "<b>Roll-up Door Configuration</b><br>• Missing or damaged components that prevent securing<br>• Total canvas damage area(s) > 8 x 12-in (20.32 x 30.48 -cm) (96 square in) (619.35 Square cm)<br>• Cable frayed > 25% of wire strands<br>• Cable exposed > 12-in (30.48-cm)<br>• Door bar extrusion crack > 1-in (2.54-cm) length or .37-in (.94-cm) in width" 
+            },
+            { 
+                titleZh: "ULD / 板的底板與側軌", 
+                titleEn: "Container/Pallet Base and Side Rails", 
+                zh: "• 已裝載貨物的 ULD 底板彎曲幅度不得超過 1.25 吋<br>• 空 ULD 底板彎曲幅度不得超過 2 吋<br>• 底板邊軌或板邊緣軌缺失<br>• C型槽損壞，導致 D-ring 無法正確均勻分布與固定<br>• 固定 D-ring 的 C 型槽槽口損壞<br>• 板角必須完好<br>&nbsp;&nbsp;<i>注意：板角焊接形成的裂縫可接受</i><br>• 底板與邊軌分離<br>• 距底板邊緣小於 3 吋處 ( 7.62 cm ) 有穿孔或撕裂 ( ＞ 3 吋 × 1 吋 )，不可接受<br>• 距底板邊緣 3 吋以外 ( 7.62 cm ) 有穿孔或撕裂 ( ＞ 6 吋 × 2 吋 )，不可接受<br>• 缺失或鬆動的鉚釘超過 5 個，不可接受<br>&nbsp;&nbsp;- 任何兩個缺失鉚釘之間必須至少有 5 個完好鉚釘<br>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受", 
+                en: "• Loaded ULD base cannot bow >1.25-in (3.17-cm)<br>• Empty ULD base cannot bow >2-in (5.08-cm)<br>• Base side rail or edge rail missing<br>• Seat track damage that does not allow for all net double stud fittings to be properly spaced and secured<br>• Damage to the seat-track lips securing a double stud fitting<br>• Corner casting must be present<br>&nbsp;&nbsp;<i>NOTE: Base side rail corner welds can be cracked.</i><br>• Separation of base and edge rail<br>• Puncture or tear (> 3 x 1-in) (7.62 X 2.54-cm) located < 3-in (7.62-cm) from frame edge<br>• Puncture or tear (> 6 x 2-in) (15.24 X 5.08-cm) located 3-in (7.62-cm) from frame edge<br>• More than five missing or loose rivets<br>&nbsp;&nbsp;- Must have five good rivets between any two missing rivets<br>• Damage to the point of preventing loading and securing or causing damage to the aircraft" 
+            },
+            { 
+                titleZh: "網", 
+                titleEn: "Cargo Nets", 
+                zh: "• TSO 標籤清晰可見<br>• 所有 D-ring 數量齊全且功能正常<br>• 網鉤：每側缺失或不可使用的網鉤不得超過一個<br>• 網角繩：單處斷裂 / 磨損超過材料25% 或超過 0.25 吋 ( 0.63cm )，不可接受<br>• 網繩：<br>&nbsp;&nbsp;- 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 ( 0.63cm )，不可接受<br>&nbsp;&nbsp;- 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 ( 0.63cm )，不可接受<br>&nbsp;&nbsp;- 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩）<br><b>注意：</b>若出現三處或以上輕微損壞，即使未超過標準，該網仍不可使用。", 
+                en: "• TSO Tag present and legible<br>• All double stud fittings present and operable<br>• Adjusting hooks – more than one per side missing or inoperative, not in conjunction with a cut rope/web<br>• Lashing Line – One cut/fray > 25% of material or .25-in (.63-cm) of the rope/web<br>• Roping<br>&nbsp;&nbsp;- Border cord – One cut/fray > 25% or .25-in (.63-cm) of the material<br>&nbsp;&nbsp;- Two rows above border cord – One cut/fray > 25% or .25-in (.63-cm) of material<br>&nbsp;&nbsp;- Above Bottom Two Rows – More than one completely cut/frayed rope between two knots (not to include edge rope)<br><b>NOTE:</b> Three or more damages not exceeding damage limitations above render a net unserviceable." 
+            },
+            { 
+                titleZh: "軍帶", 
+                titleEn: "Restraint Straps", 
+                zh: "• <b>主要SCAF(Special Cargo Analysis Function)軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;<i>註：僅可在特殊貨物（Special Cargo）的 SCAF 報告所規定條件下使用</i><br>&nbsp;&nbsp;- 未附有清晰可辨的 TSO 標籤<br>&nbsp;&nbsp;- 已超過有效期限<br>&nbsp;&nbsp;- 存在任何形式的損壞<br>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>&nbsp;&nbsp;- 應判定為不可使用：<br>&nbsp;&nbsp;- 已超過有效期限 (如適用)<br>&nbsp;&nbsp;- 扣環無法保持鎖定狀態<br>&nbsp;&nbsp;- 所連接的固定D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>&nbsp;&nbsp;- 綁帶材料存在以下情況：<br>&nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>&nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結<br>• <b>臨時綁帶</b><br>&nbsp;&nbsp;• 不得有任何損壞", 
+                en: "• <b>Primary SCAF Restraint Straps</b> – unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;<i>NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</i><br>&nbsp;&nbsp;- No TSO placard present and legible<br>&nbsp;&nbsp;- Expiry date has been exceeded<br>&nbsp;&nbsp;- Any damage is present<br>• <b>Secondary Cargo Restraint Straps</b> – unserviceable if any of the following conditions exist:<br>&nbsp;&nbsp;- Expiry date has been exceeded, if applicable<br>&nbsp;&nbsp;- Buckle latch mechanism will not lock or stay engaged<br>&nbsp;&nbsp;- Attached fittings, hooks and rings are bent, cracked, broken or missing<br>&nbsp;&nbsp;- Strapping material<br>&nbsp;&nbsp;&nbsp;&nbsp;• One cut or fray which exceeds 25% of the strap material width<br>&nbsp;&nbsp;&nbsp;&nbsp;• One or more knots exist<br>• <b>Temporary Restraint Straps</b> – No damage" 
+            },
+            { 
+                titleZh: "附屬配件", 
+                titleEn: "Accessories", 
+                zh: "附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況。<br>• 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換<br>• 雨檔門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修", 
+                en: "Accessory items DO NOT determine airworthiness. Please evaluate during routine container evaluations:<br>• Pull straps – missing, frayed, wom, or torn pull straps should be replaced<br>• Package door flaps – containers with damage extending beyond the overall envelope of the container, or that present potential hazard to the aircraft or ground handling personnel/equipment, should be sent for repair" 
+            },
+            { 
+                titleZh: "單位換算與手冊說明", 
+                titleEn: "General Notes & Manual Reference", 
+                zh: "<b>另：1英寸=2.54 厘米</b><br>如有疑問，請聯絡當班主管查閱操作手冊<br><span class='text-[10px] text-amber-800 font-mono'>FORM: 83-48-002&nbsp;&nbsp;&nbsp;&nbsp;DATE: 07/02/26</span>", 
+                en: "<b>1 in = 2.54 cm</b><br>Questions? Refer to the UCHPM, Chapter 04.<br><span class='text-[10px] text-slate-500 font-mono'>FORM: 83-48-002&nbsp;&nbsp;&nbsp;&nbsp;DATE: 07/02/26<br>© 2012, UPS and the UPS brand mark are trademarks of United Parcel Service of America, Inc. All rights reserved.</span>" 
+            }
+        ];
 
-        function setCardViewMode(m) {
-            currentCardViewMode = m;
-            if (navigator.vibrate) navigator.vibrate(15);
-            ['both', 'zh', 'en'].forEach(k => {
-                const btn = document.getElementById(`mode-btn-${k}`);
-                if (btn) {
-                    if (k === m) {
-                        btn.className = "px-2 py-1 bg-[#ffb500] text-[#2b1610] rounded transition shadow font-bold";
-                    } else {
-                        btn.className = "px-2 py-1 text-slate-300 hover:text-white rounded transition font-bold";
-                    }
-                }
-            });
-            renderOfficialCardSheets();
-        }
-
-        function getCardLogoSvgHtml() {
-            return `
-                <div class="w-8 h-10 flex-shrink-0">
-                    <svg viewBox="0 0 200 240" class="w-full h-full">
-                        <path d="M 100 234 C 32 202 6 152 6 30 L 100 6 L 194 30 C 194 152 168 202 100 234 Z" fill="#d97706" />
-                        <path d="M 100 220 C 38 190 18 144 18 36 L 100 16 L 182 36 C 182 144 162 190 100 220 Z" fill="#2b1610" />
-                        <text x="100" y="146" text-anchor="middle" fill="#d97706" font-family="Arial Black" font-weight="900" font-size="68">UPS</text>
-                    </svg>
-                </div>
-            `;
-        }
-
-        function renderOfficialCardSheets() {
+        function renderBilingualCardModal() {
             const body = document.getElementById('modal-card-body');
             if (!body) return;
             body.innerHTML = '';
 
-            const showPage1 = (currentCardPage === 'p1' || currentCardPage === 'all');
-            const showPage2 = (currentCardPage === 'p2' || currentCardPage === 'all');
+            cardSections.forEach(sec => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-3.5 md:p-4 rounded-xl border border-slate-200 shadow-sm";
 
-            if (showPage1) {
-                body.appendChild(buildPage1Element());
-            }
-            if (showPage2) {
-                body.appendChild(buildPage2Element());
-            }
+                let contentHtml = '';
+                if (currentCardViewMode === 'both') {
+                    contentHtml = `
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                            <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                                <h4 class="font-extrabold text-amber-900 border-b border-amber-200 pb-1 mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-book-bookmark text-amber-600"></i>${sec.titleZh}
+                                </h4>
+                                <div class="text-slate-700 leading-relaxed space-y-1">${sec.zh}</div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-sans">
+                                <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-language text-slate-500"></i>${sec.titleEn}
+                                </h4>
+                                <div class="text-slate-600 leading-relaxed space-y-1">${sec.en}</div>
+                            </div>
+                        </div>
+                    `;
+                } else if (currentCardViewMode === 'zh') {
+                    contentHtml = `
+                        <div class="bg-amber-50/50 p-3 rounded-lg border border-amber-100">
+                            <h4 class="font-extrabold text-amber-900 border-b border-amber-200 pb-1 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-book-bookmark text-amber-600"></i>${sec.titleZh}
+                            </h4>
+                            <div class="text-slate-700 leading-relaxed space-y-1">${sec.zh}</div>
+                        </div>
+                    `;
+                } else {
+                    contentHtml = `
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-200 font-sans">
+                            <h4 class="font-bold text-slate-800 border-b border-slate-200 pb-1 mb-2 flex items-center gap-1.5">
+                                <i class="fa-solid fa-language text-slate-500"></i>${sec.titleEn}
+                            </h4>
+                            <div class="text-slate-600 leading-relaxed space-y-1">${sec.en}</div>
+                        </div>
+                    `;
+                }
+
+                card.innerHTML = contentHtml;
+                body.appendChild(card);
+            });
         }
 
-        /* 建立 Page 1 實體卡片元素 */
-        function buildPage1Element() {
-            const wrap = document.createElement('div');
-            wrap.className = "card-sheet p-3 sm:p-5 rounded-lg border-2 border-black max-w-5xl mx-auto";
-
-            const showEn = (currentCardViewMode === 'both' || currentCardViewMode === 'en');
-            const showZh = (currentCardViewMode === 'both' || currentCardViewMode === 'zh');
-            const isSingle = (!showEn || !showZh);
-
-            wrap.innerHTML = `
-                <div class="text-xs text-slate-500 font-mono font-bold mb-1.5 flex justify-between">
-                    <span>FORM: 83-48-002 [PAGE 1 OF 2]</span>
-                    <span>OFFICIAL ULD SERVICEABILITY SCAN</span>
-                </div>
-                
-                <div class="grid ${isSingle ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-3 sm:gap-4">
-                    
-                    <!-- PAGE 1: 英文左欄 (ULD Serviceability Card) -->
-                    ${showEn ? `
-                    <div class="card-inner-border p-3 sm:p-3.5 bg-white text-[11px] sm:text-xs leading-tight flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start border-b border-black pb-2 mb-2">
-                                <div class="flex-grow card-header-title text-center pt-1 font-bold">ULD Serviceability Card</div>
-                                ${getCardLogoSvgHtml()}
-                            </div>
-
-                            <p class="leading-normal mb-2 text-justify">
-                                A Unit Load Device (ULD) is either an aircraft pallet and pallet net combination, or an aircraft container. ULDs are removable aircraft parts subject to strict civil aviation authorities' requirements from design, testing, production, and operations, to repair and maintenance. An airworthy ULD must be structurally capable of restraining the loads and providing adequate protection to the aircraft systems and structure during flight.
-                            </p>
-
-                            <div class="card-sec-title font-bold">All Airworthy ULDs</div>
-                            <ul class="list-disc pl-4 space-y-1 mb-2">
-                                <li>TSO Tags affixed in at least one location and legible</li>
-                                <li>Tare weight decal present and legible in at least one location (not handwritten)</li>
-                                <li>Identification code, ULD number, and owner's code present and legible in at least one location (not handwritten)</li>
-                                <li>Palletized cargo, without a net, is considered Special Cargo and must be accompanied by a SCAF report and overseen by an SCD</li>
-                            </ul>
-
-                            <div class="card-sec-title font-bold">All Non-UPS Containers Including Cold Chain / Pharma</div>
-                            <ul class="list-disc pl-4 space-y-1 mb-2">
-                                <li>ODLN - An affixed and legible ODLN is required for all non-UPS containers.</li>
-                                <li>An ODLN decal affixed to any ULD is recognized as an approved method to assess the serviceability of the ULD</li>
-                                <li>All ODLN criteria must be met to accept and move in the Air</li>
-                            </ul>
-
-                            <div class="card-sec-title font-bold">Container Body</div>
-                            <div class="pl-2 space-y-1 mb-2">
-                                <p class="font-bold">• Panel</p>
-                                <div class="pl-3 space-y-0.5">
-                                    <p>- Damage (crack, tear, puncture or cut) within 3-in (7.62-cm) of the frame edge</p>
-                                    <p class="italic">Exception: If the crack originates at the frame edge not to exceed 3-in (7.62-cm) in length</p>
-                                    <p>- Damage (crack, tear, puncture or cut) beyond 3-in (7.62-cm) of the frame edge, shall not exceed 7-in (17.78-cm)</p>
-                                    <p>- Panels protruding more than 2-in (5.08-cm) exceeding the original outer contour of the ULD profile</p>
-                                </div>
-                                <p class="font-bold mt-1">• Frame Members and Fasteners</p>
-                                <div class="pl-3 space-y-0.5">
-                                    <p>- Damage &gt; 3-in (7.62-cm) length or .5-in (1.27-cm) in width</p>
-                                    <p>- Indention &gt;2-in (5.08-cm)</p>
-                                    <p>- More than one fastener missing per side of panel above the base rail assembly</p>
-                                </div>
-                            </div>
-
-                            <div class="card-sec-title font-bold">Container Door/Hardware</div>
-                            <div class="pl-2 space-y-0.5 mb-2">
-                                <p class="font-bold">• Roll-up Door Configuration</p>
-                                <div class="pl-3 space-y-0.5">
-                                    <p>- Missing or damaged components that prevent securing</p>
-                                    <p>- Total canvas damage area(s) &gt; 8 x 12-in (20.32 x 30.48 -cm) (96 square in) (619.35 Square cm)</p>
-                                    <p>- Cable frayed &gt; 25% of wire strands</p>
-                                    <p>- Cable exposed &gt; 12-in (30.48-cm)</p>
-                                    <p>- Door bar extrusion crack &gt; 1-in (2.54-cm) length or .37-in (.94-cm) in width</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-black pt-2 mt-3 font-mono text-[10px] text-slate-700">
-                            <p class="font-bold">Questions? Refer to the UCHPM, Chapter 04.</p>
-                            <p class="font-bold">FORM: 83-48-002 DATE: 07/02/26</p>
-                            <p class="text-[9px] mt-1 text-slate-500">© 2012, UPS and the UPS brand mark are trademarks of United Parcel Service of America, Inc. All rights reserved.</p>
-                        </div>
-                    </div>` : ''}
-
-                    <!-- PAGE 1: 中文右欄 (ULD適航性檢查卡) -->
-                    ${showZh ? `
-                    <div class="card-inner-border p-3 sm:p-3.5 bg-white text-[11px] sm:text-xs leading-tight flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start border-b border-black pb-2 mb-2">
-                                <div class="flex-grow card-header-title text-center pt-1 font-bold">ULD適航性檢查卡</div>
-                                ${getCardLogoSvgHtml()}
-                            </div>
-
-                            <p class="leading-normal mb-2 text-justify">
-                                ULD是指飛機集裝板與集裝網的組合，或飛機集裝箱。ULD屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的ULD必須具備足夠的結構強度，能夠在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。
-                            </p>
-
-                            <div class="card-sec-box">所有適航的 ULD / 板</div>
-                            <div class="pl-1 space-y-1 mb-2">
-                                <p>• TSO 標籤至少在 ULD 的某一處且清晰可讀</p>
-                                <p>• 箱重標籤至少在一個位置清晰可見(無魔術筆改動痕跡)</p>
-                                <p>• ULD識別碼、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆改動痕跡)</p>
-                                <p>• 任何已集裝於ULD底板上但未使用集裝網固定的貨物，均被視為特殊貨物。該類貨物必須附有 SCAF(Special Cargo Analysis Function) 報告，並由 SCD (Special Cargo Designee) 全程監督及管理相關操作程序。</p>
-                            </div>
-
-                            <div class="card-sec-box">所有非-UPS ULD設備（包括冷鏈 / 醫藥貨運設備）</div>
-                            <div class="pl-1 space-y-1 mb-2">
-                                <p>• ODLN (Operational Damage Limits Notice)：所有非-UPS ULD 設備均必須貼有清晰可辨且易於閱讀的 ODLN</p>
-                                <p>• 貼附於任何 ULD上的ODLN 標籤，均被視為評估該 ULD 是否適航 / 可正常使用的認可方法</p>
-                                <p>• 所有 ODLN 相關要求均必須符合，方可接受該設備並安排空運運輸</p>
-                            </div>
-
-                            <div class="card-sec-box">ULD 主體</div>
-                            <div class="pl-1 space-y-1 mb-2">
-                                <p class="font-bold">面板</p>
-                                <p>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離框架邊緣3吋 ( 7.62 cm ) 以內，則不可接受</p>
-                                <p>• 例外情況：若裂縫起始於框架邊緣，且長度不超過 3 吋 ( 7.62 cm )，則可接受</p>
-                                <p>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離骨架邊緣超過 3 吋( 7.62cm ) 的位置，其損壞長度不得超過 7 吋 ( 17.78cm )</p>
-                                <p>• 面板突出原有 ULD 外部輪廓超過 2 吋 ( 5.08 cm )，不可接受</p>
-                                <p class="font-bold mt-1">骨架構件與緊固件</p>
-                                <p>• 損壞長度超過 3 吋 ( 7.62 cm ) 或寬度超過 0.5 吋 ( 1.27 cm )，不可接受</p>
-                                <p>• 凹陷超過 2 吋 ( 5.08 cm )，不可接受</p>
-                                <p>• 底部上方面板每側缺失超過一個緊固件，不可接受</p>
-                            </div>
-
-                            <div class="card-sec-box">ULD設備門體 / 五金配件</div>
-                            <div class="pl-1 space-y-1 mb-2">
-                                <p class="font-bold">捲簾門配置</p>
-                                <p>• 部件缺失或損壞，導致門無法固定，不可接受</p>
-                                <p>• 帆布總損壞面積超過 8 × 12 吋 ( 20.32 × 30.48cm ) ( 即 96 平方吋 / 619.35 平方公分 )，不可接受</p>
-                                <p>• 門纜繩磨損超過 25%，不可接受</p>
-                                <p>• 門纜繩外露超過 12 吋 ( 30.48 cm )，不可接受</p>
-                                <p>• 門檻裂縫長度超過 1 吋 ( 2.54 cm ) 或寬度超過 0.37 吋 ( 0.94 cm )，不可接受</p>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-black pt-2 mt-3 font-mono text-[10px] text-slate-700">
-                            <p class="font-bold">另：1英寸=2.54 厘米</p>
-                            <p class="font-bold">如有疑問，請聯絡當班主管查閱操作手冊</p>
-                            <p class="font-bold">FORM: 83-48-002&nbsp;&nbsp;&nbsp;&nbsp;DATE: 07/02/26</p>
-                        </div>
-                    </div>` : ''}
-
-                </div>
-            `;
-            return wrap;
+        function setCardViewMode(mode) {
+            currentCardViewMode = mode;
+            if (navigator.vibrate) navigator.vibrate(15);
+            ['both', 'zh', 'en'].forEach(m => {
+                const btn = document.getElementById(`mode-btn-${m}`);
+                if (btn) {
+                    if (m === mode) {
+                        btn.className = "px-2 sm:px-2.5 py-1 bg-[#ffb500] text-[#2b1610] rounded-md transition shadow font-bold";
+                    } else {
+                        btn.className = "px-2 sm:px-2.5 py-1 text-slate-300 hover:text-white rounded-md transition font-bold";
+                    }
+                }
+            });
+            renderBilingualCardModal();
         }
 
-        /* 建立 Page 2 實體卡片元素 */
-        function buildPage2Element() {
-            const wrap = document.createElement('div');
-            wrap.className = "card-sheet p-3 sm:p-5 rounded-lg border-2 border-black max-w-5xl mx-auto";
-
-            const showEn = (currentCardViewMode === 'both' || currentCardViewMode === 'en');
-            const showZh = (currentCardViewMode === 'both' || currentCardViewMode === 'zh');
-            const isSingle = (!showEn || !showZh);
-
-            wrap.innerHTML = `
-                <div class="text-xs text-slate-500 font-mono font-bold mb-1.5 flex justify-between">
-                    <span>FORM: 83-48-002 [PAGE 2 OF 2]</span>
-                    <span>OFFICIAL ULD SERVICEABILITY SCAN</span>
-                </div>
-                
-                <div class="grid ${isSingle ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'} gap-3 sm:gap-4">
-                    
-                    <!-- PAGE 2: 英文左欄 (ULD Serviceability Card) -->
-                    ${showEn ? `
-                    <div class="card-inner-border p-3 sm:p-3.5 bg-white text-[11px] sm:text-xs leading-tight flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start border-b border-black pb-2 mb-2">
-                                <div class="flex-grow card-header-title text-center pt-1 font-bold">ULD Serviceability Card</div>
-                                ${getCardLogoSvgHtml()}
-                            </div>
-
-                            <div class="card-sec-title font-bold">Container/Pallet Base and Side Rails</div>
-                            <ul class="list-disc pl-4 space-y-0.5 mb-2">
-                                <li>Loaded ULD base cannot bow &gt;1.25-in (3.17-cm)</li>
-                                <li>Empty ULD base cannot bow &gt;2-in (5.08-cm)</li>
-                                <li>Base side rail or edge rail missing</li>
-                                <li>Seat track damage that does not allow for all net double stud fittings to be properly spaced and secured</li>
-                                <li>Damage to the seat-track lips securing a double stud fitting</li>
-                                <li>Corner casting must be present<br><span class="italic">NOTE: Base side rail corner welds can be cracked.</span></li>
-                                <li>Separation of base and edge rail</li>
-                                <li>Puncture or tear (&gt; 3 x 1-in) (7.62 X 2.54-cm) located &lt; 3-in (7.62-cm) from frame edge</li>
-                                <li>Puncture or tear (&gt; 6 x 2-in) (15.24 X 5.08-cm) located 3-in (7.62-cm) from frame edge</li>
-                                <li>More than five missing or loose rivets<br>- Must have five good rivets between any two missing rivets</li>
-                                <li>Damage to the point of preventing loading and securing or causing damage to the aircraft</li>
-                            </ul>
-
-                            <div class="card-sec-title font-bold">Cargo Nets</div>
-                            <ul class="list-disc pl-4 space-y-0.5 mb-2">
-                                <li>TSO Tag present and legible</li>
-                                <li>All double stud fittings present and operable</li>
-                                <li>Adjusting hooks – more than one per side missing or inoperative, not in conjunction with a cut rope/web</li>
-                                <li>Lashing Line – One cut/fray &gt; 25% of material or .25-in (.63-cm) of the rope/web</li>
-                                <li>Roping:
-                                    <div class="pl-2 space-y-0.5 mt-0.5">
-                                        <p>- Border cord – One cut/fray &gt; 25% or .25-in (.63-cm) of the material</p>
-                                        <p>- Two rows above border cord – One cut/fray &gt; 25% or .25-in (.63-cm) of material</p>
-                                        <p>- Above Bottom Two Rows – More than one completely cut/frayed rope between two knots (not to include edge rope)</p>
-                                    </div>
-                                </li>
-                            </ul>
-                            <p class="font-bold text-[10px] mb-2">NOTE: Three or more damages not exceeding damage limitations above render a net unserviceable.</p>
-
-                            <div class="card-sec-title font-bold">Restraint Straps</div>
-                            <div class="pl-1 space-y-1 mb-2">
-                                <p class="font-bold">• Primary SCAF Restraint Straps – unserviceable if any of the following conditions exist:</p>
-                                <p class="italic pl-2 text-[10px]">NOTE: Use under conditions as specified by a SCAF Report for Special Cargo.</p>
-                                <ul class="list-disc pl-5 space-y-0.5">
-                                    <li>No TSO placard present and legible</li>
-                                    <li>Expiry date has been exceeded</li>
-                                    <li>Any damage is present</li>
-                                </ul>
-                                <p class="font-bold">• Secondary Cargo Restraint Straps – unserviceable if any of the following conditions exist:</p>
-                                <ul class="list-disc pl-5 space-y-0.5">
-                                    <li>Expiry date has been exceeded, if applicable</li>
-                                    <li>Buckle latch mechanism will not lock or stay engaged</li>
-                                    <li>Attached fittings, hooks and rings are bent, cracked, broken or missing</li>
-                                    <li>Strapping material:
-                                        <div class="pl-2 space-y-0.5">
-                                            <p>• One cut or fray which exceeds 25% of the strap material width</p>
-                                            <p>• One or more knots exist</p>
-                                        </div>
-                                    </li>
-                                </ul>
-                                <p class="font-bold">• Temporary Restraint Straps – No damage</p>
-                            </div>
-
-                            <div class="card-sec-title font-bold">Accessories</div>
-                            <p class="text-[10px] mb-1">Accessory items DO NOT determine airworthiness. Please evaluate during routine container evaluations:</p>
-                            <ul class="list-disc pl-4 space-y-0.5">
-                                <li>Pull straps – missing, frayed, worn, or torn pull straps should be replaced</li>
-                                <li>Package door flaps – containers with damage extending beyond the overall envelope of the container, or that present potential hazard to the aircraft or ground handling personnel/equipment, should be sent for repair</li>
-                            </ul>
-                        </div>
-
-                        <div class="border-t border-black pt-2 mt-3 font-mono text-[10px] text-slate-700">
-                            <p class="font-bold">Questions? Refer to the UCHPM, Chapter 04.</p>
-                            <p class="font-bold">FORM: 83-48-002 DATE: 07/02/26</p>
-                        </div>
-                    </div>` : ''}
-
-                    <!-- PAGE 2: 中文右欄 (ULD適航性檢查卡) -->
-                    ${showZh ? `
-                    <div class="card-inner-border p-3 sm:p-3.5 bg-white text-[11px] sm:text-xs leading-tight flex flex-col justify-between">
-                        <div>
-                            <div class="flex justify-between items-start border-b border-black pb-2 mb-2">
-                                <div class="flex-grow card-header-title text-center pt-1 font-bold">ULD適航性檢查卡</div>
-                                ${getCardLogoSvgHtml()}
-                            </div>
-
-                            <div class="card-sec-box">ULD / 板的底板與側軌</div>
-                            <div class="pl-1 space-y-0.5 mb-2">
-                                <p>• 已裝載貨物的 ULD 底板彎曲幅度不得超過 1.25 吋</p>
-                                <p>• 空 ULD 底板彎曲幅度不得超過 2 吋</p>
-                                <p>• 底板邊軌或板邊緣軌缺失</p>
-                                <p>• C型槽損壞，導致 D-ring 無法正確均勻分布與固定</p>
-                                <p>• 固定 D-ring 的 C 型槽槽口損壞</p>
-                                <p>• 板角必須完好<br>&nbsp;&nbsp;<span class="italic">注意：板角焊接形成的裂縫可接受</span></p>
-                                <p>• 底板與邊軌分離</p>
-                                <p>• 距底板邊緣小於 3 吋處 ( 7.62 cm ) 有穿孔或撕裂 ( ＞ 3 吋 × 1 吋 )，不可接受</p>
-                                <p>• 距底板邊緣 3 吋以外 ( 7.62 cm ) 有穿孔或撕裂 ( ＞ 6 吋 × 2 吋 )，不可接受</p>
-                                <p>• 缺失或鬆動的鉚釘超過 5 個，不可接受<br>&nbsp;&nbsp;- 任何兩個缺失鉚釘之間必須至少有 5 個完好鉚釘</p>
-                                <p>• 損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受</p>
-                            </div>
-
-                            <div class="card-sec-box">網</div>
-                            <div class="pl-1 space-y-0.5 mb-2">
-                                <p>• TSO 標籤清晰可見</p>
-                                <p>• 所有 D-ring 數量齊全且功能正常</p>
-                                <p>• 網鉤：每側缺失或不可使用的網鉤不得超過一個</p>
-                                <p>• 網角繩：單處斷裂 / 磨損超過材料25% 或超過 0.25 吋 ( 0.63cm )，不可接受</p>
-                                <p>• 網繩：<br>
-                                   &nbsp;&nbsp;- 最底層：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 ( 0.63cm )，不可接受<br>
-                                   &nbsp;&nbsp;- 底層上方兩排：單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 ( 0.63cm )，不可接受<br>
-                                   &nbsp;&nbsp;- 底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不含網角繩）
-                                </p>
-                                <p class="font-bold text-[10px] mt-1">注意：若出現三處或以上輕微損壞，即使未超過標準，該網仍不可使用。</p>
-                            </div>
-
-                            <div class="card-sec-box">軍帶</div>
-                            <div class="pl-1 space-y-0.5 mb-2">
-                                <p>• <b>主要SCAF(Special Cargo Analysis Function)軍帶 (藍色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>
-                                   &nbsp;&nbsp;<span class="italic">註：僅可在特殊貨物（Special Cargo）的 SCAF 報告所規定條件下使用</span><br>
-                                   &nbsp;&nbsp;- 未附有清晰可辨的 TSO 標籤<br>
-                                   &nbsp;&nbsp;- 已超過有效期限<br>
-                                   &nbsp;&nbsp;- 存在任何形式的損壞
-                                </p>
-                                <p>• <b>次要貨物綁固帶 (黃色)</b> -- 如出現以下任何情況，應判定為不可使用：<br>
-                                   &nbsp;&nbsp;- 已超過有效期限 (如適用)<br>
-                                   &nbsp;&nbsp;- 扣環無法保持鎖定狀態<br>
-                                   &nbsp;&nbsp;- 所連接的固定D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失，不可接受<br>
-                                   &nbsp;&nbsp;- 綁帶材料存在以下情況：<br>
-                                   &nbsp;&nbsp;&nbsp;&nbsp;• 單一切口或磨損超過綁帶寬度的 25%<br>
-                                   &nbsp;&nbsp;&nbsp;&nbsp;• 存在一個或以上解不開的結
-                                </p>
-                                <p>• <b>臨時綁帶</b><br>&nbsp;&nbsp;• 不得有任何損壞</p>
-                            </div>
-
-                            <div class="card-sec-box">附屬配件</div>
-                            <p class="text-[10px] mb-1">附屬配件狀況不影響 ULD 的適航性判定，但應於例行檢查時評估其使用狀況。</p>
-                            <div class="pl-1 space-y-0.5">
-                                <p>• 拉箱帶：如有缺失、磨損、磨耗或撕裂，應安排更換</p>
-                                <p>• 雨檔門簾：如損壞部分超出集裝設備外形輪廓，或可能對航空器、地勤人員或作業設備構成危害，應停止使用並送修</p>
-                            </div>
-                        </div>
-
-                        <div class="border-t border-black pt-2 mt-3 font-mono text-[10px] text-slate-700">
-                            <p class="font-bold">另：1英寸=2.54 厘米</p>
-                            <p class="font-bold">如有疑問，請聯絡當班主管查閱操作手冊</p>
-                            <p class="font-bold">FORM: 83-48-002&nbsp;&nbsp;&nbsp;&nbsp;DATE: 07/02/26</p>
-                        </div>
-                    </div>` : ''}
-
-                </div>
-            `;
-            return wrap;
-        }
-
-        /* Hash Navigation */
+        /* Handle Hash Routes for PWA shortcuts */
         function checkUrlHash() {
             const hash = window.location.hash;
             if (hash === '#search') {
