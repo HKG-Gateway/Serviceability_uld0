@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ULD Inspect360 - 官方 3D ULD 適航檢查與快速查詢工具</title>
     
-    <!-- PWA & Mobile Web App Meta Tags -->
     <meta name="theme-color" content="#2b1610">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -65,106 +64,70 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
 
-    <!-- Offline Alert Banner -->
     <div id="offline-bar" class="hidden bg-amber-600 text-white text-xs py-1 px-3 text-center font-bold sticky top-0 z-50 shadow">
         <i class="fa-solid fa-wifi-slash mr-1"></i> 您正處於離線模式，ULD Inspect360 仍可完整查詢快取手冊與適航標準！
+    </div>
+
+    <!-- PWA Install Banner Toast (Bottom Floating Bar for Mobile/Desktop) -->
+    <div id="pwa-banner-toast" class="hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-[#2b1610] text-white border-2 border-[#ffb500] rounded-2xl p-4 shadow-2xl z-50 flex items-center justify-between gap-3 animate-install-glow">
+        <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-12 flex-shrink-0 flex items-center justify-center">
+                <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow">
+                    <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="#ffbe10" />
+                    <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
+                    <text x="100" y="146" text-anchor="middle" fill="#ffbe10" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
+                </svg>
+            </div>
+            <div class="min-w-0">
+                <h4 class="font-extrabold text-[#ffb500] text-xs sm:text-sm truncate">安裝 ULD Inspect360 App</h4>
+                <p class="text-[11px] text-slate-300 truncate">新增至主畫面，享受極速離線檢驗體驗</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="triggerPwaInstall()" class="px-3 py-1.5 ups-gold-gradient text-[#2b1610] font-extrabold rounded-lg text-xs shadow hover:brightness-110 transition">
+                立即安裝
+            </button>
+            <button onclick="dismissPwaBanner()" class="text-slate-400 hover:text-white p-1 text-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
     </div>
 
     <header class="bg-[#2b1610] text-white sticky top-0 z-40 px-3 md:px-6 pb-2.5 shadow-md border-b-2 border-[#ffb500]">
         <div class="max-w-7xl mx-auto flex flex-col gap-2">
             <div class="flex justify-between items-center gap-2 md:gap-4">
-                <div class="flex items-center gap-2.5 md:gap-3 cursor-pointer" onclick="switchPage('uld')">
-                    <!-- UPS 3D 立體金屬盾牌 LOGO (100% 完美內嵌，絕不破圖，重現金屬反光與立體金色斜角) -->
-                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.5)]">
-                        <svg viewBox="0 0 200 240" class="w-full h-full overflow-visible" xmlns="http://www.w3.org/2000/svg">
-                            <defs>
-                                <!-- 金屬邊框渐变 (立體金色倒角反射光) -->
-                                <linearGradient id="shieldGoldBevel" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#fff8db" />
-                                    <stop offset="25%" stop-color="#ffdc73" />
-                                    <stop offset="50%" stop-color="#d6910a" />
-                                    <stop offset="75%" stop-color="#9a6200" />
-                                    <stop offset="100%" stop-color="#ffd566" />
-                                </linearGradient>
-                                <!-- 盾牌本體高光渐变 (上淺金下深金) -->
-                                <linearGradient id="shieldBodyGradient" x1="50%" y1="0%" x2="50%" y2="100%">
-                                    <stop offset="0%" stop-color="#ffea9f" />
-                                    <stop offset="35%" stop-color="#e6a928" />
-                                    <stop offset="70%" stop-color="#b8780c" />
-                                    <stop offset="100%" stop-color="#734700" />
-                                </linearGradient>
-                                <!-- 上方深色折光面 (深棕金屬反光) -->
-                                <linearGradient id="shieldFacetDark" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#4e2609" />
-                                    <stop offset="60%" stop-color="#2a1403" />
-                                    <stop offset="100%" stop-color="#190a02" />
-                                </linearGradient>
-                                <!-- UPS 金屬字體立體渐变 -->
-                                <linearGradient id="upsTextMetallic" x1="50%" y1="0%" x2="50%" y2="100%">
-                                    <stop offset="0%" stop-color="#fff6cf" />
-                                    <stop offset="45%" stop-color="#f5ba3b" />
-                                    <stop offset="85%" stop-color="#b57303" />
-                                    <stop offset="100%" stop-color="#784800" />
-                                </linearGradient>
-                                <!-- 內陰影濾鏡 -->
-                                <filter id="bevelFilter" x="-20%" y="-20%" width="140%" height="140%">
-                                    <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity="0.6"/>
-                                </filter>
-                            </defs>
-
-                            <!-- 外層金屬厚邊框 (金色倒角) -->
-                            <path d="M 100 234 C 24 200 6 146 6 28 L 100 6 L 194 28 C 194 146 176 200 100 234 Z" fill="url(#shieldGoldBevel)" />
-
-                            <!-- 內層盾面主體 (金色高光) -->
-                            <path d="M 100 220 C 34 188 18 138 18 36 L 100 16 L 182 36 C 182 138 166 188 100 220 Z" fill="url(#shieldBodyGradient)" />
-
-                            <!-- 標誌上方經典深褐色光影折面 (立體弧面) -->
-                            <path d="M 100 16 L 182 36 C 182 92 165 132 142 152 C 112 128 68 116 20 128 C 19 86 18 42 18 36 Z" fill="url(#shieldFacetDark)" />
-
-                            <!-- 立體弧面下緣金色反光線 -->
-                            <path d="M 20 128 C 68 116 112 128 142 152" fill="none" stroke="url(#shieldGoldBevel)" stroke-width="2.5" opacity="0.85" />
-
-                            <!-- UPS 專屬經典立體字體 (帶金色金屬厚度與反光質感) -->
-                            <g filter="url(#bevelFilter)">
-                                <text x="100" y="152" text-anchor="middle" fill="url(#upsTextMetallic)" stroke="#ffeeb8" stroke-width="1.2" font-family="'Arial Black', Impact, 'Helvetica Neue', sans-serif" font-weight="900" font-size="70" letter-spacing="-4">UPS</text>
-                            </g>
-
-                            <!-- 右下角商標標記 TM -->
-                            <text x="162" y="214" fill="url(#shieldGoldBevel)" font-family="Arial, sans-serif" font-weight="bold" font-size="13" opacity="0.95">TM</text>
+                
+                <!-- Left: Single-line Title and Logo matching image_5.png -->
+                <div class="flex items-center gap-2.5 cursor-pointer min-w-0" onclick="switchPage('uld')">
+                    <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-md">
+                        <img src="image.png" alt="UPS" class="w-full h-full object-contain drop-shadow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <svg viewBox="0 0 200 240" class="w-full h-full hidden" style="display:none;">
+                            <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="#ffbe10" />
+                            <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
+                            <text x="100" y="146" text-anchor="middle" fill="#ffbe10" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
+                            <text x="156" y="210" fill="#ffbe10" font-family="Arial, sans-serif" font-weight="bold" font-size="14">TM</text>
                         </svg>
                     </div>
 
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h1 class="font-extrabold text-sm sm:text-lg md:text-xl leading-none text-white tracking-normal font-sans">
+                    <div class="flex flex-col justify-center min-w-0">
+                        <div class="flex items-center gap-2 whitespace-nowrap">
+                            <span class="font-extrabold text-sm sm:text-lg md:text-xl text-white tracking-normal font-sans">
                                 ULD Inspect360
-                            </h1>
-                            <span class="text-[10px] sm:text-[11px] md:text-xs bg-[#ffb500] text-[#2b1610] px-2 py-0.5 rounded-full font-bold shadow-sm flex items-center gap-1 font-sans">
+                            </span>
+                            <span class="text-[10px] sm:text-[11px] bg-[#ffb500] text-[#2b1610] px-2 py-0.5 rounded-full font-bold shadow-sm inline-flex items-center gap-1 font-sans">
                                 <i class="fa-solid fa-cube text-[9px]"></i> 3D 適航檢查
                             </span>
                         </div>
-                        <p class="text-[10px] sm:text-xs text-[#ffb500] font-sans font-semibold tracking-normal mt-1">
+                        <p class="text-[10px] sm:text-xs text-[#ffb500] font-sans font-semibold tracking-normal mt-0.5 whitespace-nowrap">
                             ULD 3D 檢驗與適航查詢工具
                         </p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-1.5 md:gap-2">
-                    <!-- PWA Native Install Button (Chrome, Android, Edge) -->
-                    <button id="pwa-install-btn" onclick="triggerPwaInstall()" class="hidden px-2.5 py-1.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow-md transition animate-install-glow">
-                        <i class="fa-solid fa-download"></i>
-                        <span>安裝 App</span>
-                    </button>
-
-                    <!-- iOS Install Guide Button (Safari) -->
-                    <button id="pwa-ios-guide-btn" onclick="openIosModal()" class="hidden px-2.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-xs font-bold flex items-center gap-1.5 shadow transition">
-                        <i class="fa-solid fa-mobile-screen"></i>
-                        <span>安裝至主畫面</span>
-                    </button>
-
-                    <!-- Inspection Card Button -->
-                    <button onclick="openCardModal()" class="px-2.5 md:px-3 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 active:scale-95 rounded-lg text-xs font-black flex items-center gap-1 shadow-md transition">
-                        <i class="fa-solid fa-id-card text-xs"></i> 
+                <!-- Right: Inspection Card Button matching image_5.png -->
+                <div class="flex items-center flex-shrink-0">
+                    <button onclick="openCardModal()" class="px-3 md:px-4 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 active:scale-95 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-md transition">
+                        <i class="fa-solid fa-id-card text-xs sm:text-sm"></i> 
                         <span>檢查卡</span>
                     </button>
                 </div>
@@ -239,7 +202,7 @@
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
                                 <i class="fa-solid fa-ruler"></i>
                             </span>
-                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 1, 2, 3, 11, 12, 撕裂, 穿孔, 門纜..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
+                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 10吋, 1-10in, 96sq, 撕裂, 穿孔..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
                         </div>
                         <p class="text-[10px] text-slate-400 mt-1">即時比對 83-48-002 拒收臨界尺寸與合格標準。</p>
                     </div>
@@ -347,7 +310,6 @@
 
     </main>
 
-    <!-- Inspection Card Modal (FORM: 83-48-002) -->
     <div id="card-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2.5 md:p-4">
         <div class="bg-white border border-slate-200 rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
             
@@ -388,7 +350,6 @@
         </div>
     </div>
 
-    <!-- iOS Safari "Add to Home Screen" Guidance Modal -->
     <div id="ios-guide-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-center">
             <button onclick="closeIosModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-lg p-1">
@@ -490,7 +451,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v12-pwa';
+            const CACHE_NAME = 'uld-inspect360-v25-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -539,9 +500,7 @@
             try {
                 const swBlob = new Blob([swWorkerScript], { type: 'text/javascript' });
                 const swBlobUrl = URL.createObjectURL(swBlob);
-                navigator.serviceWorker.register(swBlobUrl).then(reg => {
-                    console.log('ULD PWA Service Worker Registered Successfully.');
-                }).catch(err => {
+                navigator.serviceWorker.register(swBlobUrl).catch(err => {
                     console.warn('SW registration fallback:', err);
                 });
             } catch (err) {
@@ -551,13 +510,17 @@
 
         /* PWA Install Prompts Logic */
         let deferredPwaPrompt = null;
-        const pwaInstallBtn = document.getElementById('pwa-install-btn');
-        const iosGuideBtn = document.getElementById('pwa-ios-guide-btn');
+        const pwaBannerToast = document.getElementById('pwa-banner-toast');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPwaPrompt = e;
-            if (pwaInstallBtn) pwaInstallBtn.classList.remove('hidden');
+            // 延遲 1.5 秒後彈出安裝提示橫幅
+            setTimeout(() => {
+                if (pwaBannerToast && !sessionStorage.getItem('pwa_dismissed')) {
+                    pwaBannerToast.classList.remove('hidden');
+                }
+            }, 1500);
         });
 
         function triggerPwaInstall() {
@@ -566,24 +529,41 @@
                 deferredPwaPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
                         showToast('感謝安裝！ULD Inspect360 已就緒');
-                        if (pwaInstallBtn) pwaInstallBtn.classList.add('hidden');
                     }
                     deferredPwaPrompt = null;
+                    if (pwaBannerToast) pwaBannerToast.classList.add('hidden');
                 });
+            } else {
+                // 若為 iOS 裝置或已安裝過，引導至 iOS 主畫面說明
+                const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIos) {
+                    openIosModal();
+                } else {
+                    showToast('若瀏覽器未自動彈出，請從瀏覽器選單點擊「安裝應用程式」或「加到主畫面」。');
+                }
             }
         }
 
+        function dismissPwaBanner() {
+            if (pwaBannerToast) pwaBannerToast.classList.add('hidden');
+            sessionStorage.setItem('pwa_dismissed', 'true');
+        }
+
         window.addEventListener('appinstalled', () => {
-            if (pwaInstallBtn) pwaInstallBtn.classList.add('hidden');
+            if (pwaBannerToast) pwaBannerToast.classList.add('hidden');
             showToast('ULD Inspect360 PWA 已成功安裝至您的裝置！');
         });
 
-        /* Detect iOS Safari */
+        /* Detect iOS Safari for PWA prompt */
         const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandaloneMode = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
 
         if (isIosDevice && !isStandaloneMode) {
-            if (iosGuideBtn) iosGuideBtn.classList.remove('hidden');
+            setTimeout(() => {
+                if (pwaBannerToast && !sessionStorage.getItem('pwa_dismissed')) {
+                    pwaBannerToast.classList.remove('hidden');
+                }
+            }, 2000);
         }
 
         function openIosModal() {
@@ -818,7 +798,7 @@
                 limitValue: "> 2 in / 5.08 cm",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "突出超過 2 吋可能碰撞機身內部結構，嚴禁使用，判定為不符合標準。"
+                note: "突出超過 2 吋可能碰撞機身內部結構，嚴禁使用，判定為不可接受。"
             },
             {
                 id: "frame_dmg",
@@ -846,23 +826,23 @@
                 id: "door_canvas_serviceable",
                 category: "door",
                 categoryName: "門體與五金 / Roll-up Door",
-                title: "捲簾門帆布總損壞面積 (1-7 吋 / 1-95 平方吋)",
-                condition: "帆布總損壞面積在 1-7 吋以下，或 1-95 平方吋 (1-95 sq in) 以下。",
-                limitValue: "1-7 in / 1-95 sq in",
+                title: "捲簾門帆布總損壞面積超過 8×12 吋 (20.32 x 30.48cm) (即 96 平方吋 / 619.34 平方公分)",
+                condition: "帆布總損壞面積在 95 平方吋 (95 sq in) 或以下。",
+                limitValue: "≤ 95 sq in",
                 verdict: "符合標準 (Serviceable)",
                 verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "帆布總損壞面積 1-7 吋以下同 1-95 sq 平方吋以下顯示帆布總損壞面積可符合標準。"
+                note: "8 吋或以上同 96 sq 平方吋或以上顯示不可接受。"
             },
             {
                 id: "door_canvas_unserviceable",
                 category: "door",
                 categoryName: "門體與五金 / Roll-up Door",
-                title: "捲簾門帆布總損壞面積 (8 吋或以上 / 96 平方吋或以上)",
-                condition: "帆布總損壞面積達 8 吋或以上，或 96 平方吋 (96 sq in) 或以上 (即 8 × 12 吋 / 619.35 平方公分)。",
-                limitValue: "≥ 8 in / ≥ 96 sq in",
-                verdict: "不符合標準 (Unserviceable)",
+                title: "捲簾門帆布總損壞面積超過 8×12 吋 (20.32 x 30.48cm) (即 96 平方吋 / 619.34 平方公分)",
+                condition: "帆布總損壞面積達 96 平方吋 (96 sq in) 或以上 (即超過 8×12 吋 / 619.34 平方公分)。",
+                limitValue: "≥ 96 sq in",
+                verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "8 吋或以上同 96 sq 平方吋或以上顯示不符合標準。"
+                note: "8 吋或以上同 96 sq 平方吋或以上顯示不可接受。"
             },
             {
                 id: "door_hardware",
@@ -893,9 +873,9 @@
                 title: "門纜磨損與鋼絲外露 (12 吋或以上 / 25% 或以上)",
                 condition: "門纜磨損達 25% 或以上，或門纜鋼絲外露達 12 吋 (30.48 cm) 或以上。",
                 limitValue: "≥ 25% / ≥ 12 in",
-                verdict: "不符合標準 (Unserviceable)",
+                verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 12 吋或以上同 25% 或以上顯示不符合標準。"
+                note: "輸入 12 吋或以上同 25% 或以上顯示不可接受。"
             },
             {
                 id: "door_bar",
@@ -926,9 +906,9 @@
                 title: "已裝載貨物 ULD 底板彎曲曲度 (1.25 吋或以上)",
                 condition: "已裝載貨物的 ULD 底板彎曲曲度達 1.25 吋 (3.17 cm) 或以上。",
                 limitValue: "≥ 1.25 in / 3.17 cm",
-                verdict: "已裝載貨物不符合標準 (Unserviceable)",
+                verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 1.25 吋或以上數字顯示已裝載貨物不符合標準。"
+                note: "輸入 1.25 吋或以上數字顯示已裝載貨物不可接受。"
             },
             {
                 id: "base_bow_empty_serviceable",
@@ -948,9 +928,9 @@
                 title: "空 ULD 底板彎曲曲度 (2 吋或以上)",
                 condition: "空 ULD 底板彎曲曲度達 2 吋 (5.08 cm) 或以上。",
                 limitValue: "≥ 2 in / 5.08 cm",
-                verdict: "不符合標準 (Unserviceable)",
+                verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 2 吋或以上數字顯示不符合標準。"
+                note: "輸入 2 吋或以上數字顯示不可接受。"
             },
             {
                 id: "base_missing_rail",
@@ -981,9 +961,9 @@
                 title: "底板穿孔或撕裂 - 距離板邊緣小於 3 吋 (3 吋或以上)",
                 condition: "距離板邊緣小於 3 吋 (7.62 cm) 處，底板穿孔或撕裂尺寸達 3 吋或以上。",
                 limitValue: "≥ 3 in (距離板邊緣 < 3 in)",
-                verdict: "距離板邊緣小於3吋不符合標準",
+                verdict: "不可接受",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 3 吋或以上顯示距離板邊緣小於3吋不符合標準。"
+                note: "輸入 3 吋或以上顯示距離板邊緣小於3吋不可接受。"
             },
             {
                 id: "base_tear_outer_serviceable",
@@ -1003,9 +983,9 @@
                 title: "底板穿孔或撕裂 - 距離板邊緣 3 吋以外 (12 吋或以上)",
                 condition: "距離板邊緣 3 吋以外 (7.62 cm 外)，底板穿孔或撕裂尺寸達 12 吋或以上。",
                 limitValue: "≥ 12 in (距離板邊緣 > 3 in)",
-                verdict: "不符合標準",
+                verdict: "不可接受",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "12 吋或以上顯示不符合標準。"
+                note: "12 吋或以上顯示不可接受。"
             },
             {
                 id: "base_corner",
@@ -1071,7 +1051,7 @@
                 limitValue: "必須齊全且功能正常",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "雙腳鎖扣不齊全或無法鎖定即判定為不可接受。"
+                note: "所有D-Ring (Double Stud Fittings)數量齊全且功能正常.（正常集裝網總數有18個D-Ring (Double Stud Fittings).（5條角繩總數有19個D-Ring (Double Stud Fittings)."
             },
             {
                 id: "net_hooks",
@@ -1082,7 +1062,7 @@
                 limitValue: "每側 ≤ 1 個缺失/損壞",
                 verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "網鉤每側缺失或失效超過 1 個即判定不可接受。"
+                note: "每側缺失或不可使用的網鉤不得超過1個.（正常集裝網總數有18個網鉤 (Adjusting Hooks) .（5條角繩總數有17個網鉤 (Adjusting Hooks)"
             },
             {
                 id: "net_lashing",
@@ -1113,7 +1093,7 @@
                 title: "集裝網底層兩排以上繩索 (Above Bottom Two Rows Roping)",
                 condition: "底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)。若兩個繩結之間有超過 1 條完全斷裂/磨損，判定為不可接受。",
                 limitValue: "≤ 1 條斷裂繩索 / 兩繩結間",
-                verdict: "超過限制即不可接受 (Unserviceable)",
+                verdict: "不可接受 (Unserviceable)",
                 verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
                 note: "符合標準：底層兩排以上，兩個繩結之間不得有超過一條完全斷裂/磨損的繩索（不包含角繩）。"
             },
@@ -1581,11 +1561,17 @@
             const categoryVal = document.getElementById('search-category').value;
             const rawKeyword = document.getElementById('search-keyword').value.trim();
 
+            const isInchExplicit = /(\d+(?:\.\d+)?)\s*(吋|時|in|inch|inches)/i.test(rawKeyword);
+
             const filtered = searchKnowledgeBase.filter(item => {
                 const matchCategory = (categoryVal === 'all' || item.category === categoryVal);
                 if (!matchCategory) return false;
 
                 if (!rawKeyword) return true;
+
+                if (isInchExplicit && item.id === 'frame_fasteners') {
+                    return false;
+                }
 
                 const combinedText = (
                     item.title + " " + 
@@ -1597,6 +1583,7 @@
 
                 const normalizedQuery = rawKeyword
                     .replace(/[,，]/g, ' ')
+                    .replace(/(\d+(?:\.\d+)?)\s*(sq\s*in|sqin|平方吋|平方英寸|平方公分|cm²)/gi, '$1sqin')
                     .replace(/(\d+(?:\.\d+)?)\s*(吋|時|in|inch|inches)/gi, '$1吋')
                     .replace(/(\d+(?:\.\d+)?)\s*(cm|公分)/gi, '$1cm')
                     .replace(/(\d+(?:\.\d+)?)\s*%/gi, '$1%')
@@ -1626,17 +1613,50 @@
 
                 if (hasLessThanSevenToken && item.id === 'panel_inner_unserviceable') return false;
 
+                // 檢查是否包含 <= 95 的數值
+                const hasLteNinetyFiveVal = queryTokens.some(t => {
+                    const m = t.match(/^(\d+(?:\.\d+)?)/);
+                    if (m) {
+                        const v = parseFloat(m[1]);
+                        return v <= 95 && v > 0;
+                    }
+                    return false;
+                });
+
+                if (hasLteNinetyFiveVal && item.id === 'door_canvas_unserviceable') {
+                    return false;
+                }
+
                 return queryTokens.every(token => {
-                    let numVal = null, pctVal = null;
+                    let numVal = null, pctVal = null, isSqVal = false;
 
                     const pctMatch = token.match(/^(\d+(?:\.\d+)?)%$/);
                     if (pctMatch) pctVal = parseFloat(pctMatch[1]);
 
-                    const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分|sq|sqin|平方吋|%)?$/i);
-                    if (dimMatch && !pctMatch) {
-                        numVal = parseFloat(dimMatch[1]);
-                    } else if (/^\d+(\.\d+)?$/.test(token)) {
-                        numVal = parseFloat(token);
+                    const sqMatch = token.match(/^(\d+(?:\.\d+)?)(sqin|sq|平方吋|平方英寸)?$/i);
+                    if (sqMatch && (token.includes('sq') || token.includes('平方'))) {
+                        numVal = parseFloat(sqMatch[1]);
+                        isSqVal = true;
+                    } else {
+                        const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分|%)?$/i);
+                        if (dimMatch && !pctMatch) {
+                            numVal = parseFloat(dimMatch[1]);
+                        } else if (/^\d+(\.\d+)?$/.test(token)) {
+                            numVal = parseFloat(token);
+                        }
+                    }
+
+                    if (item.id === 'panel_edge') {
+                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
+                    }
+
+                    if (item.id === 'frame_dmg') {
+                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
+                    }
+
+                    if (item.id === 'frame_fasteners') {
+                        if (isInchExplicit || isSqVal) return false;
+                        if (numVal !== null && numVal >= 1 && numVal <= 10) return true;
                     }
 
                     if (item.id === 'base_tear_edge_serviceable') {
@@ -1711,24 +1731,43 @@
                         }
                     }
 
-                    if (item.id === 'door_canvas_serviceable' && numVal !== null && ((numVal >= 1 && numVal <= 7) || (numVal >= 1 && numVal <= 95))) return true;
-                    if (item.id === 'door_canvas_unserviceable' && numVal !== null && (numVal >= 8 || numVal >= 96)) return true;
+                    if (item.id === 'door_canvas_serviceable') {
+                        if (numVal !== null) {
+                            if (numVal <= 95 && numVal > 0) return true;
+                            if (numVal >= 96) return false;
+                        }
+                    }
+
+                    if (item.id === 'door_canvas_unserviceable') {
+                        if (numVal !== null) {
+                            if (numVal <= 95) return false;
+                            if (numVal >= 96) return true;
+                        }
+                    }
+
+                    if (item.id === 'door_bar') {
+                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
+                    }
+
                     if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal >= 2) return false;
                     if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal < 2 && numVal > 0) return true;
                     if (item.id === 'panel_contour' && numVal !== null && numVal >= 2) return true;
 
                     if (hasGteSevenToken && (item.id === 'panel_edge' || item.id === 'panel_inner_unserviceable')) return true;
 
-                    if (dimMatch && !pctMatch) {
-                        const unit = dimMatch[2] ? dimMatch[2].toLowerCase() : '';
-                        if (['吋', '時', 'in', 'inch', 'inches'].includes(unit)) {
-                            const inchPattern = new RegExp(`(?<!\\d)${numVal}\\s*(吋|時|in|inch)`, 'i');
-                            const cmVal = (numVal * 2.54).toFixed(2).replace(/\.00$/, '');
-                            const cmPattern = new RegExp(`(?<!\\d)${cmVal}\\s*cm`, 'i');
-                            if (inchPattern.test(combinedText) || cmPattern.test(combinedText)) return true;
-                        } else if (['cm', '公分'].includes(unit)) {
-                            const cmPattern = new RegExp(`(?<!\\d)${numVal}\\s*(cm|公分)`, 'i');
-                            if (cmPattern.test(combinedText)) return true;
+                    if (!pctMatch) {
+                        const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
+                        if (dimMatch) {
+                            const unit = dimMatch[2] ? dimMatch[2].toLowerCase() : '';
+                            if (['吋', '時', 'in', 'inch', 'inches'].includes(unit)) {
+                                const inchPattern = new RegExp(`(?<!\\d)${numVal}\\s*(吋|時|in|inch)`, 'i');
+                                const cmVal = (numVal * 2.54).toFixed(2).replace(/\.00$/, '');
+                                const cmPattern = new RegExp(`(?<!\\d)${cmVal}\\s*cm`, 'i');
+                                if (inchPattern.test(combinedText) || cmPattern.test(combinedText)) return true;
+                            } else if (['cm', '公分'].includes(unit)) {
+                                const cmPattern = new RegExp(`(?<!\\d)${numVal}\\s*(cm|公分)`, 'i');
+                                if (cmPattern.test(combinedText)) return true;
+                            }
                         }
                     }
 
@@ -1738,7 +1777,6 @@
                     }
 
                     if (item.id === 'panel_inner_serviceable' && numVal !== null && numVal > 0 && numVal < 7) return true;
-                    if (item.id === 'panel_edge' && numVal !== null && [1, 4, 5].includes(numVal)) return true;
 
                     if (/^[a-z]{1,3}$/i.test(token)) {
                         const regex = new RegExp(`\\b${token}\\b`, 'i');
@@ -1771,7 +1809,7 @@
                     <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
                         <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
                         <p class="text-xs font-bold text-slate-700">找不到符合條件的適航檢查標準</p>
-                        <p class="text-[11px] text-slate-400 mt-1">請嘗試輸入不同尺寸數值（例如 1, 2, 3, 11, 12, 撕裂, 穿孔）或切換構件類別。</p>
+                        <p class="text-[11px] text-slate-400 mt-1">請嘗試輸入不同尺寸數值（例如 10吋, 1-10in, 96sq, 撕裂, 穿孔）或切換構件類別。</p>
                     </div>
                 `;
                 return;
@@ -1901,7 +1939,7 @@
             { 
                 titleZh: "ULD基本定義與概述", 
                 titleEn: "ULD Serviceability Card Overview", 
-                zh: "ULD是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD屬於可拆卸的航空容器部件，其設計、測試、生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的ULD必須具備足夠的結構強度，能夠在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。", 
+                zh: "ULD是指飛機集裝板與集裝網的組合，或飛機集裝箱。<br>ULD屬於可拆卸的航空容器部件，其設計、測試,生產、操作、維修及保養均受到民航監管機構嚴格規範及要求。符合適航標準的ULD必須具備足夠的結構強度，能夠在飛行期間有效固定及約束貨物載荷，為飛機系統及機體結構提供充分保護，以確保飛行安全。", 
                 en: "A Unit Load Device (ULD) is either an aircraft pallet and pallet net combination, or an aircraft container. ULDs are removable aircraft parts subject to strict civil aviation authorities' requirements from design, testing, production, and operations, to repair and maintenance. An airworthy ULD must be structurally capable of restraining the loads and providing adequate protection to the aircraft systems and structure during flight." 
             },
             { 
@@ -1919,7 +1957,7 @@
             { 
                 titleZh: "ULD 主體", 
                 titleEn: "Container Body", 
-                zh: "<b>面板</b><br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離框架邊緣3吋 ( 7.62 cm ) 以內，則不可接受<br>• 例外情況：若裂縫起始於框架邊緣，且長度不超過 3 吋 ( 7.62 cm )，則可接受<br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離骨架邊緣超過 3 吋( 7.62cm ) 的位置，其損壞長度不得超過 7 吋 ( 17.78cm )<br>• 面板突出原有 ULD 外部輪廓超過 2 吋 ( 5.08 cm )，不可接受<br><br><b>骨架構件與緊固件</b><br>• 損壞長度超過 3 吋 ( 7.62 cm ) 或寬度超過 0.5 吋 ( 1.27 cm )，不可接受<br>• 凹陷超過 2 吋 ( 5.08 cm )，不可接受<br>• 底部上方面板每側缺失超過一個緊固件，不可接受", 
+                zh: "<b>面板</b><br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離框架邊緣3吋 ( 7.62 cm ) 以內，則不可接受<br>• 例外情況：若裂紋起始於框架邊緣，且長度不超過 3 吋 ( 7.62 cm )，則可接受<br>• 面板損壞(裂縫、撕裂、穿孔或切口)若位於距離骨架邊緣超過 3 吋( 7.62cm ) 的位置，其損壞長度不得超過 7 吋 ( 17.78cm )<br>• 面板突出原有 ULD 外部輪廓超過 2 吋 ( 5.08 cm )，不可接受<br><br><b>骨架構件與緊固件</b><br>• 損壞長度超過 3 吋 ( 7.62 cm ) 或寬度超過 0.5 吋 ( 1.27 cm )，不可接受<br>• 凹陷超過 2 吋 ( 5.08 cm )，不可接受<br>• 底部上方面板每側缺失超過一個緊固件，不可接受", 
                 en: "<b>Panel</b><br>• Damage (crack, tear, puncture or cut) within 3-in (7.62-cm) of the frame edge<br>&nbsp;&nbsp;<i>Exception: If the crack originates at the frame edge not to exceed 3-in (7.62-cm) in length</i><br>• Damage (crack, tear, puncture or cut) beyond 3-in (7.62-cm) of the frame edge, shall not exceed 7-in (17.78-cm)<br>• Panels protruding more than 2-in (5.08-cm) exceeding the original outer contour of the ULD profile<br><br><b>Frame Members and Fasteners</b><br>• Damage > 3-in (7.62-cm) length or .5-in (1.27-cm) in width<br>• Indention >2-in (5.08-cm)<br>• More than one fastener missing per side of panel above the base rail assembly" 
             },
             { 
@@ -2028,7 +2066,6 @@
             renderBilingualCardModal();
         }
 
-        /* Handle Hash Routes for PWA shortcuts */
         function checkUrlHash() {
             const hash = window.location.hash;
             if (hash === '#search') {
