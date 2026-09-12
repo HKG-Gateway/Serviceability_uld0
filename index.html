@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>ULD Inspect360 - 官方 3D ULD 適航檢查與快速查詢工具</title>
     
+    <!-- PWA Primary Meta Tags -->
     <meta name="theme-color" content="#2b1610">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,8 +18,8 @@
     <!-- Dynamic PWA Manifest Placeholder -->
     <link rel="manifest" id="manifest-placeholder">
 
-    <!-- iOS App Icon -->
-    <link rel="apple-touch-icon" id="apple-touch-icon-link" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 240'><defs><linearGradient id='gold' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%23ffe17d'/><stop offset='40%25' stop-color='%23ffb500'/><stop offset='80%25' stop-color='%23d48800'/><stop offset='100%25' stop-color='%238a5400'/></linearGradient><linearGradient id='bgBrown' x1='0%25' y1='0%25' x2='0%25' y2='100%25'><stop offset='0%25' stop-color='%233a1a10'/><stop offset='100%25' stop-color='%231a0b06'/></linearGradient></defs><rect width='200' height='240' fill='%232b1610'/><path d='M 100 230 C 30 200 5 150 5 30 L 100 5 L 195 30 C 195 150 170 200 100 230 Z' fill='url(%23gold)'/><path d='M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z' fill='url(%23bgBrown)'/><text x='100' y='145' text-anchor='middle' fill='url(%23gold)' font-family='Arial Black, sans-serif' font-weight='900' font-size='68' letter-spacing='-3'>UPS</text></svg>">
+    <!-- iOS Touch App Icon (Initialized dynamically with high-res PNG) -->
+    <link rel="apple-touch-icon" id="apple-touch-icon-link" href="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg">
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -64,19 +65,20 @@
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
 
+    <!-- Offline Notification Banner -->
     <div id="offline-bar" class="hidden bg-amber-600 text-white text-xs py-1 px-3 text-center font-bold sticky top-0 z-50 shadow">
         <i class="fa-solid fa-wifi-slash mr-1"></i> 您正處於離線模式，ULD Inspect360 仍可完整查詢快取手冊與適航標準！
     </div>
 
-    <!-- PWA Install Banner Toast (Bottom Floating Bar for Mobile/Desktop) -->
+    <!-- PWA Install Banner Toast (Floating Bar for Mobile/Desktop) -->
     <div id="pwa-banner-toast" class="hidden fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-96 bg-[#2b1610] text-white border-2 border-[#ffb500] rounded-2xl p-4 shadow-2xl z-50 flex items-center justify-between gap-3 animate-install-glow">
         <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-12 flex-shrink-0 flex items-center justify-center">
-                <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow">
-                    <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="#ffbe10" />
-                    <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
-                    <text x="100" y="146" text-anchor="middle" fill="#ffbe10" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
-                </svg>
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
+                  alt="UPS Logo" 
+                  class="w-full h-full object-contain drop-shadow"
+                />
             </div>
             <div class="min-w-0">
                 <h4 class="font-extrabold text-[#ffb500] text-xs sm:text-sm truncate">安裝 ULD Inspect360 App</h4>
@@ -97,16 +99,14 @@
         <div class="max-w-7xl mx-auto flex flex-col gap-2">
             <div class="flex justify-between items-center gap-2 md:gap-4">
                 
-                <!-- Left: Single-line Title and Logo matching image_5.png -->
+                <!-- Left: Single-line Title and Logo -->
                 <div class="flex items-center gap-2.5 cursor-pointer min-w-0" onclick="switchPage('uld')">
                     <div class="relative flex-shrink-0 w-8 h-10 md:w-9 md:h-11 flex items-center justify-center filter drop-shadow-md">
-                        <img src="image.png" alt="UPS" class="w-full h-full object-contain drop-shadow" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <svg viewBox="0 0 200 240" class="w-full h-full hidden" style="display:none;">
-                            <path d="M 100 234 C 26 202 4 148 4 28 L 100 4 L 196 28 C 196 148 174 202 100 234 Z" fill="#ffbe10" />
-                            <path d="M 100 220 C 34 190 14 142 14 34 L 100 12 L 186 34 C 186 142 166 190 100 220 Z" fill="#2b1610" />
-                            <text x="100" y="146" text-anchor="middle" fill="#ffbe10" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="64" letter-spacing="-3">UPS</text>
-                            <text x="156" y="210" fill="#ffbe10" font-family="Arial, sans-serif" font-weight="bold" font-size="14">TM</text>
-                        </svg>
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
+                          alt="UPS Logo" 
+                          class="w-full h-full object-contain drop-shadow"
+                        />
                     </div>
 
                     <div class="flex flex-col justify-center min-w-0">
@@ -124,22 +124,25 @@
                     </div>
                 </div>
                 
-                <!-- Right: Inspection Card Button matching image_5.png -->
-                <div class="flex items-center flex-shrink-0">
-                    <button onclick="openCardModal()" class="px-3 md:px-4 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 active:scale-95 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-md transition">
+                <!-- Right: Inspection Card Button & Quick Action -->
+                <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button onclick="openCardModal()" class="px-2.5 sm:px-4 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 active:scale-95 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-md transition">
                         <i class="fa-solid fa-id-card text-xs sm:text-sm"></i> 
                         <span>檢查卡</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Page Navigation Tabs Switcher -->
-            <div class="flex bg-slate-900/70 p-1 rounded-lg border border-amber-500/30 text-xs font-bold">
-                <button id="nav-tab-uld" onclick="switchPage('uld')" class="flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold">
-                    <i class="fa-solid fa-boxes-packing"></i> 📦 ULD 適航檢查 (<span id="uld-count-badge">13</span>)
+            <!-- Page Navigation Tabs Switcher (3 Focused Modes) -->
+            <div class="grid grid-cols-3 bg-slate-900/70 p-1 rounded-lg border border-amber-500/30 text-xs font-bold gap-1">
+                <button id="nav-tab-uld" onclick="switchPage('uld')" class="py-1.5 px-2 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold truncate">
+                    <i class="fa-solid fa-boxes-packing"></i> <span>📦 3D 檢查 (<span id="uld-count-badge">13</span>)</span>
                 </button>
-                <button id="nav-tab-search" onclick="switchPage('search')" class="flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold">
-                    <i class="fa-solid fa-magnifying-glass"></i> 🔍 適航快速查詢工具
+                <button id="nav-tab-calc" onclick="switchPage('calc')" class="py-1.5 px-2 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold truncate">
+                    <i class="fa-solid fa-calculator text-amber-400"></i> <span>⚡ 判定計算機</span>
+                </button>
+                <button id="nav-tab-logger" onclick="switchPage('logger')" class="py-1.5 px-2 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold truncate">
+                    <i class="fa-solid fa-clipboard-list text-emerald-400"></i> <span>📋 檢驗速錄</span>
                 </button>
             </div>
         </div>
@@ -170,48 +173,6 @@
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-1.5 max-h-[220px] sm:max-h-[260px] lg:max-h-[290px] overflow-y-auto pr-1" id="item-selector-group"></div>
-            </div>
-
-            <!-- Search Filter Panel -->
-            <div id="left-panel-search" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm hidden">
-                <div class="flex items-center justify-between mb-3">
-                    <h2 class="text-xs uppercase tracking-wider text-slate-600 font-extrabold flex items-center gap-1.5">
-                        <i class="fa-solid fa-filter text-amber-600"></i>適航查詢篩選條件
-                    </h2>
-                    <button onclick="resetSearchEngine()" class="text-[10px] text-blue-600 hover:underline font-bold">重設條件</button>
-                </div>
-                
-                <div class="space-y-3 text-xs">
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">1. 選擇構件分類 (Component Category)</label>
-                        <select id="search-category" onchange="runSearchEngine()" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
-                            <option value="all">全部分類 (All Categories)</option>
-                            <option value="general">所有適航的 ULD / 板 (All Airworthy ULDs)</option>
-                            <option value="panel">面板 / Container Body & Panel</option>
-                            <option value="frame">骨架構件 / Frame Members & Fasteners</option>
-                            <option value="door">門體與五金配件 / Roll-up Door & Hardware</option>
-                            <option value="base">底板與側軌 / Base & Side Rails</option>
-                            <option value="net">集裝網 / Cargo Nets</option>
-                            <option value="strap">軍帶與綁固帶 / Restraint Straps</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="block font-bold text-slate-700 mb-1">2. 輸入損壞尺寸或關鍵字 (Damage / Inch / cm / %)</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
-                                <i class="fa-solid fa-ruler"></i>
-                            </span>
-                            <input type="text" id="search-keyword" oninput="runSearchEngine()" placeholder="例如: 10吋, 1-10in, 96sq, 撕裂, 穿孔..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none focus:border-amber-500">
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-1">即時比對 83-48-002 拒收臨界尺寸與合格標準。</p>
-                    </div>
-
-                    <div class="bg-amber-50 p-2.5 rounded-lg border border-amber-200 text-[11px] text-amber-900 flex items-start gap-2">
-                        <i class="fa-solid fa-shield-check text-amber-600 mt-0.5"></i>
-                        <span>支援離線離網判定，所有標準規格依據 <b class="font-bold">FORM: 83-48-002</b> 與 UCHPM CH04。</span>
-                    </div>
-                </div>
             </div>
 
             <div id="details-panel-container" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm flex-grow flex flex-col justify-between">
@@ -248,12 +209,47 @@
                 </div>
             </div>
 
+            <!-- Left Info Panel for Calculator -->
+            <div id="left-panel-calc-info" class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm hidden space-y-3 text-xs">
+                <div class="flex items-center gap-2 text-amber-700 font-extrabold text-sm border-b border-slate-200 pb-2">
+                    <i class="fa-solid fa-bolt text-amber-500"></i>
+                    <span>停機坪快速判定指南</span>
+                </div>
+                <p class="text-slate-600 leading-relaxed">
+                    在停機坪或裝載現場，依據實際測量值（吋 / cm / %）與破洞位置，計算機即時比對 <b class="text-slate-800">FORM: 83-48-002</b> 拒收臨界點。
+                </p>
+                <div class="space-y-1.5 bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-mono text-[11px]">
+                    <div class="flex justify-between text-slate-700"><span>面板邊緣臨界:</span><b>3 吋 (7.62 cm)</b></div>
+                    <div class="flex justify-between text-slate-700"><span>面板內部臨界:</span><b>7 吋 (17.78 cm)</b></div>
+                    <div class="flex justify-between text-slate-700"><span>裝載底板彎曲:</span><b>1.25 吋 (3.17 cm)</b></div>
+                    <div class="flex justify-between text-slate-700"><span>空底板彎曲:</span><b>2.0 吋 (5.08 cm)</b></div>
+                    <div class="flex justify-between text-slate-700"><span>捲簾門損壞:</span><b>96 平方吋 (619 cm²)</b></div>
+                    <div class="flex justify-between text-slate-700"><span>門纜磨損臨界:</span><b>25% / 12 吋鋼絲</b></div>
+                </div>
+                <button onclick="switchPage('logger')" class="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg shadow-sm transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-clipboard-check"></i> 前往檢驗報告速錄 (Defect Logger)
+                </button>
+            </div>
+
+            <div id="left-panel-logger-info" class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm hidden space-y-3 text-xs">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2">
+                    <div class="flex items-center gap-2 text-slate-800 font-extrabold text-sm">
+                        <i class="fa-solid fa-clock-rotate-left text-emerald-600"></i>
+                        <span>當班速錄歷史 (<span id="log-count-badge">0</span>)</span>
+                    </div>
+                    <button onclick="clearAllLogs()" class="text-red-600 hover:underline font-bold text-[11px]">清空記錄</button>
+                </div>
+                <div id="local-logs-container" class="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+                    <p class="text-[11px] text-slate-400 text-center py-6">暫無當班檢驗記錄，填寫右側表單即可即時新增。</p>
+                </div>
+            </div>
+
         </div>
 
-        <!-- Right 3D & Search Results Panel -->
+        <!-- Right 3D, Search Results, Calculator & Defect Logger Panels -->
         <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
 
-            <!-- ULD 3D 檢視面板 -->
+            <!-- 1. ULD 3D 檢視面板 -->
             <div id="main-view-uld" class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
                 <div class="bg-slate-50 border-b border-slate-200 px-3 py-2 flex justify-between items-center gap-2">
                     <div class="flex items-center gap-2">
@@ -291,18 +287,246 @@
                 </div>
             </div>
 
-            <!-- 適航查詢工具結果面板 -->
-            <div id="main-view-search" class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col flex-grow hidden overflow-hidden">
+            <!-- 2. 即時適航判定計算機 (Airworthiness Quick Calculator) -->
+            <div id="main-view-calc" class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col flex-grow hidden overflow-hidden">
                 <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
                     <div class="flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-amber-600"></i>
-                        <h3 class="font-extrabold text-xs md:text-sm text-slate-800">適航檢查判定結果與查詢對照</h3>
+                        <i class="fa-solid fa-calculator text-amber-600 text-base"></i>
+                        <div>
+                            <h3 class="font-extrabold text-xs md:text-sm text-slate-900">即時適航判定計算機 (Airworthiness Quick Calculator)</h3>
+                            <p class="text-[10px] text-slate-500">輸入測量數值，秒級判定 🟢 Serviceable 或 🔴 Unserviceable</p>
+                        </div>
                     </div>
-                    <span id="search-result-count" class="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">顯示全部條目</span>
+                    <span class="text-[10px] bg-emerald-100 text-emerald-900 font-bold px-2 py-0.5 rounded border border-emerald-300">
+                        FORM: 83-48-002 準則
+                    </span>
                 </div>
 
-                <div class="p-3 md:p-4 overflow-y-auto max-h-[580px] space-y-3 bg-slate-50/50" id="search-results-container">
-                    <!-- Dynamic Search Results Injected Here -->
+                <div class="p-4 md:p-5 space-y-4 overflow-y-auto max-h-[640px]">
+                    <!-- Step 1: Component Selection -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                        <label class="block text-xs font-black text-slate-700 uppercase tracking-wide">
+                            步驟 1：選擇構件檢查項目 (Select Inspection Component)
+                        </label>
+                        <select id="calc-scenario" onchange="updateCalcFields()" class="w-full p-2.5 bg-white border border-slate-300 rounded-lg text-xs md:text-sm font-bold text-slate-800 focus:ring-2 focus:ring-amber-500 focus:outline-none">
+                            <optgroup label="面板 (Container Body & Panel)">
+                                <option value="panel_damage">面板損壞 (裂縫/撕裂/穿孔/切口) - 距離邊緣與長度判定</option>
+                                <option value="panel_contour">面板突出原有 ULD 外部輪廓 (Protruding Contour)</option>
+                            </optgroup>
+                            <optgroup label="骨架構件與緊固件 (Frame Members & Fasteners)">
+                                <option value="frame_dimensions">骨架結構損壞 (長度 / 寬度 / 凹陷深度)</option>
+                                <option value="frame_fastener">底部上方面板每側固定件缺失數量</option>
+                            </optgroup>
+                            <optgroup label="捲簾門與五金 (Roll-up Door & Hardware)">
+                                <option value="door_canvas">捲簾門帆布總損壞面積 (Canvas Damage Area)</option>
+                                <option value="door_cable">門纜繩磨損比例 (%) 或 鋼絲外露長度</option>
+                                <option value="door_bar">門檻 (Door Bar Extrusion) 裂縫長度與寬度</option>
+                                <option value="door_latch">五金部件缺失/損壞 (導致門無法固定)</option>
+                            </optgroup>
+                            <optgroup label="底板與側軌 (Base & Side Rails)">
+                                <option value="base_bow">底板彎曲曲度 (已裝載貨物 vs 空 ULD)</option>
+                                <option value="base_tear">底板穿孔或撕裂尺寸 (依距板邊緣距離)</option>
+                                <option value="base_rivets">底板缺失或鬆動的鉚釘數量</option>
+                                <option value="base_rail_missing">底板邊軌 / 板邊緣軌缺失或分離</option>
+                                <option value="base_corner_status">板角完好性 (Corner Casting)</option>
+                            </optgroup>
+                            <optgroup label="集裝網 (Cargo Nets)">
+                                <option value="net_tso">TSO 標籤可辨識性</option>
+                                <option value="net_fittings">D-ring 雙腳鎖扣 (Double Stud Fittings) 完整度</option>
+                                <option value="net_hooks">網鉤 (Adjusting Hooks) 每側缺失或損壞數量</option>
+                                <option value="net_roping_lower">網角繩 / 最底層 / 底層上方兩排單處斷裂磨損</option>
+                                <option value="net_roping_upper">底層兩排以上繩結間完全斷裂/磨損繩索數</option>
+                            </optgroup>
+                            <optgroup label="軍帶與綁固帶 (Restraint Straps)">
+                                <option value="strap_blue_scaf">主要 SCAF 藍色軍帶 (標籤/效期/任何損壞)</option>
+                                <option value="strap_yellow_sec">次要貨物綁固帶 (黃色) - 磨損寬度 / 繩結 / 鎖扣</option>
+                                <option value="strap_trsl">TRSL 臨時綁帶 (破損狀況 / 每板上限)</option>
+                            </optgroup>
+                            <optgroup label="標籤與通用適航 (General Airworthiness)">
+                                <option value="general_labels">TSO 標籤 / 箱重標籤 / ULD 識別碼清晰度</option>
+                                <option value="fcc_dg_rules">板裝含有電池貨品 / 危險品 (DG) 之 FCC 使用規範</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <!-- Step 2: Dynamic Value Input Fields Container -->
+                    <div id="calc-input-fields" class="bg-white p-4 rounded-xl border border-slate-200 space-y-3 shadow-inner">
+                        <!-- Dynamically populated according to scenario -->
+                    </div>
+
+                    <!-- Step 3: Calculation & Verdict Actions -->
+                    <div class="flex flex-col sm:flex-row gap-2">
+                        <button onclick="calculateAirworthiness()" class="flex-1 py-3 ups-gold-gradient text-[#2b1610] font-black rounded-xl text-sm shadow-md hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-calculator"></i>
+                            <span>執行即時適航判定 (Evaluate)</span>
+                        </button>
+                        <button onclick="resetCalculatorForm()" class="px-4 py-3 bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold rounded-xl text-xs transition">
+                            重置
+                        </button>
+                    </div>
+
+                    <!-- Step 4: Big Result Banner -->
+                    <div id="calc-result-banner" class="hidden p-4 rounded-2xl border-2 transition-all space-y-3">
+                        <div class="flex flex-wrap items-center justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span id="calc-result-icon" class="text-2xl"></span>
+                                <div>
+                                    <h4 id="calc-result-title" class="font-black text-base md:text-lg"></h4>
+                                    <p id="calc-result-subtitle" class="text-xs font-bold"></p>
+                                </div>
+                            </div>
+                            <span id="calc-result-standard" class="text-[11px] font-mono px-2.5 py-1 rounded-full font-bold"></span>
+                        </div>
+
+                        <div id="calc-result-details" class="text-xs leading-relaxed p-3 bg-white/80 rounded-xl border space-y-1.5 font-medium"></div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <button onclick="copyCalcResult()" class="text-xs text-slate-700 hover:text-black font-bold flex items-center gap-1 underline">
+                                <i class="fa-regular fa-copy"></i> 複製此判定結果
+                            </button>
+                            <button onclick="transferCalcToLogger()" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-lg shadow transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-share-from-square"></i> 帶入檢驗報告速錄 (Send to Defect Logger)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. 離線電子檢查卡與檢驗報告速錄 (Defect Logger) -->
+            <div id="main-view-logger" class="bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col flex-grow hidden overflow-hidden">
+                <div class="bg-slate-50 border-b border-slate-200 px-4 py-3 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check text-emerald-600 text-base"></i>
+                        <div>
+                            <h3 class="font-extrabold text-xs md:text-sm text-slate-900">離線電子檢查卡與檢驗報告速錄 (Defect Logger)</h3>
+                            <p class="text-[10px] text-slate-500">停機坪交接、異常通報、符合規範一鍵產生標準交接摘要</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] bg-amber-100 text-amber-900 font-bold px-2 py-0.5 rounded border border-amber-300">
+                        OFFLINE READY
+                    </span>
+                </div>
+
+                <div class="p-4 md:p-5 space-y-4 overflow-y-auto max-h-[640px]">
+                    <!-- Form Header Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">ULD 箱/板號 (ULD Number) *</label>
+                            <input type="text" id="log-uld-num" placeholder="例如: AKE12345UPS" class="w-full p-2 uppercase bg-slate-50 border border-slate-300 rounded-lg font-mono font-bold text-slate-900 focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">ULD 類型 (Type)</label>
+                            <select id="log-uld-type" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none">
+                                <option value="AMP Container">AMP 集裝箱</option>
+                                <option value="AMJ Container">AMJ 集裝箱</option>
+                                <option value="AMD Container">AMD 集裝箱</option>
+                                <option value="AAY Container">AAY 集裝箱</option>
+                                <option value="AAZ Container">AAZ 集裝箱</option>
+                                <option value="ALP Container">ALP 集裝箱</option>
+                                <option value="AAD Container">AAD 集裝箱</option>
+                                <option value="PAG Pallet">PAG 集裝板</option>
+                                <option value="PMC Pallet">PMC 集裝板</option>
+                                <option value="FCC Flexible Container">FCC 軟體箱</option>
+                                <option value="Cargo Net">Cargo Net 集裝網</option>
+                                <option value="Restraint Straps">Restraint Straps 軍帶</option>
+                                <option value="TRSL Straps">TRSL 臨時綁帶</option>
+                                <option value="Other ULD">其他 ULD 設備</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">檢查員工號 / 班別 (Inspector)</label>
+                            <input type="text" id="log-inspector" placeholder="例如: 98124 / 晨班" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-900 focus:outline-none focus:border-amber-500">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">泊位 / 地點 (Stand / Bay)</label>
+                            <input type="text" id="log-location" placeholder="例如: Bay 24 / Ramp 3" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-900 focus:outline-none focus:border-amber-500">
+                        </div>
+                    </div>
+
+                    <!-- Status Verdict Selection -->
+                    <div>
+                        <label class="block text-xs font-black text-slate-700 mb-1.5 uppercase">
+                            適航判定結果 (Serviceability Status) *
+                        </label>
+                        <div class="grid grid-cols-3 gap-2 text-xs">
+                            <label class="flex items-center justify-center gap-2 p-2.5 border rounded-xl cursor-pointer font-bold transition-all has-[:checked]:bg-emerald-50 has-[:checked]:border-emerald-500 has-[:checked]:text-emerald-800 bg-slate-50 text-slate-600">
+                                <input type="radio" name="log-status" value="🟢 Serviceable (合格可使用)" checked class="accent-emerald-600">
+                                <span>🟢 合格 (Serviceable)</span>
+                            </label>
+                            <label class="flex items-center justify-center gap-2 p-2.5 border rounded-xl cursor-pointer font-bold transition-all has-[:checked]:bg-red-50 has-[:checked]:border-red-500 has-[:checked]:text-red-800 bg-slate-50 text-slate-600">
+                                <input type="radio" name="log-status" value="🔴 Unserviceable (拒收不可使用)" class="accent-red-600">
+                                <span>🔴 拒收 (Unserviceable)</span>
+                            </label>
+                            <label class="flex items-center justify-center gap-2 p-2.5 border rounded-xl cursor-pointer font-bold transition-all has-[:checked]:bg-amber-50 has-[:checked]:border-amber-500 has-[:checked]:text-amber-800 bg-slate-50 text-slate-600">
+                                <input type="radio" name="log-status" value="⚠️ Pending (待當班主管複核)" class="accent-amber-600">
+                                <span>⚠️ 待複核 (Pending)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Defect Quick Chips -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="text-xs font-bold text-slate-700">快速標記常見缺陷 (Quick Defect Tags)</label>
+                            <span class="text-[10px] text-slate-400">點擊直接填入下方說明</span>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5 text-[11px]">
+                            <button type="button" onclick="appendDefectChip('面板距邊緣<3吋裂紋超標')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 面板裂紋超標</button>
+                            <button type="button" onclick="appendDefectChip('面板突出外部輪廓>2吋')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 面板輪廓突出</button>
+                            <button type="button" onclick="appendDefectChip('底板彎曲幅度超標')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 底板彎曲</button>
+                            <button type="button" onclick="appendDefectChip('底板缺失鉚釘超過5個')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 鉚釘缺失>5個</button>
+                            <button type="button" onclick="appendDefectChip('門纜磨損超25%或鋼絲外露')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 門纜磨損</button>
+                            <button type="button" onclick="appendDefectChip('捲簾門帆布損壞超過96sq in')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 帆布破損超標</button>
+                            <button type="button" onclick="appendDefectChip('TSO標籤缺失或無法辨識')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ TSO標籤缺失</button>
+                            <button type="button" onclick="appendDefectChip('集裝網雙腳鎖扣D-ring缺失損壞')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 網扣缺失</button>
+                            <button type="button" onclick="appendDefectChip('軍帶切口磨損超過25%寬度')" class="px-2 py-1 bg-slate-100 hover:bg-amber-100 border border-slate-300 rounded-md text-slate-700 font-medium transition">+ 軍帶磨損</button>
+                        </div>
+                    </div>
+
+                    <!-- Defect Descriptions -->
+                    <div class="space-y-1">
+                        <label class="block font-bold text-slate-700 text-xs">損壞情況與實測數據 (Defect Description & Measurements)</label>
+                        <textarea id="log-defect-desc" rows="3" placeholder="例如：右側面板距離框架邊緣 2 吋處有一道 4 吋穿孔；底板彎曲達 1.5 吋；依據 FORM 83-48-002 判定拒收。" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs leading-relaxed font-sans text-slate-800 focus:outline-none focus:border-amber-500"></textarea>
+                    </div>
+
+                    <!-- Action Taken -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">處置處置方式 (Action Taken)</label>
+                            <select id="log-action" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-800 focus:outline-none">
+                                <option value="已貼紅色拒收標籤並安排送修 (Red Tagged & Sent to Maintenance)">已貼紅標送修 (Red Tagged for Repair)</option>
+                                <option value="正常放行安排上機裝載 (Released for Flight Loading)">正常放行裝載 (Released for Flight)</option>
+                                <option value="已更換符合適航標準之 ULD (Replaced Airworthy ULD)">已現場更換良品 (Replaced)</option>
+                                <option value="已留置待 Supervisor 主管覆核 (Held for Supervisor Review)">留置待主管覆核 (Held for Review)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">通報管道 / 接收群組 (Target Group)</label>
+                            <input type="text" id="log-target" value="Ramp Operations / ULD Control" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-medium text-slate-900 focus:outline-none">
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
+                        <button onclick="generateAndCopyReport()" class="flex-1 min-w-[200px] py-3 ups-gold-gradient text-[#2b1610] font-black rounded-xl text-xs md:text-sm shadow-md hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-copy"></i>
+                            <span>一鍵生成交接通報摘要並複製</span>
+                        </button>
+                        <button onclick="saveCurrentLogToHistory()" class="px-4 py-3 bg-slate-800 hover:bg-slate-900 text-amber-300 font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-bookmark"></i>
+                            <span>保存至本機歷史</span>
+                        </button>
+                    </div>
+
+                    <!-- Generated Preview Box -->
+                    <div class="space-y-1.5">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="font-bold text-slate-600">即時通報摘要預覽 (Formatted Preview):</span>
+                            <button onclick="copyGeneratedTextDirectly()" class="text-blue-600 hover:underline font-bold text-[11px]">
+                                <i class="fa-regular fa-clone mr-0.5"></i>重新複製
+                            </button>
+                        </div>
+                        <pre id="log-preview-output" class="p-3 bg-slate-900 text-amber-300 text-[11px] rounded-xl font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-all">填寫上方表單並點擊「一鍵生成交接通報摘要」，標準交接文字將顯示於此並自動複製至剪貼簿。</pre>
+                    </div>
                 </div>
             </div>
 
@@ -310,17 +534,18 @@
 
     </main>
 
+    <!-- Bilingual Inspection Card Modal (FORM: 83-48-002) -->
     <div id="card-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-2.5 md:p-4">
         <div class="bg-white border border-slate-200 rounded-xl max-w-5xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden">
             
             <div class="bg-[#2b1610] px-4 md:px-6 py-3 border-b-2 border-[#ffb500] flex flex-wrap justify-between items-center text-white gap-2 flex-shrink-0">
                 <div class="flex items-center gap-3">
-                    <div class="w-7 h-9 flex-shrink-0">
-                        <svg viewBox="0 0 200 240" class="w-full h-full">
-                            <path d="M 100 232 C 30 200 5 150 5 28 L 100 5 L 195 28 C 195 150 170 200 100 232 Z" fill="#ffbe10" />
-                            <path d="M 100 218 C 36 188 16 142 16 34 L 100 14 L 184 34 C 184 142 164 188 100 218 Z" fill="#2b1610" />
-                            <text x="100" y="148" text-anchor="middle" fill="#ffbe10" font-family="Arial Black" font-weight="900" font-size="70">UPS</text>
-                        </svg>
+                    <div class="w-7 h-9 flex-shrink-0 flex items-center justify-center">
+                        <img 
+                          src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
+                          alt="UPS Logo" 
+                          class="w-full h-full object-contain drop-shadow"
+                        />
                     </div>
                     <div>
                         <h3 class="font-bold text-[#ffb500] text-sm md:text-base flex items-center gap-2">
@@ -350,14 +575,19 @@
         </div>
     </div>
 
+    <!-- iOS Installation Guide Modal -->
     <div id="ios-guide-modal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white border border-slate-200 rounded-2xl max-w-sm w-full p-5 shadow-2xl relative text-center">
             <button onclick="closeIosModal()" class="absolute top-3 right-3 text-slate-400 hover:text-slate-600 text-lg p-1">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             
-            <div class="w-14 h-14 mx-auto mb-3 bg-[#2b1610] rounded-xl flex items-center justify-center border-2 border-[#ffb500] shadow-md">
-                <i class="fa-solid fa-boxes-packing text-[#ffb500] text-2xl"></i>
+            <div class="w-14 h-14 mx-auto mb-3 bg-[#2b1610] p-2.5 rounded-xl flex items-center justify-center border-2 border-[#ffb500] shadow-md">
+                <img 
+                  src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
+                  alt="UPS Logo" 
+                  class="w-full h-full object-contain drop-shadow"
+                />
             </div>
 
             <h3 class="font-extrabold text-slate-900 text-base mb-1">將 ULD Inspect360 安裝至主畫面</h3>
@@ -389,28 +619,78 @@
     </div>
 
     <script>
-        /* ================= PWA SETUP & MANIFEST INITIALIZATION ================= */
-        const iconSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-            <defs>
-                <linearGradient id="pwaGold" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffe17d" />
-                    <stop offset="50%" stop-color="#ffb500" />
-                    <stop offset="100%" stop-color="#d48800" />
-                </linearGradient>
-                <linearGradient id="pwaBg" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#3d1b11" />
-                    <stop offset="100%" stop-color="#1c0904" />
-                </linearGradient>
-            </defs>
-            <rect width="512" height="512" rx="96" fill="#2b1610" />
-            <path d="M 256 470 C 100 400 40 300 40 70 L 256 25 L 472 70 C 472 300 412 400 256 470 Z" fill="url(#pwaGold)" />
-            <path d="M 256 440 C 120 375 65 285 65 85 L 256 45 L 447 85 C 447 285 392 375 256 440 Z" fill="url(#pwaBg)" />
-            <text x="256" y="295" text-anchor="middle" fill="url(#pwaGold)" font-family="Arial Black, Impact, sans-serif" font-weight="900" font-size="140" letter-spacing="-6">UPS</text>
-        </svg>`;
+        /* ================= PWA SETUP & HIGH-RES PNG ICON GENERATOR ================= */
+        const upsLogoUrl = "https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg";
 
-        const iconDataUrl = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(iconSvg);
-        document.getElementById('apple-touch-icon-link').setAttribute('href', iconDataUrl);
+        // Generate a 512x512 PNG Data URL so that iOS & Android home screens guarantee crisp UPS Shield Icon
+        function createPwaPngIcon() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
 
+            // Draw brown background matching #2b1610
+            ctx.fillStyle = "#2b1610";
+            ctx.fillRect(0, 0, 512, 512);
+
+            // Vector drawing of the UPS Shield Logo
+            ctx.save();
+            ctx.scale(512 / 200, 512 / 240);
+
+            // Gold shield outline
+            const grad = ctx.createLinearGradient(0, 0, 200, 240);
+            grad.addColorStop(0, '#ffe17d');
+            grad.addColorStop(0.5, '#ffb500');
+            grad.addColorStop(1, '#d48800');
+
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.moveTo(20, 28);
+            ctx.bezierCurveTo(65, 14, 135, 14, 180, 28);
+            ctx.bezierCurveTo(180, 130, 160, 188, 100, 226);
+            ctx.bezierCurveTo(40, 188, 20, 130, 20, 28);
+            ctx.closePath();
+            ctx.fill();
+
+            // Inner dark brown shield
+            ctx.fillStyle = "#2b1610";
+            ctx.beginPath();
+            ctx.moveTo(26, 80);
+            ctx.quadraticCurveTo(100, 42, 174, 42);
+            ctx.lineTo(174, 120);
+            ctx.bezierCurveTo(174, 176, 154, 196, 100, 218);
+            ctx.bezierCurveTo(46, 196, 26, 176, 26, 120);
+            ctx.closePath();
+            ctx.fill();
+
+            // Top light-gold segment
+            ctx.fillStyle = "#ffe17d";
+            ctx.strokeStyle = "#d48800";
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(26, 40);
+            ctx.quadraticCurveTo(60, 30, 96, 36);
+            ctx.quadraticCurveTo(60, 55, 26, 78);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+
+            // 'ups' text
+            ctx.fillStyle = "#ffb500";
+            ctx.font = "900 62px 'Arial Black', Impact, sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("ups", 100, 148);
+
+            ctx.restore();
+            return canvas.toDataURL('image/png');
+        }
+
+        const pngIconUrl = createPwaPngIcon();
+
+        // 1. Assign PNG icon directly to apple-touch-icon (Ensures iOS home screen display)
+        document.getElementById('apple-touch-icon-link').setAttribute('href', pngIconUrl);
+
+        // 2. Assign high-res PNG and SVG to Manifest configuration
         const manifestConfig = {
             "name": "ULD Inspect360 - ULD 適航檢查工具",
             "short_name": "ULD Inspect360",
@@ -423,26 +703,39 @@
             "orientation": "any",
             "icons": [
                 {
-                    "src": iconDataUrl,
+                    "src": pngIconUrl,
                     "sizes": "192x192 512x512",
-                    "type": "image/svg+xml",
+                    "type": "image/png",
                     "purpose": "any maskable"
+                },
+                {
+                    "src": upsLogoUrl,
+                    "sizes": "any",
+                    "type": "image/svg+xml",
+                    "purpose": "any"
                 }
             ],
             "shortcuts": [
                 {
-                    "name": "適航快速查詢",
-                    "short_name": "快速查詢",
-                    "description": "依尺寸數值比對 FORM 83-48-002 適航標準",
-                    "url": "./#search",
-                    "icons": [{ "src": iconDataUrl, "sizes": "192x192" }]
+                    "name": "即時適航判定計算機",
+                    "short_name": "判定計算機",
+                    "description": "停機坪一鍵判定合格與拒收",
+                    "url": "./#calc",
+                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
+                },
+                {
+                    "name": "檢驗報告速錄",
+                    "short_name": "報告速錄",
+                    "description": "一鍵生成交接通報摘要",
+                    "url": "./#logger",
+                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
                 },
                 {
                     "name": "檢查卡中英對照",
                     "short_name": "檢查卡",
                     "description": "FORM 83-48-002 官方檢查卡",
                     "url": "./#card",
-                    "icons": [{ "src": iconDataUrl, "sizes": "192x192" }]
+                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
                 }
             ]
         };
@@ -451,7 +744,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v25-pwa';
+            const CACHE_NAME = 'uld-inspect360-v28-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -459,13 +752,14 @@
                 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js',
-                'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js'
+                'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js',
+                'https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg'
             ];
 
             self.addEventListener('install', (evt) => {
                 evt.waitUntil(
                     caches.open(CACHE_NAME).then((cache) => {
-                        return cache.addAll(ASSETS);
+                        return cache.addAll(ASSETS).catch(() => Promise.resolve());
                     }).then(() => self.skipWaiting())
                 );
             });
@@ -496,26 +790,24 @@
             });
         `;
 
-        if ('serviceWorker' in navigator) {
+        if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
             try {
                 const swBlob = new Blob([swWorkerScript], { type: 'text/javascript' });
                 const swBlobUrl = URL.createObjectURL(swBlob);
                 navigator.serviceWorker.register(swBlobUrl).catch(err => {
-                    console.warn('SW registration fallback:', err);
+                    console.warn('SW registration info:', err);
                 });
             } catch (err) {
                 console.warn('SW Blob not permitted:', err);
             }
         }
 
-        /* PWA Install Prompts Logic */
         let deferredPwaPrompt = null;
         const pwaBannerToast = document.getElementById('pwa-banner-toast');
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPwaPrompt = e;
-            // 延遲 1.5 秒後彈出安裝提示橫幅
             setTimeout(() => {
                 if (pwaBannerToast && !sessionStorage.getItem('pwa_dismissed')) {
                     pwaBannerToast.classList.remove('hidden');
@@ -534,7 +826,6 @@
                     if (pwaBannerToast) pwaBannerToast.classList.add('hidden');
                 });
             } else {
-                // 若為 iOS 裝置或已安裝過，引導至 iOS 主畫面說明
                 const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
                 if (isIos) {
                     openIosModal();
@@ -554,7 +845,6 @@
             showToast('ULD Inspect360 PWA 已成功安裝至您的裝置！');
         });
 
-        /* Detect iOS Safari for PWA prompt */
         const isIosDevice = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isStandaloneMode = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
 
@@ -574,7 +864,6 @@
             document.getElementById('ios-guide-modal').classList.add('hidden');
         }
 
-        /* Network Status Detection */
         function checkNetworkStatus() {
             const bar = document.getElementById('offline-bar');
             if (!navigator.onLine) {
@@ -1346,7 +1635,8 @@
         function init3D() {
             renderCategoryButtons();
             renderBilingualCardModal();
-            renderSearchResults(searchKnowledgeBase);
+            updateCalcFields();
+            loadLogsFromStorage();
 
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -1523,319 +1813,42 @@
         function switchPage(page) {
             activePage = page;
             
-            const btnUld = document.getElementById('nav-tab-uld');
-            const btnSearch = document.getElementById('nav-tab-search');
+            const tabs = ['uld', 'calc', 'logger'];
+            tabs.forEach(t => {
+                const btn = document.getElementById(`nav-tab-${t}`);
+                if (!btn) return;
+                if (t === page) {
+                    btn.className = "py-1.5 px-2 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold truncate ring-1 ring-amber-300";
+                } else {
+                    btn.className = "py-1.5 px-2 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold truncate";
+                }
+            });
 
             const leftUld = document.getElementById('left-panel-uld');
-            const leftSearch = document.getElementById('left-panel-search');
+            const leftCalc = document.getElementById('left-panel-calc-info');
+            const leftLogger = document.getElementById('left-panel-logger-info');
             const detailsPanel = document.getElementById('details-panel-container');
-            const mainSearch = document.getElementById('main-view-search');
+
+            const mainUld = document.getElementById('main-view-uld');
+            const mainCalc = document.getElementById('main-view-calc');
+            const mainLogger = document.getElementById('main-view-logger');
+
+            // Hide all first
+            [leftUld, leftCalc, leftLogger, detailsPanel].forEach(el => el && el.classList.add('hidden'));
+            [mainUld, mainCalc, mainLogger].forEach(el => el && el.classList.add('hidden'));
 
             if (page === 'uld') {
-                btnUld.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
-                btnSearch.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
-                
                 leftUld.classList.remove('hidden');
                 detailsPanel.classList.remove('hidden');
-                leftSearch.classList.add('hidden');
-
-                document.getElementById('main-view-uld').classList.remove('hidden');
-                mainSearch.classList.add('hidden');
-            } else {
-                btnSearch.className = "flex-1 py-1.5 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold";
-                btnUld.className = "flex-1 py-1.5 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold";
-
-                leftUld.classList.add('hidden');
-                detailsPanel.classList.add('hidden');
-                leftSearch.classList.remove('hidden');
-
-                document.getElementById('main-view-uld').classList.add('hidden');
-                mainSearch.classList.remove('hidden');
-
-                runSearchEngine();
+                mainUld.classList.remove('hidden');
+            } else if (page === 'calc') {
+                leftCalc.classList.remove('hidden');
+                mainCalc.classList.remove('hidden');
+            } else if (page === 'logger') {
+                leftLogger.classList.remove('hidden');
+                mainLogger.classList.remove('hidden');
+                renderLocalLogsList();
             }
-        }
-
-        /* Airworthiness Query Engine */
-        function runSearchEngine() {
-            const categoryVal = document.getElementById('search-category').value;
-            const rawKeyword = document.getElementById('search-keyword').value.trim();
-
-            const isInchExplicit = /(\d+(?:\.\d+)?)\s*(吋|時|in|inch|inches)/i.test(rawKeyword);
-
-            const filtered = searchKnowledgeBase.filter(item => {
-                const matchCategory = (categoryVal === 'all' || item.category === categoryVal);
-                if (!matchCategory) return false;
-
-                if (!rawKeyword) return true;
-
-                if (isInchExplicit && item.id === 'frame_fasteners') {
-                    return false;
-                }
-
-                const combinedText = (
-                    item.title + " " + 
-                    item.condition + " " + 
-                    item.limitValue + " " + 
-                    item.categoryName + " " + 
-                    (item.note || "")
-                ).toLowerCase();
-
-                const normalizedQuery = rawKeyword
-                    .replace(/[,，]/g, ' ')
-                    .replace(/(\d+(?:\.\d+)?)\s*(sq\s*in|sqin|平方吋|平方英寸|平方公分|cm²)/gi, '$1sqin')
-                    .replace(/(\d+(?:\.\d+)?)\s*(吋|時|in|inch|inches)/gi, '$1吋')
-                    .replace(/(\d+(?:\.\d+)?)\s*(cm|公分)/gi, '$1cm')
-                    .replace(/(\d+(?:\.\d+)?)\s*%/gi, '$1%')
-                    .toLowerCase();
-
-                const queryTokens = normalizedQuery.split(/\s+/).filter(Boolean);
-
-                const hasGteSevenToken = queryTokens.some(t => {
-                    const dMatch = t.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
-                    if (dMatch) {
-                        const val = parseFloat(dMatch[1]);
-                        return val >= 7;
-                    }
-                    return false;
-                });
-
-                if (hasGteSevenToken && item.id === 'panel_inner_serviceable') return false;
-
-                const hasLessThanSevenToken = queryTokens.some(t => {
-                    const dMatch = t.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
-                    if (dMatch) {
-                        const val = parseFloat(dMatch[1]);
-                        return val > 0 && val < 7;
-                    }
-                    return false;
-                });
-
-                if (hasLessThanSevenToken && item.id === 'panel_inner_unserviceable') return false;
-
-                // 檢查是否包含 <= 95 的數值
-                const hasLteNinetyFiveVal = queryTokens.some(t => {
-                    const m = t.match(/^(\d+(?:\.\d+)?)/);
-                    if (m) {
-                        const v = parseFloat(m[1]);
-                        return v <= 95 && v > 0;
-                    }
-                    return false;
-                });
-
-                if (hasLteNinetyFiveVal && item.id === 'door_canvas_unserviceable') {
-                    return false;
-                }
-
-                return queryTokens.every(token => {
-                    let numVal = null, pctVal = null, isSqVal = false;
-
-                    const pctMatch = token.match(/^(\d+(?:\.\d+)?)%$/);
-                    if (pctMatch) pctVal = parseFloat(pctMatch[1]);
-
-                    const sqMatch = token.match(/^(\d+(?:\.\d+)?)(sqin|sq|平方吋|平方英寸)?$/i);
-                    if (sqMatch && (token.includes('sq') || token.includes('平方'))) {
-                        numVal = parseFloat(sqMatch[1]);
-                        isSqVal = true;
-                    } else {
-                        const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分|%)?$/i);
-                        if (dimMatch && !pctMatch) {
-                            numVal = parseFloat(dimMatch[1]);
-                        } else if (/^\d+(\.\d+)?$/.test(token)) {
-                            numVal = parseFloat(token);
-                        }
-                    }
-
-                    if (item.id === 'panel_edge') {
-                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
-                    }
-
-                    if (item.id === 'frame_dmg') {
-                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
-                    }
-
-                    if (item.id === 'frame_fasteners') {
-                        if (isInchExplicit || isSqVal) return false;
-                        if (numVal !== null && numVal >= 1 && numVal <= 10) return true;
-                    }
-
-                    if (item.id === 'base_tear_edge_serviceable') {
-                        if (numVal !== null) {
-                            if (numVal <= 2 && numVal > 0) return true;
-                            if (numVal >= 3) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_tear_edge_unserviceable') {
-                        if (numVal !== null) {
-                            if (numVal >= 3) return true;
-                            if (numVal <= 2 && numVal > 0) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_tear_outer_serviceable') {
-                        if (numVal !== null) {
-                            if (numVal >= 1 && numVal <= 11) return true;
-                            if (numVal >= 12) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_tear_outer_unserviceable') {
-                        if (numVal !== null) {
-                            if (numVal >= 12) return true;
-                            if (numVal < 12 && numVal > 0) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_bow_loaded_serviceable') {
-                        if (numVal !== null) {
-                            if (numVal <= 1.24 && numVal > 0) return true;
-                            if (numVal >= 1.25) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_bow_loaded_unserviceable') {
-                        if (numVal !== null) {
-                            if (numVal >= 1.25) return true;
-                            if (numVal <= 1.24 && numVal > 0) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_bow_empty_serviceable') {
-                        if (numVal !== null) {
-                            if (numVal <= 1.9 && numVal > 0) return true;
-                            if (numVal >= 2.0) return false;
-                        }
-                    }
-
-                    if (item.id === 'base_bow_empty_unserviceable') {
-                        if (numVal !== null) {
-                            if (numVal >= 2.0) return true;
-                            if (numVal <= 1.9 && numVal > 0) return false;
-                        }
-                    }
-
-                    if (item.id === 'door_cable_serviceable') {
-                        if (pctVal !== null) return pctVal >= 1 && pctVal <= 24;
-                        if (numVal !== null) {
-                            if (numVal >= 1 && numVal <= 11) return true;
-                            if (numVal >= 12 || numVal >= 25) return false;
-                        }
-                    }
-
-                    if (item.id === 'door_cable_unserviceable') {
-                        if (pctVal !== null) return pctVal >= 25;
-                        if (numVal !== null) {
-                            if (numVal >= 12) return true;
-                            if (numVal < 12 && numVal > 0) return false;
-                        }
-                    }
-
-                    if (item.id === 'door_canvas_serviceable') {
-                        if (numVal !== null) {
-                            if (numVal <= 95 && numVal > 0) return true;
-                            if (numVal >= 96) return false;
-                        }
-                    }
-
-                    if (item.id === 'door_canvas_unserviceable') {
-                        if (numVal !== null) {
-                            if (numVal <= 95) return false;
-                            if (numVal >= 96) return true;
-                        }
-                    }
-
-                    if (item.id === 'door_bar') {
-                        if (numVal !== null && numVal <= 10 && numVal > 0) return true;
-                    }
-
-                    if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal >= 2) return false;
-                    if (item.id === 'panel_contour_serviceable' && numVal !== null && numVal < 2 && numVal > 0) return true;
-                    if (item.id === 'panel_contour' && numVal !== null && numVal >= 2) return true;
-
-                    if (hasGteSevenToken && (item.id === 'panel_edge' || item.id === 'panel_inner_unserviceable')) return true;
-
-                    if (!pctMatch) {
-                        const dimMatch = token.match(/^(\d+(?:\.\d+)?)(吋|時|in|inch|inches|cm|公分)?$/i);
-                        if (dimMatch) {
-                            const unit = dimMatch[2] ? dimMatch[2].toLowerCase() : '';
-                            if (['吋', '時', 'in', 'inch', 'inches'].includes(unit)) {
-                                const inchPattern = new RegExp(`(?<!\\d)${numVal}\\s*(吋|時|in|inch)`, 'i');
-                                const cmVal = (numVal * 2.54).toFixed(2).replace(/\.00$/, '');
-                                const cmPattern = new RegExp(`(?<!\\d)${cmVal}\\s*cm`, 'i');
-                                if (inchPattern.test(combinedText) || cmPattern.test(combinedText)) return true;
-                            } else if (['cm', '公分'].includes(unit)) {
-                                const cmPattern = new RegExp(`(?<!\\d)${numVal}\\s*(cm|公分)`, 'i');
-                                if (cmPattern.test(combinedText)) return true;
-                            }
-                        }
-                    }
-
-                    if (/^\d+(\.\d+)?$/.test(token)) {
-                        const numPattern = new RegExp(`(?<![\\d.])${token}(?![\\d.])`, 'i');
-                        if (numPattern.test(combinedText)) return true;
-                    }
-
-                    if (item.id === 'panel_inner_serviceable' && numVal !== null && numVal > 0 && numVal < 7) return true;
-
-                    if (/^[a-z]{1,3}$/i.test(token)) {
-                        const regex = new RegExp(`\\b${token}\\b`, 'i');
-                        return regex.test(combinedText);
-                    }
-
-                    return combinedText.includes(token);
-                });
-            });
-
-            renderSearchResults(filtered);
-        }
-
-        function resetSearchEngine() {
-            document.getElementById('search-category').value = 'all';
-            document.getElementById('search-keyword').value = '';
-            runSearchEngine();
-        }
-
-        function renderSearchResults(results) {
-            const container = document.getElementById('search-results-container');
-            const countBadge = document.getElementById('search-result-count');
-            if (!container) return;
-
-            countBadge.innerText = `找到 ${results.length} 項符合標準`;
-            container.innerHTML = '';
-
-            if (results.length === 0) {
-                container.innerHTML = `
-                    <div class="text-center py-10 bg-white rounded-xl border border-slate-200">
-                        <i class="fa-solid fa-triangle-exclamation text-3xl text-amber-500 mb-2"></i>
-                        <p class="text-xs font-bold text-slate-700">找不到符合條件的適航檢查標準</p>
-                        <p class="text-[11px] text-slate-400 mt-1">請嘗試輸入不同尺寸數值（例如 10吋, 1-10in, 96sq, 撕裂, 穿孔）或切換構件類別。</p>
-                    </div>
-                `;
-                return;
-            }
-
-            results.forEach(item => {
-                const card = document.createElement('div');
-                card.className = "bg-white border border-slate-200 rounded-xl p-3.5 shadow-sm hover:border-amber-400 transition-all";
-                card.innerHTML = `
-                    <div class="flex flex-wrap justify-between items-start gap-2 mb-2">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-300 rounded text-[10px] font-bold font-mono">${item.categoryName}</span>
-                            <h4 class="font-extrabold text-xs md:text-sm text-slate-900">${item.title}</h4>
-                        </div>
-                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${item.verdictClass}">
-                            <i class="fa-solid fa-circle-check mr-1"></i>${item.verdict}
-                        </span>
-                    </div>
-                    <div class="space-y-1.5 text-xs bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">檢查判定條件：</b>${item.condition}</p>
-                        <p class="text-slate-800"><b class="text-slate-600 font-semibold">尺寸 / 數量限制：</b><span class="font-mono text-amber-700 font-bold">${item.limitValue}</span></p>
-                        ${item.note ? `<p class="text-[11px] text-slate-500 italic mt-1 border-t border-slate-200 pt-1">💡 <b class="font-semibold">備註 / 說明：</b>${item.note}</p>` : ''}
-                    </div>
-                `;
-                container.appendChild(card);
-            });
         }
 
         function renderCategoryButtons() {
@@ -1932,6 +1945,989 @@
         function hideLoading() { document.getElementById('canvas-loading').style.display = 'none'; }
         function onWindowResize() { const c = document.getElementById('viewport-container'); if (!c || !camera || !renderer) return; camera.aspect = c.clientWidth / c.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(c.clientWidth, c.clientHeight); }
         function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
+
+        let lastEvaluationReport = null;
+
+        function updateCalcFields() {
+            const scenario = document.getElementById('calc-scenario').value;
+            const container = document.getElementById('calc-input-fields');
+            if (!container) return;
+
+            let html = '';
+
+            if (scenario === 'panel_damage') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">距離框架邊緣位置 (Distance to Frame Edge)</label>
+                            <select id="calc-panel-dist" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                                <option value="within3">距離框架邊緣 3 吋 (7.62 cm) 以內</option>
+                                <option value="beyond3">距離骨架邊緣超過 3 吋 (7.62 cm)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">損壞長度 (Damage Length - 吋 / cm)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-panel-len" step="0.1" min="0" placeholder="例如: 2.5 或 8" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                                <select id="calc-panel-unit" class="w-20 p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">
+                                    <option value="in">吋 (in)</option>
+                                    <option value="cm">公分 (cm)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pt-1">
+                        <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                            <input type="checkbox" id="calc-panel-edge-origin" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                            <span>例外條款：此裂紋「起始於框架邊緣」(Originates at the frame edge)</span>
+                        </label>
+                    </div>
+                `;
+            } else if (scenario === 'panel_contour') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">面板突出原有 ULD 外部輪廓尺寸 (Protruding Outer Contour)</label>
+                        <div class="flex gap-2 max-w-sm">
+                            <input type="number" id="calc-contour-val" step="0.1" min="0" placeholder="例如: 1.8 或 2.5" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                            <select id="calc-contour-unit" class="w-20 p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">
+                                <option value="in">吋 (in)</option>
+                                <option value="cm">公分 (cm)</option>
+                            </select>
+                        </div>
+                        <p class="text-[10px] text-slate-400">標準：突出超過 2 吋 (5.08 cm) 嚴禁使用，判定不可接受。</p>
+                    </div>
+                `;
+            } else if (scenario === 'frame_dimensions') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">損壞長度 (吋 in)</label>
+                            <input type="number" id="calc-frame-len" step="0.1" min="0" placeholder="臨界: 3 in" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">損壞寬度 (吋 in)</label>
+                            <input type="number" id="calc-frame-width" step="0.05" min="0" placeholder="臨界: 0.5 in" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">結構凹陷 (吋 in)</label>
+                            <input type="number" id="calc-frame-indent" step="0.1" min="0" placeholder="臨界: 2 in" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'frame_fastener') {
+                html = `
+                    <div class="text-xs space-y-2 max-w-sm">
+                        <label class="block font-bold text-slate-700">底部上方面板每側缺失固定件數量 (Missing Fasteners per Side)</label>
+                        <input type="number" id="calc-fastener-count" min="0" step="1" value="0" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-900">
+                        <p class="text-[10px] text-slate-400">標準：底部上方面板每側缺失超過 1 個固定件即判定不可接受。</p>
+                    </div>
+                `;
+            } else if (scenario === 'door_canvas') {
+                html = `
+                    <div class="text-xs space-y-3">
+                        <label class="block font-bold text-slate-700">測量方式 (Measurement Mode)</label>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-slate-600 font-semibold mb-1">直接輸入總損壞面積 (Total Area):</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="calc-canvas-sq" min="0" step="1" placeholder="例如: 90 或 100" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                    <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">sq in (平方吋)</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-slate-600 font-semibold mb-1">或輸入破洞長 × 寬 (L × W 吋):</label>
+                                <div class="flex items-center gap-1.5">
+                                    <input type="number" id="calc-canvas-l" min="0" placeholder="長 (in)" class="w-1/2 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                    <span>×</span>
+                                    <input type="number" id="calc-canvas-w" min="0" placeholder="寬 (in)" class="w-1/2 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-400">標準：帆布總損壞面積超過 8 × 12 吋 (即 96 平方吋 / 619.35 cm²) 不可接受。</p>
+                    </div>
+                `;
+            } else if (scenario === 'door_cable') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">門纜鋼絲磨損百分比 (Cable Fray %)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-cable-pct" min="0" max="100" placeholder="例如: 15 或 28" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">%</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">磨損達 25% 或以上不可接受。</p>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">門纜鋼絲外露長度 (Cable Exposed)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-cable-exposed" min="0" step="0.5" placeholder="例如: 8 或 13" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">鋼絲外露達 12 吋 (30.48 cm) 或以上不可接受。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'door_bar') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">門檻裂縫長度 (Door Bar Crack Length)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-doorbar-len" step="0.05" min="0" placeholder="臨界: 1 in" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">門檻裂縫寬度 (Crack Width)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-doorbar-width" step="0.01" min="0" placeholder="臨界: 0.37 in" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'door_latch') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">五金部件與鎖定狀態 (Door Hardware Status)</label>
+                        <select id="calc-door-latch-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="ok">所有鎖扣與五金配件完整，門體可牢固固定鎖緊 (OK)</option>
+                            <option value="broken">五金部件缺失或損壞，導致門體「無法固定鎖定」(Cannot Secure)</option>
+                        </select>
+                    </div>
+                `;
+            } else if (scenario === 'base_bow') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">裝載狀態 (Loading Condition)</label>
+                            <select id="calc-bow-state" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                                <option value="loaded">已裝載貨物 (Loaded ULD)</option>
+                                <option value="empty">空箱 / 空板 (Empty ULD)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">底板彎曲曲度 (Base Bow Height)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="calc-bow-val" step="0.05" min="0" placeholder="例如: 1.2 或 1.8" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1">裝載臨界 1.25 吋；空箱臨界 2 吋。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'base_tear') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">距離底板邊緣位置 (Distance from Edge)</label>
+                            <select id="calc-basetear-loc" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                                <option value="near">距離板邊緣小於 3 吋 (< 3 in)</option>
+                                <option value="far">距離板邊緣 3 吋以外 (≥ 3 in)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">穿孔或撕裂尺寸 (Puncture / Tear Dimensions 吋 in)</label>
+                            <div class="flex items-center gap-1.5">
+                                <input type="number" id="calc-basetear-l" step="0.5" min="0" placeholder="長度 L (in)" class="w-1/2 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <span>×</span>
+                                <input type="number" id="calc-basetear-w" step="0.5" min="0" placeholder="寬度 W (in)" class="w-1/2 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                            </div>
+                            <p class="text-[10px] text-slate-400 mt-1"><3吋臨界: 3×1吋；≥3吋臨界: 6×2吋。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'base_rivets') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">缺失或鬆動鉚釘總數 (Missing/Loose Rivets)</label>
+                            <input type="number" id="calc-rivet-count" min="0" value="0" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                            <p class="text-[10px] text-slate-400 mt-1">超過 5 個鉚釘即不可接受。</p>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">相鄰缺失鉚釘間之完好鉚釘數</label>
+                            <input type="number" id="calc-rivet-spacing" min="0" value="5" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                            <p class="text-[10px] text-slate-400 mt-1">任意兩個缺失釘扣間必須至少有 5 個完好鉚釘。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'base_rail_missing') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">側軌與邊緣完整性狀態 (Side Rail Condition)</label>
+                        <select id="calc-rail-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="intact">底板邊軌與邊緣軌完好無缺失且未分離 (Intact)</option>
+                            <option value="missing">底板邊軌或板邊緣軌缺失 (Missing Base Side / Edge Rail)</option>
+                            <option value="separated">底板與邊軌出現分離 / 脫離現象 (Separation of Base & Edge Rail)</option>
+                            <option value="seat_track_damaged">C 型槽損壞，導致 D-ring 無法正確均勻分布與固定</option>
+                        </select>
+                    </div>
+                `;
+            } else if (scenario === 'base_corner_status') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">板角結構狀況 (Corner Casting)</label>
+                        <select id="calc-corner-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="intact">板角完好存在 (Present & Intact)</option>
+                            <option value="weld_crack">板角完好，僅有板角側軌焊接形成的裂縫 (Welds Cracked - 可接受)</option>
+                            <option value="missing_broken">板角缺失、斷裂或嚴重損壞 (Corner Missing/Damaged - 不可接受)</option>
+                        </select>
+                    </div>
+                `;
+            } else if (scenario === 'net_tso' || scenario === 'general_labels') {
+                html = `
+                    <div class="space-y-2 text-xs">
+                        <label class="block font-bold text-slate-700">標籤清晰度檢查清單</label>
+                        <div class="space-y-1.5 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-lbl-tso" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>TSO 標籤至少在某一處存在且清晰可讀 (Affixed and legible)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-lbl-tare" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>箱重標籤清晰可見，無魔術筆手寫改動痕跡</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-lbl-id" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>ULD 識別碼、箱/板號及所有者代碼清晰可見無塗改</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'net_fittings') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">D-ring 雙腳鎖扣狀況</label>
+                            <select id="calc-net-dring" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <option value="full">所有 D-ring 數量齊全且功能正常 (正常18個/5角繩19個)</option>
+                                <option value="missing">存在缺失、鎖死失效或功能異常 (Double Stud Fittings Inoperable)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">D-Ring (Double Stud Fittings) 每側缺失或損壞數</label>
+                            <input type="number" id="calc-net-hooks-val" min="0" value="0" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                            <p class="text-[10px] text-slate-400 mt-1">所有 D-Ring 雙腳鎖扣必須齊全且功能正常 (正常18個/5角繩19個)。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'net_hooks') {
+                html = `
+                    <div class="space-y-3 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">網鉤 (Adjusting Hooks)狀況</label>
+                                <select id="calc-net-hooks-status" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                                    <option value="normal">網鉤 (Adjusting Hooks) 正常18個/5角繩17個</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">網鉤 (Adjusting Hooks) 每側缺失或損壞數</label>
+                                <input type="number" id="calc-net-hooks-val" min="0" value="0" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <p class="text-[10px] text-slate-400 mt-1">每側缺失或不可使用網鉤不得超過 1 個。</p>
+                            </div>
+                        </div>
+                        <div class="pt-1">
+                            <label class="inline-flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                <input type="checkbox" id="calc-net-hooks-exceed" class="w-4 h-4 rounded text-amber-600 focus:ring-amber-500">
+                                <span>每側是否缺失或損壞多過 1 個 (超過 1 個不可接受)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'net_roping_lower' || scenario === 'net_roping_upper') {
+                html = `
+                    <div class="space-y-3 text-xs">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">網角繩 / 最底層 / 底層上方兩排 磨損比例 (%)</label>
+                                <input type="number" id="calc-net-fray-pct" min="0" max="100" placeholder="例如: 15 或 30" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <p class="text-[10px] text-slate-400 mt-1">單處斷裂/磨損超過 25% 或 0.25 吋 (0.63 cm) 不可接受。</p>
+                            </div>
+                            <div>
+                                <label class="block font-bold text-slate-700 mb-1">底層兩排以上：兩繩結間完全斷裂繩索數</label>
+                                <input type="number" id="calc-net-broken-knots" min="0" value="0" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <p class="text-[10px] text-slate-400 mt-1">兩結之間不得超過 1 條完全斷裂繩索。</p>
+                            </div>
+                        </div>
+                        <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                            <input type="checkbox" id="calc-net-multi-damages" class="w-4 h-4 rounded text-amber-600">
+                            <span>全網出現 3 處或以上輕微磨損 (Three or more damages present)</span>
+                        </label>
+                    </div>
+                `;
+            } else if (scenario === 'strap_blue_scaf') {
+                html = `
+                    <div class="space-y-2 text-xs">
+                        <label class="block font-bold text-slate-700">主要 SCAF 藍色軍帶檢查項目</label>
+                        <div class="space-y-1 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-scaf-tso" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>附有清晰可辨的 TSO 標籤</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-scaf-valid" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>在有效期限內 (未過期)</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-scaf-nodmg" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>無任何形式之損壞 (不得有任何磨損/切口/裂縫)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'strap_yellow_sec') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">切口或磨損佔綁帶寬度比例 (%)</label>
+                            <input type="number" id="calc-yellow-fray" min="0" max="100" placeholder="臨界: 25%" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">五金扣環 / D-Ring / 掛鉤狀況</label>
+                            <select id="calc-yellow-hardware" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <option value="ok">扣環可牢固鎖定，五金完好無彎曲或裂紋</option>
+                                <option value="fail">扣環無法保持鎖定，或配件彎曲/斷裂/缺失</option>
+                            </select>
+                        </div>
+                        <div class="sm:col-span-2 space-y-1">
+                            <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="calc-yellow-knot" class="w-4 h-4 rounded text-amber-600">
+                                <span>存在一個或以上解不開的結 (One or more knots exist)</span>
+                            </label>
+                            <br>
+                            <label class="inline-flex items-center gap-2 cursor-pointer font-semibold text-slate-700">
+                                <input type="checkbox" id="calc-yellow-expired" class="w-4 h-4 rounded text-amber-600">
+                                <span>已超過有效期限 (Expired)</span>
+                            </label>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'strap_trsl') {
+                html = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">TRSL 帶身與扣件狀況</label>
+                            <select id="calc-trsl-dmg" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <option value="none">完好無損，無任何破損 (No Damage)</option>
+                                <option value="damaged">存在磨損、切口、裂縫或損壞 (Damaged - 不可接受)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block font-bold text-slate-700 mb-1">同一塊集裝板上使用數量</label>
+                            <input type="number" id="calc-trsl-count" min="1" max="10" value="6" class="w-full p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                            <p class="text-[10px] text-slate-400 mt-1">一塊板最多只能用 6 條 (長: 2 條 | 短: 1 條)。</p>
+                        </div>
+                    </div>
+                `;
+            } else if (scenario === 'fcc_dg_rules') {
+                html = `
+                    <div class="space-y-2 text-xs">
+                        <label class="block font-bold text-slate-700">板裝貨品屬性判定</label>
+                        <div class="space-y-1.5 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                            <label class="flex items-center gap-2 cursor-pointer">
+                                <input type="checkbox" id="calc-fcc-battery" checked class="w-4 h-4 rounded text-amber-600">
+                                <span>板裝含有電池貨品 (Battery Cargo) 或危險品 (Dangerous Goods / DG)</span>
+                            </label>
+                        </div>
+                        <p class="text-[11px] text-slate-500">標準：所有板裝含有電池貨品 / 危險品 (DG) 均必須強制使用 FCC (Flexible Container)。</p>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            document.getElementById('calc-result-banner').classList.add('hidden');
+        }
+
+        function calculateAirworthiness() {
+            const scenario = document.getElementById('calc-scenario').value;
+            let isServiceable = true;
+            let title = "";
+            let reason = "";
+            let limitClause = "";
+            let standardDoc = "FORM: 83-48-002";
+
+            if (scenario === 'panel_damage') {
+                const dist = document.getElementById('calc-panel-dist').value;
+                const lenInput = parseFloat(document.getElementById('calc-panel-len').value) || 0;
+                const unit = document.getElementById('calc-panel-unit').value;
+                const lenInches = unit === 'cm' ? (lenInput / 2.54) : lenInput;
+                const isEdgeOrigin = document.getElementById('calc-panel-edge-origin').checked;
+
+                title = "面板損壞檢查判定 (Panel Damage)";
+
+                if (dist === 'within3') {
+                    if (isEdgeOrigin && lenInches <= 3.0) {
+                        isServiceable = true;
+                        reason = `裂紋起始於框架邊緣，且長度 ${lenInches.toFixed(2)} 吋 (≤ 3 吋 / 7.62 cm)，符合例外允許條款。`;
+                        limitClause = "例外條款允許：起始於邊緣且長度 ≤ 3 吋 (7.62 cm)";
+                    } else {
+                        isServiceable = false;
+                        reason = `損壞位於距離框架邊緣 3 吋 (7.62 cm) 以內，實測長度 ${lenInches.toFixed(2)} 吋${isEdgeOrigin ? ' (超過例外 3 吋允許長度)' : ' (非起始於邊緣)'}。`;
+                        limitClause = "距離框架邊緣 3 吋以內損壞不可接受 (起始於邊緣且 ≤ 3 吋除外)";
+                    }
+                } else {
+                    if (lenInches >= 7.0) {
+                        isServiceable = false;
+                        reason = `損壞距離骨架邊緣超過 3 吋，但損壞長度達 ${lenInches.toFixed(2)} 吋 (≥ 7 吋 / 17.78 cm)，已達拒收臨界。`;
+                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度不得達到或超過 7 吋 (17.78 cm)";
+                    } else {
+                        isServiceable = true;
+                        reason = `損壞距離骨架邊緣超過 3 吋，且損壞長度為 ${lenInches.toFixed(2)} 吋 (< 7 吋 / 17.78 cm)，在安全容許範圍內。`;
+                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度 < 7 吋 (17.78 cm)";
+                    }
+                }
+            } else if (scenario === 'panel_contour') {
+                const val = parseFloat(document.getElementById('calc-contour-val').value) || 0;
+                const unit = document.getElementById('calc-contour-unit').value;
+                const inches = unit === 'cm' ? (val / 2.54) : val;
+                title = "面板突出外部輪廓判定 (Protruding Outer Contour)";
+
+                if (inches > 2.0) {
+                    isServiceable = false;
+                    reason = `面板突出原有外部輪廓達 ${inches.toFixed(2)} 吋 (> 2 吋 / 5.08 cm)，可能碰撞機艙結構。`;
+                    limitClause = "突出外部輪廓不可超過 2 吋 (5.08 cm)";
+                } else {
+                    isServiceable = true;
+                    reason = `面板突出外部輪廓為 ${inches.toFixed(2)} 吋 (≤ 2 吋 / 5.08 cm)，符合安全輪廓規範。`;
+                    limitClause = "突出外部輪廓 ≤ 2 吋 (5.08 cm)";
+                }
+            } else if (scenario === 'frame_dimensions') {
+                const len = parseFloat(document.getElementById('calc-frame-len').value) || 0;
+                const width = parseFloat(document.getElementById('calc-frame-width').value) || 0;
+                const indent = parseFloat(document.getElementById('calc-frame-indent').value) || 0;
+                title = "骨架結構與緊固件判定 (Frame Members)";
+
+                if (len > 3.0 || width > 0.5 || indent > 2.0) {
+                    isServiceable = false;
+                    const failList = [];
+                    if (len > 3.0) failList.push(`長度 ${len} 吋 (> 3 吋)`);
+                    if (width > 0.5) failList.push(`寬度 ${width} 吋 (> 0.5 吋)`);
+                    if (indent > 2.0) failList.push(`凹陷 ${indent} 吋 (> 2 吋)`);
+                    reason = `骨架結構出現超標損壞：${failList.join('、')}。`;
+                    limitClause = "損壞 > 3 吋長、> 0.5 吋寬 或 凹陷 > 2 吋均屬不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = `骨架損壞長度 (${len} in)、寬度 (${width} in) 及凹陷 (${indent} in) 均未超過臨界限制。`;
+                    limitClause = "長度 ≤ 3 吋、寬度 ≤ 0.5 吋、凹陷 ≤ 2 吋";
+                }
+            } else if (scenario === 'frame_fastener') {
+                const count = parseInt(document.getElementById('calc-fastener-count').value, 10) || 0;
+                title = "底部上方面板固定件判定 (Base Rail Fasteners)";
+                if (count > 1) {
+                    isServiceable = false;
+                    reason = `每側缺失 ${count} 個固定件，已超過允許數量 (每側超過 1 個不可接受)。`;
+                    limitClause = "底部上方面板每側缺失固定件不得超過 1 個";
+                } else {
+                    isServiceable = true;
+                    reason = `每側缺失 ${count} 個固定件，符合 1 個或以內之標準規範。`;
+                    limitClause = "每側缺失固定件 ≤ 1 個";
+                }
+            } else if (scenario === 'door_canvas') {
+                let sq = parseFloat(document.getElementById('calc-canvas-sq').value) || 0;
+                const l = parseFloat(document.getElementById('calc-canvas-l').value) || 0;
+                const w = parseFloat(document.getElementById('calc-canvas-w').value) || 0;
+                if (!sq && l && w) sq = l * w;
+
+                title = "捲簾門帆布損壞判定 (Canvas Damage Area)";
+                if (sq >= 96) {
+                    isServiceable = false;
+                    reason = `帆布總損壞面積達 ${sq} 平方吋 (≥ 96 sq in / 619.35 cm²)，超過 8 × 12 吋限制。`;
+                    limitClause = "帆布總損壞面積不可超過 96 平方吋 (619.35 cm²)";
+                } else {
+                    isServiceable = true;
+                    reason = `帆布總損壞面積為 ${sq} 平方吋 (≤ 95 sq in)，在可接受範圍內。`;
+                    limitClause = "帆布總損壞面積 ≤ 95 平方吋";
+                }
+            } else if (scenario === 'door_cable') {
+                const pct = parseFloat(document.getElementById('calc-cable-pct').value) || 0;
+                const exp = parseFloat(document.getElementById('calc-cable-exposed').value) || 0;
+                title = "捲簾門纜繩磨損判定 (Door Cable)";
+
+                if (pct >= 25 || exp >= 12) {
+                    isServiceable = false;
+                    const fl = [];
+                    if (pct >= 25) fl.push(`磨損 ${pct}% (≥ 25%)`);
+                    if (exp >= 12) fl.push(`鋼絲外露 ${exp} 吋 (≥ 12 吋)`);
+                    reason = `門纜繩狀況不合格：${fl.join('、')}。`;
+                    limitClause = "門纜磨損達 25% 或外露達 12 吋均不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = `門纜磨損 ${pct}% (< 25%) 且鋼絲外露 ${exp} 吋 (< 12 吋)，符合標準。`;
+                    limitClause = "磨損 < 25% 且外露 < 12 吋";
+                }
+            } else if (scenario === 'door_bar') {
+                const len = parseFloat(document.getElementById('calc-doorbar-len').value) || 0;
+                const width = parseFloat(document.getElementById('calc-doorbar-width').value) || 0;
+                title = "門檻擠型結構裂縫判定 (Door Bar Extrusion)";
+                if (len > 1.0 || width > 0.37) {
+                    isServiceable = false;
+                    reason = `門檻裂縫超標 (長: ${len} in > 1 in 或 寬: ${width} in > 0.37 in)。`;
+                    limitClause = "裂縫長度 > 1 吋 或 寬度 > 0.37 吋不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = `門檻裂縫長度 ${len} 吋及寬度 ${width} 吋均符合標準限制。`;
+                    limitClause = "長度 ≤ 1 吋 且 寬度 ≤ 0.37 吋";
+                }
+            } else if (scenario === 'door_latch') {
+                const st = document.getElementById('calc-door-latch-state').value;
+                title = "門體五金鎖定判定 (Door Hardware)";
+                if (st === 'broken') {
+                    isServiceable = false;
+                    reason = "五金配件損壞或缺失，導致門體無法固定，存在飛行貨物脫落風險。";
+                    limitClause = "部件缺失或損壞導致門無法固定不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = "門體五金配件功能正常，能夠牢固鎖閉與固定。";
+                    limitClause = "五金完整功能正常";
+                }
+            } else if (scenario === 'base_bow') {
+                const st = document.getElementById('calc-bow-state').value;
+                const val = parseFloat(document.getElementById('calc-bow-val').value) || 0;
+                title = "底板彎曲幅度判定 (Base Bow)";
+
+                if (st === 'loaded') {
+                    if (val >= 1.25) {
+                        isServiceable = false;
+                        reason = `已裝載貨物之底板彎曲達 ${val} 吋 (≥ 1.25 吋 / 3.17 cm)，超過裝載安全極限。`;
+                        limitClause = "已裝載貨物之 ULD 底板彎曲幅度不得超過 1.25 吋 (3.17 cm)";
+                    } else {
+                        isServiceable = true;
+                        reason = `已裝載貨物之底板彎曲 ${val} 吋 (≤ 1.24 吋)，符合安全標準。`;
+                        limitClause = "已裝載 ULD 彎曲 ≤ 1.24 吋";
+                    }
+                } else {
+                    if (val >= 2.0) {
+                        isServiceable = false;
+                        reason = `空 ULD 底板彎曲達 ${val} 吋 (≥ 2 吋 / 5.08 cm)，超過安全極限。`;
+                        limitClause = "空 ULD 底板彎曲幅度不得超過 2 吋 (5.08 cm)";
+                    } else {
+                        isServiceable = true;
+                        reason = `空 ULD 底板彎曲 ${val} 吋 (< 2 吋)，符合標準。`;
+                        limitClause = "空 ULD 彎曲 < 2 吋";
+                    }
+                }
+            } else if (scenario === 'base_tear') {
+                const loc = document.getElementById('calc-basetear-loc').value;
+                const l = parseFloat(document.getElementById('calc-basetear-l').value) || 0;
+                const w = parseFloat(document.getElementById('calc-basetear-w').value) || 0;
+                title = "底板穿孔或撕裂判定 (Base Puncture / Tear)";
+
+                if (loc === 'near') {
+                    if (l > 3.0 || w > 1.0) {
+                        isServiceable = false;
+                        reason = `距離板邊緣 < 3 吋處，穿孔尺寸 ${l} × ${w} 吋，超過 3 吋 × 1 吋限制。`;
+                        limitClause = "距邊緣 < 3 吋處穿孔撕裂不得超過 3 吋 × 1 吋";
+                    } else {
+                        isServiceable = true;
+                        reason = `距邊緣 < 3 吋處，穿孔尺寸 ${l} × ${w} 吋在 3 吋 × 1 吋以內，合格。`;
+                        limitClause = "距邊緣 < 3 吋處 ≤ 3 吋 × 1 吋";
+                    }
+                } else {
+                    if (l > 6.0 || w > 2.0) {
+                        isServiceable = false;
+                        reason = `距離板邊緣 ≥ 3 吋處，穿孔尺寸 ${l} × ${w} 吋，超過 6 吋 × 2 吋限制。`;
+                        limitClause = "距邊緣 ≥ 3 吋處穿孔撕裂不得超過 6 吋 × 2 吋";
+                    } else {
+                        isServiceable = true;
+                        reason = `距邊緣 ≥ 3 吋處，穿孔尺寸 ${l} × ${w} 吋在 6 吋 × 2 吋以內，合格。`;
+                        limitClause = "距邊緣 ≥ 3 吋處 ≤ 6 吋 × 2 吋";
+                    }
+                }
+            } else if (scenario === 'base_rivets') {
+                const count = parseInt(document.getElementById('calc-rivet-count').value, 10) || 0;
+                const sp = parseInt(document.getElementById('calc-rivet-spacing').value, 10) || 0;
+                title = "底板鉚釘狀態判定 (Base Rivets)";
+
+                if (count > 5 || sp < 5) {
+                    isServiceable = false;
+                    reason = `鉚釘缺失超過 5 個 (實測 ${count} 個) 或兩缺失間完好鉚釘不足 5 個 (實測 ${sp} 個)。`;
+                    limitClause = "缺失超過 5 個鉚釘不可接受，且任意兩缺失鉚釘間必須至少有 5 個完好鉚釘";
+                } else {
+                    isServiceable = true;
+                    reason = `缺失鉚釘 ${count} 個 (≤ 5 個) 且兩缺失間間隔 ${sp} 個完好鉚釘 (≥ 5 個)，合格。`;
+                    limitClause = "缺失 ≤ 5 個且間隔 ≥ 5 個完好鉚釘";
+                }
+            } else if (scenario === 'base_rail_missing') {
+                const st = document.getElementById('calc-rail-state').value;
+                title = "底板側軌與 C 型槽判定 (Base Side Rails & Tracks)";
+                if (st !== 'intact') {
+                    isServiceable = false;
+                    reason = (st === 'missing') ? "底板邊軌或板邊緣軌缺失。" :
+                             (st === 'separated') ? "底板與邊軌出現分離 / 脫離現象。" : "C 型槽損壞，導致 D-ring 無法正確均勻分布與固定。";
+                    limitClause = "邊軌缺失、底板分離或鎖槽損壞均屬不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = "底板側軌完好無缺失、無分離且 C 型槽鎖定功能完好。";
+                    limitClause = "軌道與鎖槽完好無分離";
+                }
+            } else if (scenario === 'base_corner_status') {
+                const st = document.getElementById('calc-corner-state').value;
+                title = "板角鑄件完好性判定 (Corner Casting)";
+                if (st === 'missing_broken') {
+                    isServiceable = false;
+                    reason = "板角缺失或損壞，無法保證艙內鎖固及結構剛性。";
+                    limitClause = "板角必須完好存在 (Corner casting must be present)";
+                } else {
+                    isServiceable = true;
+                    reason = (st === 'weld_crack') 
+                        ? "板角完好，板角側軌焊接形成的裂縫屬標準許可範圍 (Corner welds can be cracked)。"
+                        : "板角完好存在且無結構缺失。";
+                    limitClause = "板角完好 (注意：焊接處裂縫可接受)";
+                }
+            } else if (scenario === 'net_tso' || scenario === 'general_labels') {
+                const tso = document.getElementById('calc-lbl-tso').checked;
+                const tare = document.getElementById('calc-lbl-tare').checked;
+                const idCode = document.getElementById('calc-lbl-id').checked;
+                title = "標籤清晰度與合規性判定 (Decals & Placards)";
+
+                if (!tso || !tare || !idCode) {
+                    isServiceable = false;
+                    const fl = [];
+                    if (!tso) fl.push("TSO 標籤缺失或無法辨識");
+                    if (!tare) fl.push("箱重標籤缺失或有手寫塗改");
+                    if (!idCode) fl.push("ULD 識別碼塗改或無法辨認");
+                    reason = `標籤不合格：${fl.join('、')}。`;
+                    limitClause = "TSO 標籤、箱重標籤及 ULD 識別代碼均必須至少在一處清晰可見且無魔術筆塗改";
+                } else {
+                    isServiceable = true;
+                    reason = "TSO 標籤清晰可讀、箱重與識別代碼完整且無手寫塗改痕跡。";
+                    limitClause = "符合標準 (Serviceable)";
+                }
+            } else if (scenario === 'net_fittings') {
+                const dState = document.getElementById('calc-net-dring') ? document.getElementById('calc-net-dring').value : 'full';
+                const countVal = parseInt(document.getElementById('calc-net-hooks-val').value, 10) || 0;
+                title = "集裝網 D-ring 雙腳鎖扣判定 (Double Stud Fittings)";
+                if (dState === 'missing' || countVal > 0) {
+                    isServiceable = false;
+                    reason = (dState === 'missing') 
+                        ? "雙腳鎖扣 D-ring 數量不齊全或功能異常。" 
+                        : `雙腳鎖扣 D-ring 缺失或損壞達 ${countVal} 個。`;
+                    limitClause = "所有 D-Ring (Double Stud Fittings) 數量齊全且功能正常 (正常18個/5角繩19個)";
+                } else {
+                    isServiceable = true;
+                    reason = "所有 D-Ring 雙腳鎖扣數量齊全且功能正常 (正常18個/5角繩19個)。";
+                    limitClause = "所有 D-Ring (Double Stud Fittings) 數量齊全且功能正常 (正常18個/5角繩19個)";
+                }
+            } else if (scenario === 'net_hooks') {
+                const countVal = parseInt(document.getElementById('calc-net-hooks-val')?.value, 10) || 0;
+                const isExceedChecked = document.getElementById('calc-net-hooks-exceed')?.checked || false;
+                title = "集裝網網鉤判定 (Adjusting Hooks)";
+
+                if (isExceedChecked || countVal > 1) {
+                    isServiceable = false;
+                    reason = `每側缺失或損壞的網鉤超過 1 個${countVal > 1 ? ` (實測每側 ${countVal} 個)` : ' (勾選每側缺失/損壞多過 1 個)'}，不可接受。`;
+                    limitClause = "每側缺失或不可使用的網鉤不得超過 1 個 (正常18個/5角繩17個)";
+                } else {
+                    isServiceable = true;
+                    reason = `網鉤狀況正常 (正常18個/5角繩17個)，每側缺失或損壞網鉤 ${countVal} 個 (≤ 1 個)，符合標準。`;
+                    limitClause = "每側缺失或不可使用的網鉤不得超過 1 個";
+                }
+            } else if (scenario === 'net_roping_lower' || scenario === 'net_roping_upper') {
+                const fray = parseFloat(document.getElementById('calc-net-fray-pct').value) || 0;
+                const brokenKnots = parseInt(document.getElementById('calc-net-broken-knots').value, 10) || 0;
+                const multi = document.getElementById('calc-net-multi-damages').checked;
+                title = "集裝網繩索磨損判定 (Cargo Net Roping)";
+
+                if (fray > 25 || brokenKnots > 1 || multi) {
+                    isServiceable = false;
+                    const fl = [];
+                    if (fray > 25) fl.push(`單處磨損 ${fray}% (> 25%)`);
+                    if (brokenKnots > 1) fl.push(`兩結間斷裂 ${brokenKnots} 條 (> 1 條)`);
+                    if (multi) fl.push("全網出現 3 處或以上損壞");
+                    reason = `網繩結構損壞超標：${fl.join('、')}。`;
+                    limitClause = "網繩單處磨損 ≤ 25%，兩結間斷裂 ≤ 1 條，三處或以上損壞即不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = `網角繩/底層磨損 ${fray}% (≤ 25%)，兩結間斷裂 ${brokenKnots} 條，且無多處累積損壞。`;
+                    limitClause = "符合集裝網適航標準";
+                }
+            } else if (scenario === 'strap_blue_scaf') {
+                const tso = document.getElementById('calc-scaf-tso').checked;
+                const valid = document.getElementById('calc-scaf-valid').checked;
+                const nodmg = document.getElementById('calc-scaf-nodmg').checked;
+                title = "主要 SCAF 藍色軍帶判定 (Primary SCAF Restraint Straps)";
+
+                if (!tso || !valid || !nodmg) {
+                    isServiceable = false;
+                    reason = "藍色軍帶存在破損、過期或缺少 TSO 標籤，特殊貨物嚴禁使用。";
+                    limitClause = "主要 SCAF 軍帶不得存在任何形式之損壞、過期或無 TSO 標籤";
+                } else {
+                    isServiceable = true;
+                    reason = "附有有效 TSO 標籤、在效期內且無任何損壞，在 SCAF 報告監督下可正常使用。";
+                    limitClause = "符合 SCAF 藍色軍帶適航標準";
+                }
+            } else if (scenario === 'strap_yellow_sec') {
+                const fray = parseFloat(document.getElementById('calc-yellow-fray').value) || 0;
+                const hw = document.getElementById('calc-yellow-hardware').value;
+                const knot = document.getElementById('calc-yellow-knot').checked;
+                const exp = document.getElementById('calc-yellow-expired').checked;
+                title = "次要貨物綁固帶 (黃色) 判定 (Secondary Cargo Straps)";
+
+                if (fray > 25 || hw === 'fail' || knot || exp) {
+                    isServiceable = false;
+                    const fl = [];
+                    if (fray > 25) fl.push(`磨損超寬度 ${fray}% (> 25%)`);
+                    if (hw === 'fail') fl.push("扣環無法鎖定或金屬件損壞");
+                    if (knot) fl.push("存在解不開的結");
+                    if (exp) fl.push("已過期");
+                    reason = `次要綁固帶不合格：${fl.join('、')}。`;
+                    limitClause = "切口磨損不得超過寬度 25%，不得有死結，扣環必須鎖緊";
+                } else {
+                    isServiceable = true;
+                    reason = `綁帶磨損 ${fray}% (≤ 25%)，五金功能正常，無死結且在效期內。`;
+                    limitClause = "符合次要貨物綁固帶標準";
+                }
+            } else if (scenario === 'strap_trsl') {
+                const dmg = document.getElementById('calc-trsl-dmg').value;
+                const count = parseInt(document.getElementById('calc-trsl-count').value, 10) || 0;
+                title = "TRSL 臨時綁帶判定 (Temporary Restraint Straps)";
+
+                if (dmg === 'damaged' || count > 6) {
+                    isServiceable = false;
+                    reason = (dmg === 'damaged') 
+                        ? "TRSL 存在損壞 (標準嚴格要求不能有任何損壞)。"
+                        : `同一塊板使用 ${count} 條 (一塊板最多只能用 6 條)。`;
+                    limitClause = "TRSL 不能有任何損壞；一塊板最多只能使用 6 條 (長: 2 條 | 短: 1 條)";
+                } else {
+                    isServiceable = true;
+                    reason = `TRSL 完好無損且板裝使用數量 ${count} 條 (≤ 6 條)，符合規範。`;
+                    limitClause = "符合 TRSL 使用標準";
+                }
+            } else if (scenario === 'fcc_dg_rules') {
+                const isBattery = document.getElementById('calc-fcc-battery').checked;
+                title = "FCC 使用規範判定 (FCC Usage Requirement)";
+                if (isBattery) {
+                    isServiceable = true;
+                    reason = "所有板裝含有電池貨品 / 危險品 (DG) 均必須強制使用 FCC。";
+                    limitClause = "強制要求：板裝電池貨品 / DG 貨物必須使用 FCC";
+                } else {
+                    isServiceable = true;
+                    reason = "非電池 / 非 DG 貨物，可依照正常 Contour 尺寸（96吋黃色 / 118吋綠色）選用。";
+                    limitClause = "依 Contour 選配";
+                }
+            }
+
+            // Render Banner
+            const banner = document.getElementById('calc-result-banner');
+            const icon = document.getElementById('calc-result-icon');
+            const tit = document.getElementById('calc-result-title');
+            const sub = document.getElementById('calc-result-subtitle');
+            const std = document.getElementById('calc-result-standard');
+            const details = document.getElementById('calc-result-details');
+
+            banner.classList.remove('hidden');
+
+            if (isServiceable) {
+                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-emerald-50 border-emerald-500 text-emerald-900 shadow-md";
+                icon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+                tit.innerText = "🟢 SERVICEABLE (合格 / 可正常使用)";
+                sub.innerText = title;
+                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-emerald-200 text-emerald-900";
+                std.innerText = standardDoc;
+            } else {
+                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-red-50 border-red-500 text-red-900 shadow-md";
+                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-600"></i>`;
+                tit.innerText = "🔴 UNSERVICEABLE (拒收 / 不可使用)";
+                sub.innerText = title;
+                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-red-200 text-red-900";
+                std.innerText = standardDoc;
+            }
+
+            details.innerHTML = `
+                <p><b>實測狀況判定：</b>${reason}</p>
+                <p><b>依據檢驗標準：</b>${limitClause}</p>
+                <p class="text-[11px] text-slate-500 pt-1 border-t border-slate-200/60 font-mono">Reference: FORM: 83-48-002 (07/02/26) / UCHPM Chapter 04</p>
+            `;
+
+            lastEvaluationReport = {
+                title,
+                status: isServiceable ? "🟢 Serviceable (合格可使用)" : "🔴 Unserviceable (拒收不可使用)",
+                reason,
+                limitClause,
+                time: new Date().toLocaleTimeString('zh-HK', { hour12: false })
+            };
+
+            if (navigator.vibrate) navigator.vibrate(isServiceable ? 30 : [50, 50, 50]);
+        }
+
+        function resetCalculatorForm() {
+            document.getElementById('calc-result-banner').classList.add('hidden');
+            updateCalcFields();
+            showToast('判定計算機已重置');
+        }
+
+        function copyCalcResult() {
+            if (!lastEvaluationReport) return;
+            const text = `【ULD Inspect360 即時適航判定結果】\n項目：${lastEvaluationReport.title}\n判定：${lastEvaluationReport.status}\n實測分析：${lastEvaluationReport.reason}\n標準依據：${lastEvaluationReport.limitClause}\n手冊依據：FORM: 83-48-002 / UCHPM CH04\n時間：${lastEvaluationReport.time}`;
+            copyTextToClipboard(text);
+            showToast('判定結果已複製至剪貼簿！');
+        }
+
+        function transferCalcToLogger() {
+            if (!lastEvaluationReport) return;
+            switchPage('logger');
+
+            const statusRadio = document.querySelector(`input[name="log-status"][value="${lastEvaluationReport.status}"]`);
+            if (statusRadio) statusRadio.checked = true;
+
+            const descBox = document.getElementById('log-defect-desc');
+            const addition = `【${lastEvaluationReport.title}】實測結果：${lastEvaluationReport.reason} (依據：${lastEvaluationReport.limitClause})`;
+            descBox.value = descBox.value ? (descBox.value + '\n' + addition) : addition;
+
+            showToast('已將計算機判定結果帶入速錄表單！');
+        }
+
+        function appendDefectChip(text) {
+            const desc = document.getElementById('log-defect-desc');
+            if (desc.value.trim().length > 0) {
+                desc.value += `、${text}`;
+            } else {
+                desc.value = text;
+            }
+            if (navigator.vibrate) navigator.vibrate(15);
+        }
+
+        function buildReportText() {
+            const uldNum = document.getElementById('log-uld-num').value.trim() || '未填寫箱號';
+            const uldType = document.getElementById('log-uld-type').value;
+            const inspector = document.getElementById('log-inspector').value.trim() || '當班巡檢員';
+            const location = document.getElementById('log-location').value.trim() || 'Ramp Stand';
+            const status = document.querySelector('input[name="log-status"]:checked').value;
+            const defectDesc = document.getElementById('log-defect-desc').value.trim() || '無異常 / 外觀良好符合適航標準';
+            const action = document.getElementById('log-action').value;
+            const target = document.getElementById('log-target').value.trim() || 'Ramp Ops';
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('zh-HK');
+            const timeStr = now.toLocaleTimeString('zh-HK', { hour12: false });
+
+            const summary = 
+`================================
+【ULD INSPECT360 現場適航檢查報告】
+================================
+• 箱/板編號: ${uldNum}
+• 設備類型: ${uldType}
+• 適航判定: ${status}
+• 檢查地點: ${location}
+• 當班檢查: ${inspector}
+• 檢查時間: ${dateStr} ${timeStr}
+--------------------------------
+【損壞描述與實測數據】:
+${defectDesc}
+--------------------------------
+【處置方式】:
+• ${action}
+• 通報群組: ${target}
+• 規範依據: FORM: 83-48-002 / UCHPM CH04
+================================`;
+            return summary;
+        }
+
+        function generateAndCopyReport() {
+            const report = buildReportText();
+            document.getElementById('log-preview-output').innerText = report;
+            copyTextToClipboard(report);
+            showToast('✅ 交接通報摘要已生成並複製到剪貼簿！');
+        }
+
+        function copyGeneratedTextDirectly() {
+            const text = document.getElementById('log-preview-output').innerText;
+            copyTextToClipboard(text);
+            showToast('已複製通報摘要！');
+        }
+
+        // Local Storage Session Logs
+        let localLogs = [];
+
+        function saveCurrentLogToHistory() {
+            const uldNum = document.getElementById('log-uld-num').value.trim();
+            if (!uldNum) {
+                showToast('請先填寫 ULD 箱/板號');
+                return;
+            }
+
+            const item = {
+                id: Date.now(),
+                uldNum: uldNum.toUpperCase(),
+                uldType: document.getElementById('log-uld-type').value,
+                status: document.querySelector('input[name="log-status"]:checked').value,
+                desc: document.getElementById('log-defect-desc').value.trim() || '符合適航標準',
+                time: new Date().toLocaleTimeString('zh-HK', { hour12: false }),
+                action: document.getElementById('log-action').value
+            };
+
+            localLogs.unshift(item);
+            saveLogsToStorage();
+            renderLocalLogsList();
+            showToast(`已儲存 ${item.uldNum} 至當班速錄清單！`);
+        }
+
+        function renderLocalLogsList() {
+            const container = document.getElementById('local-logs-container');
+            const badge = document.getElementById('log-count-badge');
+            if (!container) return;
+
+            badge.innerText = localLogs.length;
+
+            if (localLogs.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-slate-400 text-center py-6">暫無當班檢驗記錄，填寫右側表單即可即時新增。</p>`;
+                return;
+            }
+
+            container.innerHTML = '';
+            localLogs.forEach(lg => {
+                const isUnsev = lg.status.includes('Unserviceable');
+                const isServ = lg.status.includes('Serviceable');
+                const badgeColor = isUnsev ? 'bg-red-100 text-red-800 border-red-300' :
+                                   isServ ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
+                                   'bg-amber-100 text-amber-800 border-amber-300';
+
+                const card = document.createElement('div');
+                card.className = "p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1";
+                card.innerHTML = `
+                    <div class="flex justify-between items-center">
+                        <span class="font-mono font-black text-slate-900">${lg.uldNum}</span>
+                        <span class="text-[10px] px-1.5 py-0.5 rounded border font-bold ${badgeColor}">${lg.time}</span>
+                    </div>
+                    <div class="text-[11px] text-slate-600 truncate">${lg.uldType} • ${lg.desc}</div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-400 pt-1 border-t border-slate-200">
+                        <span class="truncate max-w-[180px]">${lg.action}</span>
+                        <button onclick="deleteLogItem(${lg.id})" class="text-red-500 hover:underline">刪除</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function deleteLogItem(id) {
+            localLogs = localLogs.filter(l => l.id !== id);
+            saveLogsToStorage();
+            renderLocalLogsList();
+            showToast('已移除該條記錄');
+        }
+
+        function clearAllLogs() {
+            if (localLogs.length === 0) return;
+            localLogs = [];
+            saveLogsToStorage();
+            renderLocalLogsList();
+            showToast('已清空當班速錄清單');
+        }
+
+        function saveLogsToStorage() {
+            try {
+                sessionStorage.setItem('uld_inspect360_logs', JSON.stringify(localLogs));
+            } catch(e) {}
+        }
+
+        function loadLogsFromStorage() {
+            try {
+                const saved = sessionStorage.getItem('uld_inspect360_logs');
+                if (saved) localLogs = JSON.parse(saved);
+            } catch(e) {}
+        }
 
         let currentCardViewMode = 'both';
 
@@ -2068,10 +3064,14 @@
 
         function checkUrlHash() {
             const hash = window.location.hash;
-            if (hash === '#search') {
-                switchPage('search');
-            } else if (hash === '#card') {
+            if (hash === '#card') {
                 openCardModal();
+            } else if (hash === '#calc') {
+                switchPage('calc');
+            } else if (hash === '#logger') {
+                switchPage('logger');
+            } else {
+                switchPage('uld');
             }
         }
 
