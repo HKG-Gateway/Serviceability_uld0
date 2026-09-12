@@ -15,11 +15,101 @@
     <meta name="description" content="ULD Inspect360 官方適航性檢查卡 (FORM: 83-48-002) 與適航快速查詢工具">
     <meta name="format-detection" content="telephone=no">
 
+    <!-- Pre-rendered Apple Touch Icon & Favicon (Direct Data URL to bypass iOS Cross-Origin / Fallback to 'U') -->
+    <link rel="apple-touch-icon" id="apple-touch-icon-link">
+    <link rel="icon" type="image/png" id="favicon-link">
+
     <!-- Dynamic PWA Manifest Placeholder -->
     <link rel="manifest" id="manifest-placeholder">
 
-    <!-- iOS Touch App Icon (Official High-Res UPS Logo) -->
-    <link rel="apple-touch-icon" id="apple-touch-icon-link" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png">
+    <!-- Inline Icon Generator: Ensures iOS Safari & Android PWA never fallback to letter 'U' -->
+    <script>
+        (function generateHighResAppIcon() {
+            try {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+
+                // 1. Rich UPS Dark Brown Background
+                ctx.fillStyle = '#24120c';
+                ctx.fillRect(0, 0, 512, 512);
+
+                // Subtle inner glow / gradient
+                const grad = ctx.createRadialGradient(256, 256, 60, 256, 256, 280);
+                grad.addColorStop(0, '#3d2015');
+                grad.addColorStop(1, '#24120c');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, 512, 512);
+
+                // 2. Draw UPS Shield Base Shape
+                function createShieldPath(inset) {
+                    ctx.beginPath();
+                    const left = 76 + inset;
+                    const right = 436 - inset;
+                    const top = 64 + inset;
+                    const shoulderY = 320 - (inset * 0.4);
+                    const bottomY = 448 - inset;
+                    const centerX = 256;
+
+                    ctx.moveTo(left, top);
+                    ctx.lineTo(right, top);
+                    ctx.lineTo(right, shoulderY);
+                    ctx.bezierCurveTo(right, 390, centerX + 60, bottomY, centerX, bottomY);
+                    ctx.bezierCurveTo(centerX - 60, bottomY, left, 390, left, shoulderY);
+                    ctx.closePath();
+                }
+
+                // Shield Outer Gold Border
+                createShieldPath(0);
+                const goldGrad = ctx.createLinearGradient(76, 64, 436, 448);
+                goldGrad.addColorStop(0, '#ffe58f');
+                goldGrad.addColorStop(0.4, '#ffb500');
+                goldGrad.addColorStop(1, '#d48800');
+                ctx.fillStyle = goldGrad;
+                ctx.fill();
+
+                // Shield Inner Dark Fill
+                createShieldPath(18);
+                ctx.fillStyle = '#2b1610';
+                ctx.fill();
+
+                // 3. Shield Gold Header Bar
+                ctx.save();
+                createShieldPath(18);
+                ctx.clip();
+
+                ctx.beginPath();
+                ctx.rect(76, 64, 360, 110);
+                ctx.fillStyle = goldGrad;
+                ctx.fill();
+
+                // 4. Letters "ups" in shield
+                ctx.fillStyle = '#ffb500';
+                ctx.font = '900 132px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.letterSpacing = '-2px';
+                ctx.fillText('ups', 256, 280);
+
+                // Subtitle 360 in clean gold badge
+                ctx.font = '800 38px monospace';
+                ctx.fillStyle = '#ffe58f';
+                ctx.fillText('INSPECT 360', 256, 375);
+
+                ctx.restore();
+
+                const iconPngData = canvas.toDataURL('image/png');
+
+                // Set icons immediately before DOM loads
+                document.getElementById('apple-touch-icon-link').href = iconPngData;
+                document.getElementById('favicon-link').href = iconPngData;
+                window.__UPS_APP_ICON__ = iconPngData;
+            } catch (e) {
+                console.warn('Icon canvas creation fallback:', e);
+            }
+        })();
+    </script>
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -75,6 +165,7 @@
         <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-12 flex-shrink-0 flex items-center justify-center">
                 <img 
+                  id="pwa-banner-icon-preview"
                   src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
                   alt="UPS Logo" 
                   class="w-full h-full object-contain drop-shadow"
@@ -582,8 +673,9 @@
                 <i class="fa-solid fa-xmark"></i>
             </button>
             
-            <div class="w-14 h-14 mx-auto mb-3 bg-[#2b1610] p-2.5 rounded-xl flex items-center justify-center border-2 border-[#ffb500] shadow-md">
+            <div class="w-14 h-14 mx-auto mb-3 bg-[#2b1610] p-2 rounded-xl flex items-center justify-center border-2 border-[#ffb500] shadow-md overflow-hidden">
                 <img 
+                  id="ios-modal-icon-preview"
                   src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
                   alt="UPS Logo" 
                   class="w-full h-full object-contain drop-shadow"
@@ -619,12 +711,18 @@
     </div>
 
     <script>
-        /* ================= PWA SETUP & OFFICIAL LOGO CONFIGURATION ================= */
-        const upsLogoUrl = "https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg";
-        const upsPng512 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png";
-        const upsPng192 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/192px-United_Parcel_Service_logo_2014.svg.png";
+        /* ================= PWA SETUP & OFFICIAL EMBEDDED LOGO CONFIGURATION ================= */
+        const appIconPng = window.__UPS_APP_ICON__ || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png";
 
-        // Assign official PNG and SVG directly to Manifest configuration
+        // Feed generated PNG directly into modal preview icons
+        if (window.__UPS_APP_ICON__) {
+            const p1 = document.getElementById('pwa-banner-icon-preview');
+            const p2 = document.getElementById('ios-modal-icon-preview');
+            if (p1) p1.src = window.__UPS_APP_ICON__;
+            if (p2) p2.src = window.__UPS_APP_ICON__;
+        }
+
+        // Direct Manifest Configuration using Data URL (Immune to CORS or Host Blocks)
         const manifestConfig = {
             "name": "ULD Inspect360 - ULD 適航檢查工具",
             "short_name": "ULD Inspect360",
@@ -632,27 +730,21 @@
             "start_url": "./",
             "scope": "./",
             "display": "standalone",
-            "background_color": "#2b1610",
+            "background_color": "#24120c",
             "theme_color": "#2b1610",
             "orientation": "any",
             "icons": [
                 {
-                    "src": upsPng192,
+                    "src": appIconPng,
                     "sizes": "192x192",
                     "type": "image/png",
                     "purpose": "any"
                 },
                 {
-                    "src": upsPng512,
+                    "src": appIconPng,
                     "sizes": "512x512",
                     "type": "image/png",
                     "purpose": "any maskable"
-                },
-                {
-                    "src": upsLogoUrl,
-                    "sizes": "any",
-                    "type": "image/svg+xml",
-                    "purpose": "any"
                 }
             ],
             "shortcuts": [
@@ -661,21 +753,21 @@
                     "short_name": "判定計算機",
                     "description": "停機坪一鍵判定合格與拒收",
                     "url": "./#calc",
-                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": appIconPng, "sizes": "192x192", "type": "image/png" }]
                 },
                 {
                     "name": "檢驗報告速錄",
                     "short_name": "報告速錄",
                     "description": "一鍵生成交接通報摘要",
                     "url": "./#logger",
-                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": appIconPng, "sizes": "192x192", "type": "image/png" }]
                 },
                 {
                     "name": "檢查卡中英對照",
                     "short_name": "檢查卡",
                     "description": "FORM 83-48-002 官方檢查卡",
                     "url": "./#card",
-                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": appIconPng, "sizes": "192x192", "type": "image/png" }]
                 }
             ]
         };
@@ -684,7 +776,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v30-pwa';
+            const CACHE_NAME = 'uld-inspect360-v31-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -692,10 +784,7 @@
                 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js',
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js',
-                'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js',
-                'https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg',
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png',
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/192px-United_Parcel_Service_logo_2014.svg.png'
+                'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js'
             ];
 
             self.addEventListener('install', (evt) => {
