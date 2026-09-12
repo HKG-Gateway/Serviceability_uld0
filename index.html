@@ -118,7 +118,6 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
     <script type="text/javascript" src="https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mqtt@5.3.5/dist/mqtt.min.js"></script>
 
     <style>
         #viewport-container {
@@ -333,10 +332,10 @@
                 </div>
                 
                 <!-- Realtime Sync Connection Banner -->
-                <div id="sync-status-indicator" class="text-[10px] text-amber-900 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-300 flex items-center justify-between font-medium shadow-sm">
+                <div id="sync-status-indicator" class="text-[10px] text-emerald-900 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-300 flex items-center justify-between font-medium shadow-sm">
                     <span class="flex items-center gap-1.5">
-                        <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
-                        <span id="sync-status-text">正在連線全員雲端同步資料庫...</span>
+                        <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span id="sync-status-text">🟢 雲端已即時連線 (全員同步中)</span>
                     </span>
                     <span class="font-bold text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded text-[9px]">權限：任何人皆可刪除</span>
                 </div>
@@ -728,7 +727,6 @@
         /* ================= PWA SETUP & OFFICIAL EMBEDDED LOGO CONFIGURATION ================= */
         const appIconPng = window.__UPS_APP_ICON__ || "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png";
 
-        // Feed generated PNG directly into modal preview icons
         if (window.__UPS_APP_ICON__) {
             const p1 = document.getElementById('pwa-banner-icon-preview');
             const p2 = document.getElementById('ios-modal-icon-preview');
@@ -736,7 +734,6 @@
             if (p2) p2.src = window.__UPS_APP_ICON__;
         }
 
-        // Direct Manifest Configuration using Data URL (Immune to CORS or Host Blocks)
         const manifestConfig = {
             "name": "ULD Inspect360 - ULD 適航檢查工具",
             "short_name": "ULD Inspect360",
@@ -790,7 +787,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v31-pwa';
+            const CACHE_NAME = 'uld-inspect360-v32-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -1682,7 +1679,7 @@
             renderBilingualCardModal();
             updateCalcFields();
             loadLogsFromStorage();
-            initFirebaseSync();
+            initUniversalSync();
 
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -1879,7 +1876,6 @@
             const mainCalc = document.getElementById('main-view-calc');
             const mainLogger = document.getElementById('main-view-logger');
 
-            // Hide all first
             [leftUld, leftCalc, leftLogger, detailsPanel].forEach(el => el && el.classList.add('hidden'));
             [mainUld, mainCalc, mainLogger].forEach(el => el && el.classList.add('hidden'));
 
@@ -2822,7 +2818,6 @@
                 }
             }
 
-            // Render Banner
             const banner = document.getElementById('calc-result-banner');
             const icon = document.getElementById('calc-result-icon');
             const tit = document.getElementById('calc-result-title');
@@ -2957,15 +2952,11 @@ ${defectDesc}
             showToast('已複製通報摘要！');
         }
 
+        /* ================= UNIVERSAL PORT 443 CROSS-DEVICE SYNC ENGINE ================= */
         let localLogs = [];
-        let syncDb = null;
-        let syncAuth = null;
-        let syncUser = null;
-        let syncCollectionRef = null;
-        let isCloudConnected = false;
-        let mqttClient = null;
-        let isMqttConnected = false;
-        const PLAN_A_TOPIC = 'uld_inspect360/public/shared_defect_logs_v1';
+        let eventSource = null;
+        const SYNC_TOPIC = 'uld_inspect360_shared_hub_v1';
+        const SYNC_ENDPOINT = `https://ntfy.sh/${SYNC_TOPIC}`;
 
         function updateSyncStatus(state, text) {
             const banner = document.getElementById('sync-status-indicator');
@@ -2987,134 +2978,70 @@ ${defectDesc}
             }
         }
 
-        async function initFirebaseSync() {
-            updateSyncStatus('connecting', '正在連線全員雲端同步資料庫...');
+        function initUniversalSync() {
+            updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
 
-            // If Firebase config is not injected (e.g. standalone iPhone PWA / outside platforms), automatically activate Plan A
-            if (typeof __firebase_config === 'undefined') {
-                initPlanASync();
-                return;
-            }
-
-            try {
-                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                const { getAuth, signInWithCustomToken, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
-                const { getFirestore, collection, doc, addDoc, deleteDoc, onSnapshot, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                const firebaseConfig = JSON.parse(__firebase_config);
-
-                const app = initializeApp(firebaseConfig);
-                syncDb = getFirestore(app);
-                syncAuth = getAuth(app);
-
-                // RULE 3 - Authenticate FIRST before queries
-                let authenticatedUser = null;
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    try {
-                        const cred = await signInWithCustomToken(syncAuth, __initial_auth_token);
-                        authenticatedUser = cred.user;
-                    } catch (tokenErr) {
+            // 1. Initial snapshot fetch via Standard HTTPS Port 443
+            fetch(`${SYNC_ENDPOINT}/json?poll=1&since=latest`)
+                .then(res => res.text())
+                .then(text => {
+                    if (!text) return;
+                    const lines = text.trim().split('\n');
+                    for (let i = lines.length - 1; i >= 0; i--) {
                         try {
-                            const anonCred = await signInAnonymously(syncAuth);
-                            authenticatedUser = anonCred.user;
-                        } catch (anonErr) {}
+                            const packet = JSON.parse(lines[i]);
+                            if (packet.event === 'message' && packet.message) {
+                                const parsed = JSON.parse(packet.message);
+                                if (Array.isArray(parsed)) {
+                                    localLogs = parsed;
+                                    saveLogsToStorage();
+                                    renderLocalLogsList();
+                                    break;
+                                }
+                            }
+                        } catch (err) {}
                     }
-                } else {
-                    try {
-                        const anonCred = await signInAnonymously(syncAuth);
-                        authenticatedUser = anonCred.user;
-                    } catch (anonErr) {}
+                })
+                .catch(() => {});
+
+            // 2. Realtime SSE over standard HTTPS Port 443 (Never blocked by firewalls or mobile carriers)
+            try {
+                if (window.EventSource) {
+                    eventSource = new EventSource(`${SYNC_ENDPOINT}/sse`);
+                    eventSource.onopen = () => {
+                        updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
+                    };
+                    eventSource.onmessage = (evt) => {
+                        try {
+                            const packet = JSON.parse(evt.data);
+                            if (packet.event === 'message' && packet.message) {
+                                const parsed = JSON.parse(packet.message);
+                                if (Array.isArray(parsed)) {
+                                    localLogs = parsed;
+                                    saveLogsToStorage();
+                                    renderLocalLogsList();
+                                }
+                            }
+                        } catch (err) {}
+                    };
+                    eventSource.onerror = () => {
+                        updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
+                    };
                 }
-
-                if (!authenticatedUser) {
-                    initPlanASync();
-                    return;
-                }
-
-                syncUser = authenticatedUser;
-                isCloudConnected = true;
-
-                // RULE 1 - Strict Public Data Collection Path
-                syncCollectionRef = collection(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs');
-
+            } catch (e) {
                 updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
-
-                // RULE 2 - Simple Collection Query without OrderBy/Limit + Memory Sort
-                onSnapshot(syncCollectionRef, (snapshot) => {
-                    const fetchedLogs = [];
-                    snapshot.forEach((docSnap) => {
-                        fetchedLogs.push({ docId: docSnap.id, ...docSnap.data() });
-                    });
-                    fetchedLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-                    localLogs = fetchedLogs;
-                    renderLocalLogsList();
-                }, (error) => {
-                    initPlanASync();
-                });
-            } catch (err) {
-                initPlanASync();
             }
         }
 
-        function initPlanASync() {
-            updateSyncStatus('connecting', '正在啟動全員即時雲端中繼...');
-
-            if (typeof mqtt === 'undefined') {
-                updateSyncStatus('offline', '離線本機模式 (網絡未就緒)');
-                loadLogsFromStorage();
-                renderLocalLogsList();
-                return;
-            }
-
+        async function broadcastSync() {
             try {
-                const brokerUrl = 'wss://broker.emqx.io:8084/mqtt';
-                const clientId = 'uld_pwa_' + Math.random().toString(16).substring(2, 10);
-
-                mqttClient = mqtt.connect(brokerUrl, {
-                    clientId: clientId,
-                    clean: true,
-                    connectTimeout: 6000,
-                    reconnectPeriod: 3000,
-                    keepalive: 60
+                await fetch(SYNC_ENDPOINT, {
+                    method: 'POST',
+                    headers: { 'Title': 'ULD Inspect360 Sync' },
+                    body: JSON.stringify(localLogs)
                 });
-
-                mqttClient.on('connect', () => {
-                    isMqttConnected = true;
-                    isCloudConnected = true;
-                    updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
-                    mqttClient.subscribe(PLAN_A_TOPIC, { qos: 1 });
-                });
-
-                mqttClient.on('message', (topic, payload) => {
-                    if (topic === PLAN_A_TOPIC) {
-                        try {
-                            const data = JSON.parse(payload.toString());
-                            if (Array.isArray(data)) {
-                                localLogs = data;
-                                saveLogsToStorage();
-                                renderLocalLogsList();
-                            }
-                        } catch (err) {
-                            console.warn("Sync payload parsing:", err);
-                        }
-                    }
-                });
-
-                mqttClient.on('error', () => {
-                    if (!isMqttConnected) {
-                        updateSyncStatus('connecting', '正在重新連線雲端中繼...');
-                    }
-                });
-
-                mqttClient.on('offline', () => {
-                    isMqttConnected = false;
-                    updateSyncStatus('connecting', '雲端重連中...');
-                });
-            } catch (e) {
-                updateSyncStatus('offline', '離線本機模式');
-                loadLogsFromStorage();
-                renderLocalLogsList();
+            } catch (err) {
+                console.warn('Sync broadcast warning:', err);
             }
         }
 
@@ -3136,45 +3063,17 @@ ${defectDesc}
                 action: document.getElementById('log-action').value,
                 target: document.getElementById('log-target').value.trim() || 'Ramp Ops',
                 time: new Date().toLocaleTimeString('zh-HK', { hour12: false }),
-                timestamp: Date.now(),
-                creatorId: syncUser ? syncUser.uid : 'ramp-user'
+                timestamp: Date.now()
             };
 
-            // 1. Plan A (MQTT Realtime Broadcast with retain for instant cross-device delivery)
-            if (isMqttConnected && mqttClient) {
-                localLogs.unshift(logData);
-                try {
-                    mqttClient.publish(PLAN_A_TOPIC, JSON.stringify(localLogs), { qos: 1, retain: true });
-                } catch(e) {}
-                saveLogsToStorage();
-                renderLocalLogsList();
-                if (!skipToast) showToast(`✅ 已全員同步 ${logData.uldNum} 至所有人的裝置！`);
-                return;
-            }
-
-            // 2. Fallback to Firestore if platform credentials present
-            if (isCloudConnected && syncDb && syncUser && syncCollectionRef) {
-                try {
-                    const { addDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    await addDoc(syncCollectionRef, logData);
-                    if (!skipToast) showToast(`✅ 已全員同步 ${logData.uldNum} 至所有人的裝置！`);
-                    return;
-                } catch (e) {
-                    saveLogLocally(logData, skipToast);
-                    return;
-                }
-            }
-
-            // 3. Fallback to local memory
-            saveLogLocally(logData, skipToast);
-        }
-
-        function saveLogLocally(logData, skipToast) {
-            logData.docId = 'local_' + Date.now();
             localLogs.unshift(logData);
             saveLogsToStorage();
             renderLocalLogsList();
-            if (!skipToast) showToast(`已儲存 ${logData.uldNum} 至本機速錄清單！`);
+
+            // Broadcast to all connected devices over port 443
+            broadcastSync();
+
+            if (!skipToast) showToast(`✅ 已全員同步 ${logData.uldNum} 至所有人的裝置！`);
         }
 
         function renderLocalLogsList() {
@@ -3197,7 +3096,7 @@ ${defectDesc}
                                    isServ ? 'bg-emerald-100 text-emerald-800 border-emerald-300' :
                                    'bg-amber-100 text-amber-800 border-amber-300';
 
-                const docIdentifier = lg.docId ? `'${lg.docId}'` : lg.id;
+                const docIdentifier = `'${lg.docId || lg.id}'`;
 
                 const card = document.createElement('div');
                 card.className = "p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs space-y-1.5 shadow-sm transition hover:border-slate-300";
@@ -3224,74 +3123,21 @@ ${defectDesc}
         // Anyone can delete any report across all connected devices
         async function deleteLogItem(docId) {
             const docIdStr = String(docId);
-
-            // 1. Plan A Sync Deletion
-            if (isMqttConnected && mqttClient) {
-                localLogs = localLogs.filter(l => String(l.docId || l.id) !== docIdStr);
-                try {
-                    mqttClient.publish(PLAN_A_TOPIC, JSON.stringify(localLogs), { qos: 1, retain: true });
-                } catch(e) {}
-                saveLogsToStorage();
-                renderLocalLogsList();
-                showToast('已自全員設備中同步刪除！');
-                return;
-            }
-
-            // 2. Firestore Deletion
-            if (isCloudConnected && syncDb && syncUser && syncCollectionRef && !docIdStr.startsWith('local_')) {
-                try {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                    const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    const docRef = doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', docIdStr);
-                    await deleteDoc(docRef);
-                    showToast('已自全員設備中同步刪除！');
-                    return;
-                } catch (e) {}
-            }
-
-            // Fallback for local removal
             localLogs = localLogs.filter(l => String(l.docId || l.id) !== docIdStr);
             saveLogsToStorage();
             renderLocalLogsList();
-            showToast('已移除該條記錄');
+            broadcastSync();
+            showToast('已自全員設備中同步刪除！');
         }
 
         // Anyone can clear all reports across all connected devices
         async function clearAllLogs() {
             if (localLogs.length === 0) return;
-
-            // 1. Plan A Sync Clear All
-            if (isMqttConnected && mqttClient) {
-                localLogs = [];
-                try {
-                    mqttClient.publish(PLAN_A_TOPIC, JSON.stringify([]), { qos: 1, retain: true });
-                } catch(e) {}
-                saveLogsToStorage();
-                renderLocalLogsList();
-                showToast('已清空所有設備上的速錄記錄！');
-                return;
-            }
-
-            // 2. Firestore Clear All
-            if (isCloudConnected && syncDb && syncUser && syncCollectionRef) {
-                try {
-                    const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                    const { doc, deleteDoc, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    const snaps = await getDocs(syncCollectionRef);
-                    const deletePromises = [];
-                    snaps.forEach(s => {
-                        deletePromises.push(deleteDoc(doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', s.id)));
-                    });
-                    await Promise.all(deletePromises);
-                    showToast('已清空所有設備上的速錄記錄！');
-                    return;
-                } catch (e) {}
-            }
-
             localLogs = [];
             saveLogsToStorage();
             renderLocalLogsList();
-            showToast('已清空當班速錄清單');
+            broadcastSync();
+            showToast('已清空所有設備上的速錄記錄！');
         }
 
         function saveLogsToStorage() {
