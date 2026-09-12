@@ -420,6 +420,9 @@
                                 <option value="base_rivets">底板缺失或鬆動的鉚釘數量</option>
                                 <option value="base_rail_missing">底板邊軌 / 板邊緣軌缺失或分離</option>
                                 <option value="base_corner_status">板角完好性 (Corner Casting)</option>
+                                <option value="base_seat_track_dist">C型槽損壞，導致 D-ring 無法正確均勻分布與固定</option>
+                                <option value="base_seat_track_lip">固定 D-ring 的 C 型槽槽口損壞</option>
+                                <option value="base_loading_aircraft_damage">損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害</option>
                             </optgroup>
                             <optgroup label="集裝網 (Cargo Nets)">
                                 <option value="net_tso">TSO 標籤可辨識性</option>
@@ -2191,7 +2194,6 @@
                             <option value="intact">底板邊軌與邊緣軌完好無缺失且未分離 (Intact)</option>
                             <option value="missing">底板邊軌或板邊緣軌缺失 (Missing Base Side / Edge Rail)</option>
                             <option value="separated">底板與邊軌出現分離 / 脫離現象 (Separation of Base & Edge Rail)</option>
-                            <option value="seat_track_damaged">C 型槽損壞，導致 D-ring 無法正確均勻分布與固定</option>
                         </select>
                     </div>
                 `;
@@ -2204,6 +2206,39 @@
                             <option value="weld_crack">板角完好，僅有板角側軌焊接形成的裂縫 (Welds Cracked - 可接受)</option>
                             <option value="missing_broken">板角缺失、斷裂或嚴重損壞 (Corner Missing/Damaged - 不可接受)</option>
                         </select>
+                    </div>
+                `;
+            } else if (scenario === 'base_seat_track_dist') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">C 型槽狀況 (Seat Track Condition)</label>
+                        <select id="calc-seat-track-dist-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="intact">C 型槽完好，D-ring 可正常均勻分布並有效固定 (合格)</option>
+                            <option value="damaged">C 型槽損壞，導致 D-ring 無法正確均勻分布與固定 (損壞)</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400">標準：C 型槽損壞導致 D-ring 無法正確均勻分布與固定，判定不可接受 (Unserviceable)。</p>
+                    </div>
+                `;
+            } else if (scenario === 'base_seat_track_lip') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">固定 D-ring 的 C 型槽槽口狀況 (Seat-track Lips Condition)</label>
+                        <select id="calc-seat-track-lip-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="intact">槽口完好無損，D-ring 鎖扣可牢固卡入鎖緊 (合格)</option>
+                            <option value="damaged">固定 D-ring 的 C 型槽槽口損壞 (破損/變形/開口受損)</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400">標準：固定 D-ring 的 C 型槽槽口損壞，判定不可接受 (Unserviceable)。</p>
+                    </div>
+                `;
+            } else if (scenario === 'base_loading_aircraft_damage') {
+                html = `
+                    <div class="text-xs space-y-2">
+                        <label class="block font-bold text-slate-700">裝載固定與機艙內部安全評估 (Loading & Aircraft Safety)</label>
+                        <select id="calc-aircraft-hazard-state" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg font-bold text-slate-800">
+                            <option value="intact">損壞程度未影響貨物裝載與固定，無損害機身內部風險 (合格)</option>
+                            <option value="hazard">損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害 (不可接受)</option>
+                        </select>
+                        <p class="text-[10px] text-slate-400">標準：損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受。</p>
                     </div>
                 `;
             } else if (scenario === 'net_tso' || scenario === 'general_labels') {
@@ -2582,16 +2617,15 @@
                 }
             } else if (scenario === 'base_rail_missing') {
                 const st = document.getElementById('calc-rail-state').value;
-                title = "底板側軌與 C 型槽判定 (Base Side Rails & Tracks)";
+                title = "底板側軌與邊緣完整性判定 (Base Side Rails)";
                 if (st !== 'intact') {
                     isServiceable = false;
-                    reason = (st === 'missing') ? "底板邊軌或板邊緣軌缺失。" :
-                             (st === 'separated') ? "底板與邊軌出現分離 / 脫離現象。" : "C 型槽損壞，導致 D-ring 無法正確均勻分布與固定。";
-                    limitClause = "邊軌缺失、底板分離或鎖槽損壞均屬不可接受";
+                    reason = (st === 'missing') ? "底板邊軌或板邊緣軌缺失。" : "底板與邊軌出現分離 / 脫離現象。";
+                    limitClause = "邊軌缺失或底板與邊軌分離均屬不可接受";
                 } else {
                     isServiceable = true;
-                    reason = "底板側軌完好無缺失、無分離且 C 型槽鎖定功能完好。";
-                    limitClause = "軌道與鎖槽完好無分離";
+                    reason = "底板側軌完好無缺失且未分離。";
+                    limitClause = "軌道完好無缺失且無分離";
                 }
             } else if (scenario === 'base_corner_status') {
                 const st = document.getElementById('calc-corner-state').value;
@@ -2606,6 +2640,42 @@
                         ? "板角完好，板角側軌焊接形成的裂縫屬標準許可範圍 (Corner welds can be cracked)。"
                         : "板角完好存在且無結構缺失。";
                     limitClause = "板角完好 (注意：焊接處裂縫可接受)";
+                }
+            } else if (scenario === 'base_seat_track_dist') {
+                const st = document.getElementById('calc-seat-track-dist-state').value;
+                title = "C 型槽 D-ring 分布固定判定 (Seat Track)";
+                if (st === 'damaged') {
+                    isServiceable = false;
+                    reason = "C型槽損壞，導致 D-ring 無法正確均勻分布與固定。";
+                    limitClause = "C型槽損壞，導致 D-ring 無法正確均勻分布與固定，不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = "C型槽結構完好，D-ring 雙腳鎖扣可依標準正確均勻分布並穩固固定。";
+                    limitClause = "C型槽完好無損且鎖扣可均勻分布固定";
+                }
+            } else if (scenario === 'base_seat_track_lip') {
+                const st = document.getElementById('calc-seat-track-lip-state').value;
+                title = "C 型槽槽口判定 (Seat-track Lips)";
+                if (st === 'damaged') {
+                    isServiceable = false;
+                    reason = "固定 D-ring 的 C 型槽槽口損壞，無法保證鎖扣固定強度。";
+                    limitClause = "固定 D-ring 的 C 型槽槽口損壞，不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = "固定 D-ring 的 C 型槽槽口完好無損，鎖扣卡入鎖緊安全可靠。";
+                    limitClause = "C 型槽槽口完好無損";
+                }
+            } else if (scenario === 'base_loading_aircraft_damage') {
+                const st = document.getElementById('calc-aircraft-hazard-state').value;
+                title = "裝載固定與機身內部安全判定 (Safety Hazard)";
+                if (st === 'hazard') {
+                    isServiceable = false;
+                    reason = "損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害。";
+                    limitClause = "損壞程度已影響貨物裝載與固定，或可能對機身內部造成損害，不可接受";
+                } else {
+                    isServiceable = true;
+                    reason = "損壞程度未影響貨物裝載與固定，亦無危害機身內部結構之風險。";
+                    limitClause = "未影響貨物裝載固定且無機身內部危害風險";
                 }
             } else if (scenario === 'net_tso' || scenario === 'general_labels') {
                 const tso = document.getElementById('calc-lbl-tso').checked;
