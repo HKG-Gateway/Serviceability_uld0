@@ -18,8 +18,8 @@
     <!-- Dynamic PWA Manifest Placeholder -->
     <link rel="manifest" id="manifest-placeholder">
 
-    <!-- iOS Touch App Icon (Initialized dynamically with high-res PNG) -->
-    <link rel="apple-touch-icon" id="apple-touch-icon-link" href="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg">
+    <!-- iOS Touch App Icon (Official High-Res UPS Logo) -->
+    <link rel="apple-touch-icon" id="apple-touch-icon-link" href="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png">
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -619,78 +619,12 @@
     </div>
 
     <script>
-        /* ================= PWA SETUP & HIGH-RES PNG ICON GENERATOR ================= */
+        /* ================= PWA SETUP & OFFICIAL LOGO CONFIGURATION ================= */
         const upsLogoUrl = "https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg";
+        const upsPng512 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png";
+        const upsPng192 = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/192px-United_Parcel_Service_logo_2014.svg.png";
 
-        // Generate a 512x512 PNG Data URL so that iOS & Android home screens guarantee crisp UPS Shield Icon
-        function createPwaPngIcon() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-
-            // Draw brown background matching #2b1610
-            ctx.fillStyle = "#2b1610";
-            ctx.fillRect(0, 0, 512, 512);
-
-            // Vector drawing of the UPS Shield Logo
-            ctx.save();
-            ctx.scale(512 / 200, 512 / 240);
-
-            // Gold shield outline
-            const grad = ctx.createLinearGradient(0, 0, 200, 240);
-            grad.addColorStop(0, '#ffe17d');
-            grad.addColorStop(0.5, '#ffb500');
-            grad.addColorStop(1, '#d48800');
-
-            ctx.fillStyle = grad;
-            ctx.beginPath();
-            ctx.moveTo(20, 28);
-            ctx.bezierCurveTo(65, 14, 135, 14, 180, 28);
-            ctx.bezierCurveTo(180, 130, 160, 188, 100, 226);
-            ctx.bezierCurveTo(40, 188, 20, 130, 20, 28);
-            ctx.closePath();
-            ctx.fill();
-
-            // Inner dark brown shield
-            ctx.fillStyle = "#2b1610";
-            ctx.beginPath();
-            ctx.moveTo(26, 80);
-            ctx.quadraticCurveTo(100, 42, 174, 42);
-            ctx.lineTo(174, 120);
-            ctx.bezierCurveTo(174, 176, 154, 196, 100, 218);
-            ctx.bezierCurveTo(46, 196, 26, 176, 26, 120);
-            ctx.closePath();
-            ctx.fill();
-
-            // Top light-gold segment
-            ctx.fillStyle = "#ffe17d";
-            ctx.strokeStyle = "#d48800";
-            ctx.lineWidth = 1.5;
-            ctx.beginPath();
-            ctx.moveTo(26, 40);
-            ctx.quadraticCurveTo(60, 30, 96, 36);
-            ctx.quadraticCurveTo(60, 55, 26, 78);
-            ctx.closePath();
-            ctx.fill();
-            ctx.stroke();
-
-            // 'ups' text
-            ctx.fillStyle = "#ffb500";
-            ctx.font = "900 62px 'Arial Black', Impact, sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("ups", 100, 148);
-
-            ctx.restore();
-            return canvas.toDataURL('image/png');
-        }
-
-        const pngIconUrl = createPwaPngIcon();
-
-        // 1. Assign PNG icon directly to apple-touch-icon (Ensures iOS home screen display)
-        document.getElementById('apple-touch-icon-link').setAttribute('href', pngIconUrl);
-
-        // 2. Assign high-res PNG and SVG to Manifest configuration
+        // Assign official PNG and SVG directly to Manifest configuration
         const manifestConfig = {
             "name": "ULD Inspect360 - ULD 適航檢查工具",
             "short_name": "ULD Inspect360",
@@ -703,8 +637,14 @@
             "orientation": "any",
             "icons": [
                 {
-                    "src": pngIconUrl,
-                    "sizes": "192x192 512x512",
+                    "src": upsPng192,
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any"
+                },
+                {
+                    "src": upsPng512,
+                    "sizes": "512x512",
                     "type": "image/png",
                     "purpose": "any maskable"
                 },
@@ -721,21 +661,21 @@
                     "short_name": "判定計算機",
                     "description": "停機坪一鍵判定合格與拒收",
                     "url": "./#calc",
-                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
                 },
                 {
                     "name": "檢驗報告速錄",
                     "short_name": "報告速錄",
                     "description": "一鍵生成交接通報摘要",
                     "url": "./#logger",
-                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
                 },
                 {
                     "name": "檢查卡中英對照",
                     "short_name": "檢查卡",
                     "description": "FORM 83-48-002 官方檢查卡",
                     "url": "./#card",
-                    "icons": [{ "src": pngIconUrl, "sizes": "192x192", "type": "image/png" }]
+                    "icons": [{ "src": upsPng192, "sizes": "192x192", "type": "image/png" }]
                 }
             ]
         };
@@ -744,7 +684,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v28-pwa';
+            const CACHE_NAME = 'uld-inspect360-v30-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -753,7 +693,9 @@
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js',
                 'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js',
                 'https://static.sketchfab.com/api/sketchfab-viewer-1.12.1.js',
-                'https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg'
+                'https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/512px-United_Parcel_Service_logo_2014.svg.png',
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/United_Parcel_Service_logo_2014.svg/192px-United_Parcel_Service_logo_2014.svg.png'
             ];
 
             self.addEventListener('install', (evt) => {
