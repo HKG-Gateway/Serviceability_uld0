@@ -326,14 +326,20 @@
                 <div class="flex items-center justify-between border-b border-slate-200 pb-2">
                     <div class="flex items-center gap-2 text-slate-800 font-extrabold text-sm">
                         <i class="fa-solid fa-satellite-dish text-emerald-600 animate-pulse"></i>
-                        <span>全員即時同步歷史 (<span id="log-count-badge">0</span>)</span>
+                        <span>全員共享速錄清單 (<span id="log-count-badge">0</span>)</span>
                     </div>
                     <button onclick="clearAllLogs()" class="text-red-600 hover:underline font-bold text-[11px]" title="清空所有裝置上的速錄記錄">清空全員記錄</button>
                 </div>
-                <div class="text-[10px] text-emerald-800 bg-emerald-50 px-2 py-1 rounded-md border border-emerald-200 flex items-center justify-between font-medium">
-                    <span><i class="fa-solid fa-users text-emerald-600 mr-1"></i>跨裝置即時共享中</span>
-                    <span class="font-bold text-amber-700 bg-amber-100/80 px-1.5 py-0.5 rounded text-[9px]">權限：任何人皆可刪除</span>
+                
+                <!-- Realtime Sync Connection Banner -->
+                <div id="sync-status-indicator" class="text-[10px] text-amber-900 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-300 flex items-center justify-between font-medium shadow-sm">
+                    <span class="flex items-center gap-1.5">
+                        <span id="sync-status-dot" class="w-2 h-2 rounded-full bg-amber-500 animate-ping"></span>
+                        <span id="sync-status-text">正在連線全員雲端同步資料庫...</span>
+                    </span>
+                    <span class="font-bold text-amber-900 bg-amber-200/80 px-1.5 py-0.5 rounded text-[9px]">權限：任何人皆可刪除</span>
                 </div>
+
                 <div id="local-logs-container" class="space-y-2 max-h-[360px] overflow-y-auto pr-1">
                     <p class="text-[11px] text-slate-400 text-center py-6">正在同步全員檢驗記錄...</p>
                 </div>
@@ -607,7 +613,7 @@
                     <div class="flex flex-wrap gap-2 pt-2 border-t border-slate-200">
                         <button onclick="generateAndCopyReport()" class="flex-1 min-w-[200px] py-3 ups-gold-gradient text-[#2b1610] font-black rounded-xl text-xs md:text-sm shadow-md hover:brightness-110 active:scale-95 transition flex items-center justify-center gap-2">
                             <i class="fa-solid fa-copy"></i>
-                            <span>一鍵生成交接通報摘要並複製 (自動全員同步)</span>
+                            <span>一鍵生成交接通報摘要並複製 (同步全員)</span>
                         </button>
                         <button onclick="saveCurrentLogToHistory()" class="px-4 py-3 bg-slate-800 hover:bg-slate-900 text-amber-300 font-bold rounded-xl text-xs shadow transition flex items-center gap-1.5">
                             <i class="fa-solid fa-cloud-arrow-up"></i>
@@ -1675,6 +1681,7 @@
             renderBilingualCardModal();
             updateCalcFields();
             loadLogsFromStorage();
+            initFirebaseSync();
 
             const container = document.getElementById('canvas-container');
             if (!container) return;
@@ -2934,7 +2941,13 @@ ${defectDesc}
             const report = buildReportText();
             document.getElementById('log-preview-output').innerText = report;
             copyTextToClipboard(report);
-            showToast('✅ 交接通報摘要已生成並複製到剪貼簿！');
+            const uldNum = document.getElementById('log-uld-num').value.trim();
+            if (uldNum) {
+                saveCurrentLogToHistory(true);
+                showToast('✅ 交接通報摘要已生成並複製，已同步至所有人裝置！');
+            } else {
+                showToast('✅ 交接通報摘要已生成並複製到剪貼簿！');
+            }
         }
 
         function copyGeneratedTextDirectly() {
@@ -2943,48 +2956,97 @@ ${defectDesc}
             showToast('已複製通報摘要！');
         }
 
-        // Cloud & Local Multi-device Synchronized Logs
         let localLogs = [];
         let syncDb = null;
         let syncAuth = null;
         let syncUser = null;
         let syncCollectionRef = null;
+        let isCloudConnected = false;
 
-        // Dynamic multi-user initialization supporting cross-device real-time sync
-        (async function initializeSharedSync() {
+        function updateSyncStatus(state, text) {
+            const banner = document.getElementById('sync-status-indicator');
+            const dot = document.getElementById('sync-status-dot');
+            const txt = document.getElementById('sync-status-text');
+            if (!banner || !txt) return;
+
+            txt.innerText = text;
+
+            if (state === 'online') {
+                banner.className = "text-[10px] text-emerald-900 bg-emerald-50 px-2.5 py-1.5 rounded-lg border border-emerald-300 flex items-center justify-between font-medium shadow-sm";
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-emerald-500 animate-pulse";
+            } else if (state === 'connecting') {
+                banner.className = "text-[10px] text-amber-900 bg-amber-50 px-2.5 py-1.5 rounded-lg border border-amber-300 flex items-center justify-between font-medium shadow-sm";
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-amber-500 animate-ping";
+            } else {
+                banner.className = "text-[10px] text-slate-700 bg-slate-100 px-2.5 py-1.5 rounded-lg border border-slate-300 flex items-center justify-between font-medium shadow-sm";
+                if (dot) dot.className = "w-2 h-2 rounded-full bg-slate-400";
+            }
+        }
+
+        async function initFirebaseSync() {
+            updateSyncStatus('connecting', '正在連線全員雲端資料庫...');
+
+            if (typeof __firebase_config === 'undefined') {
+                updateSyncStatus('offline', '離線本機模式 (未配置雲端環境)');
+                loadLogsFromStorage();
+                renderLocalLogsList();
+                return;
+            }
+
             try {
-                if (typeof __firebase_config === 'undefined') {
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                const { getAuth, signInWithCustomToken, signInAnonymously } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                const { getFirestore, collection, doc, addDoc, deleteDoc, onSnapshot, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+                const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
+                const firebaseConfig = JSON.parse(__firebase_config);
+
+                const app = initializeApp(firebaseConfig);
+                syncDb = getFirestore(app);
+                syncAuth = getAuth(app);
+
+                // RULE 3 - Authenticate FIRST before queries
+                // First try custom token; if it fails or expires, immediately fall back to anonymous auth
+                let authenticatedUser = null;
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    try {
+                        const cred = await signInWithCustomToken(syncAuth, __initial_auth_token);
+                        authenticatedUser = cred.user;
+                    } catch (tokenErr) {
+                        console.warn("Custom token failed, falling back to anonymous auth:", tokenErr);
+                        try {
+                            const anonCred = await signInAnonymously(syncAuth);
+                            authenticatedUser = anonCred.user;
+                        } catch (anonErr) {
+                            console.error("Anonymous auth failed:", anonErr);
+                        }
+                    }
+                } else {
+                    try {
+                        const anonCred = await signInAnonymously(syncAuth);
+                        authenticatedUser = anonCred.user;
+                    } catch (anonErr) {
+                        console.error("Anonymous auth failed:", anonErr);
+                    }
+                }
+
+                if (!authenticatedUser) {
+                    updateSyncStatus('offline', '認證未完成，使用本機模式');
                     loadLogsFromStorage();
                     renderLocalLogsList();
                     return;
                 }
 
-                const fbApp = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
-                const fbAuth = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
-                const fbFs = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-
-                const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                const firebaseConfig = JSON.parse(__firebase_config);
-
-                const app = fbApp.initializeApp(firebaseConfig);
-                syncDb = fbFs.getFirestore(app);
-                syncAuth = fbAuth.getAuth(app);
-
-                // RULE 3 - Authenticate FIRST before queries
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await fbAuth.signInWithCustomToken(syncAuth, __initial_auth_token);
-                } else {
-                    await fbAuth.signInAnonymously(syncAuth);
-                }
-
-                syncUser = syncAuth.currentUser;
-                if (!syncUser) return;
+                syncUser = authenticatedUser;
+                isCloudConnected = true;
 
                 // RULE 1 - Strict Public Data Collection Path
-                syncCollectionRef = fbFs.collection(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs');
+                syncCollectionRef = collection(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs');
+
+                updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
 
                 // RULE 2 - Simple Collection Query without OrderBy/Limit + Memory Sort
-                fbFs.onSnapshot(syncCollectionRef, (snapshot) => {
+                onSnapshot(syncCollectionRef, (snapshot) => {
                     const fetchedLogs = [];
                     snapshot.forEach((docSnap) => {
                         fetchedLogs.push({ docId: docSnap.id, ...docSnap.data() });
@@ -2995,13 +3057,17 @@ ${defectDesc}
                     renderLocalLogsList();
                 }, (error) => {
                     console.error("Realtime sync error:", error);
+                    updateSyncStatus('offline', '同步監聽異常，使用本機清單');
+                    loadLogsFromStorage();
+                    renderLocalLogsList();
                 });
             } catch (err) {
-                console.warn("Realtime sync fallback to local storage:", err);
+                console.warn("Realtime sync error:", err);
+                updateSyncStatus('offline', '無法連線雲端，使用本機清單');
                 loadLogsFromStorage();
                 renderLocalLogsList();
             }
-        })();
+        }
 
         async function saveCurrentLogToHistory(skipToast = false) {
             const uldNum = document.getElementById('log-uld-num').value.trim();
@@ -3024,11 +3090,11 @@ ${defectDesc}
                 creatorId: syncUser ? syncUser.uid : 'local-user'
             };
 
-            if (syncDb && syncUser && syncCollectionRef) {
+            if (isCloudConnected && syncDb && syncUser && syncCollectionRef) {
                 try {
-                    const fbFs = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    await fbFs.addDoc(syncCollectionRef, logData);
-                    if (!skipToast) showToast(`已全員同步 ${logData.uldNum} 至所有裝置！`);
+                    const { addDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    await addDoc(syncCollectionRef, logData);
+                    if (!skipToast) showToast(`✅ 已全員同步 ${logData.uldNum} 至所有人的裝置！`);
                 } catch (e) {
                     console.error("Sync add error:", e);
                     saveLogLocally(logData, skipToast);
@@ -3093,13 +3159,13 @@ ${defectDesc}
         // Anyone can delete any report across all connected devices
         async function deleteLogItem(docId) {
             const docIdStr = String(docId);
-            if (syncDb && syncUser && syncCollectionRef && !docIdStr.startsWith('local_')) {
+            if (isCloudConnected && syncDb && syncUser && syncCollectionRef && !docIdStr.startsWith('local_')) {
                 try {
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                    const fbFs = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const { doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
                     // RULE 1 - Strict Public Doc Path
-                    const docRef = fbFs.doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', docIdStr);
-                    await fbFs.deleteDoc(docRef);
+                    const docRef = doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', docIdStr);
+                    await deleteDoc(docRef);
                     showToast('已自全員設備中同步刪除！');
                     return;
                 } catch (e) {
@@ -3118,14 +3184,14 @@ ${defectDesc}
         async function clearAllLogs() {
             if (localLogs.length === 0) return;
 
-            if (syncDb && syncUser && syncCollectionRef) {
+            if (isCloudConnected && syncDb && syncUser && syncCollectionRef) {
                 try {
                     const appId = typeof __app_id !== 'undefined' ? __app_id : 'uld-inspect360';
-                    const fbFs = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
-                    const snaps = await fbFs.getDocs(syncCollectionRef);
+                    const { doc, deleteDoc, getDocs } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    const snaps = await getDocs(syncCollectionRef);
                     const deletePromises = [];
                     snaps.forEach(s => {
-                        deletePromises.push(fbFs.deleteDoc(fbFs.doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', s.id)));
+                        deletePromises.push(deleteDoc(doc(syncDb, 'artifacts', appId, 'public', 'data', 'defect_logs', s.id)));
                     });
                     await Promise.all(deletePromises);
                     showToast('已清空所有設備上的速錄記錄！');
@@ -3153,17 +3219,6 @@ ${defectDesc}
                 if (saved) localLogs = JSON.parse(saved);
             } catch(e) {}
         }
-
-        // Auto broadcast when generating report if ULD number is present
-        const origGenerateAndCopyReport = generateAndCopyReport;
-        generateAndCopyReport = function() {
-            origGenerateAndCopyReport();
-            const uldNum = document.getElementById('log-uld-num').value.trim();
-            if (uldNum) {
-                saveCurrentLogToHistory(true);
-                showToast('✅ 交接摘要已生成並複製，已同步至所有人的裝置！');
-            }
-        };
 
         let currentCardViewMode = 'both';
 
