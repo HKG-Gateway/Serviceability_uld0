@@ -1607,7 +1607,7 @@
                             <div>
                                 <label class="block text-slate-600 font-semibold mb-1">直接輸入總損壞面積 (Total Area):</label>
                                 <div class="flex gap-2">
-                                    <input type="number" id="calc-canvas-sq" min="0" step="1" placeholder="例如: 90 或 100" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                    <input type="number" id="calc-canvas-sq" min="0" step="1" placeholder="例如: 90 或 96" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
                                     <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">sq in (平方吋)</span>
                                 </div>
                             </div>
@@ -1620,7 +1620,7 @@
                                 </div>
                             </div>
                         </div>
-                        <p class="text-[10px] text-slate-400">標準：帆布總損壞面積超過 8 × 12 吋 (即 96 平方吋 / 619.35 cm²) 不可接受。</p>
+                        <p class="text-[10px] text-slate-400">標準：帆布總損壞面積超過 8 × 12 吋 (即 96 平方吋 / 619.35 cm²) 不可接受 (96 平方吋或以下合格)。</p>
                     </div>
                 `;
             } else if (scenario === 'door_cable') {
@@ -1629,7 +1629,7 @@
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">門纜鋼絲磨損百分比 (Cable Fray %)</label>
                             <div class="flex gap-2">
-                                <input type="number" id="calc-cable-pct" min="0" max="100" placeholder="例如: 15 或 28" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <input type="number" id="calc-cable-pct" min="0" max="100" placeholder="例如: 15 或 25" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
                                 <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">%</span>
                             </div>
                             <p class="text-[10px] text-slate-400 mt-1">磨損超過 25% 不可接受 (25% 或以下合格)。</p>
@@ -1637,7 +1637,7 @@
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">門纜鋼絲外露長度 (Cable Exposed)</label>
                             <div class="flex gap-2">
-                                <input type="number" id="calc-cable-exposed" min="0" step="0.5" placeholder="例如: 8 或 13" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
+                                <input type="number" id="calc-cable-exposed" min="0" step="0.5" placeholder="例如: 8 或 12" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
                                 <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
                             </div>
                             <p class="text-[10px] text-slate-400 mt-1">鋼絲外露超過 12 吋 (30.48 cm) 不可接受 (12 吋或以下合格)。</p>
@@ -2040,14 +2040,14 @@
                 if (!sq && l && w) sq = l * w;
 
                 title = "捲簾門帆布損壞判定 (Canvas Damage Area)";
-                if (sq >= 96) {
+                if (sq > 96.0) {
                     isServiceable = false;
-                    reason = `帆布總損壞面積達 ${sq} 平方吋 (≥ 96 sq in / 619.35 cm²)，超過 8 × 12 吋限制。`;
+                    reason = `帆布總損壞面積達 ${sq} 平方吋 (> 96 sq in / 619.35 cm²)，超過 8 × 12 吋限制。`;
                     limitClause = "帆布總損壞面積不可超過 96 平方吋 (619.35 cm²)";
                 } else {
                     isServiceable = true;
-                    reason = `帆布總損壞面積為 ${sq} 平方吋 (≤ 95 sq in)，在可接受範圍內。`;
-                    limitClause = "帆布總損壞面積 ≤ 95 平方吋";
+                    reason = `帆布總損壞面積為 ${sq} 平方吋 (≤ 96 sq in / 8 × 12 吋)，符合標準可正常使用。`;
+                    limitClause = "帆布總損壞面積 ≤ 96 平方吋 (619.35 cm²)";
                 }
             } else if (scenario === 'door_cable') {
                 const pct = parseFloat(document.getElementById('calc-cable-pct').value) || 0;
