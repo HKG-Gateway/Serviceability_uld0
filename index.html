@@ -202,7 +202,7 @@
 
                     <div class="flex flex-col justify-center min-w-0">
                         <div class="flex items-center gap-2 whitespace-nowrap">
-                            <span class="font-extrabold text-sm sm:text-lg md:text-xl text-white tracking-normal font-sans">
+                            <span class="font-extrabold text-sm sm:lg md:text-xl text-white tracking-normal font-sans">
                                 ULD Inspect360
                             </span>
                             <span class="text-[10px] sm:text-[11px] bg-[#ffb500] text-[#2b1610] px-2 py-0.5 rounded-full font-bold shadow-sm inline-flex items-center gap-1 font-sans">
@@ -787,7 +787,7 @@
         document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
 
         const swWorkerScript = `
-            const CACHE_NAME = 'uld-inspect360-v33-pwa';
+            const CACHE_NAME = 'uld-inspect360-v35-pwa';
             const ASSETS = [
                 './',
                 'https://cdn.tailwindcss.com',
@@ -1030,471 +1030,6 @@
   • 綁帶材料存在以下情況：
     • 單一切口或磨損超過綁帶寬度的 25%
     • 存在一個或以上解不開的結`;
-
-        const searchKnowledgeBase = [
-            {
-                id: "general_tso",
-                category: "general",
-                categoryName: "所有適航的 ULD/板",
-                title: "TSO 標籤 (TSO Tag / Placard)",
-                condition: "TSO 標籤至少在 ULD 的某一處且清晰可讀。",
-                limitValue: "至少一處清晰可讀",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "符合此條件方可判定為適航可使用。"
-            },
-            {
-                id: "general_tare_weight",
-                category: "general",
-                categoryName: "所有適航的 ULD/板",
-                title: "箱重標籤 (Tare Weight Decal)",
-                condition: "箱重標籤 (Tare Weight Decal) 至少在一個位置清晰可見 (無魔術筆塗改痕跡)。",
-                limitValue: "至少一處清晰可見 (無手寫塗改)",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "不得使用魔術筆等手寫塗改。"
-            },
-            {
-                id: "general_id_code",
-                category: "general",
-                categoryName: "所有適航的 ULD/板",
-                title: "ULD 識別碼、箱/板號及所有者代碼",
-                condition: "ULD 識別碼、箱/板號及所有者代碼至少在一個位置清晰可見 (無魔術筆塗改痕跡)。",
-                limitValue: "至少一處清晰可見 (無手寫塗改)",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "包含 ULD 編號與所有者標記，不得有手寫塗改痕跡。"
-            },
-            {
-                id: "fcc_dg_battery",
-                category: "general",
-                categoryName: "FCC / 配件 (Accessories)",
-                title: "FCC 使用規範 (電池貨品 / 危險品 DG)",
-                condition: "所有板裝含有電池貨品或危險品 (Dangerous Goods / DG) 之貨物。",
-                limitValue: "必須使用 FCC",
-                verdict: "強制使用 (Mandatory)",
-                verdictClass: "bg-amber-100 text-[#2b1610] border-amber-300",
-                note: "所有板裝含有電池貨品 / 危險品 (DG) 均必須使用 FCC。"
-            },
-            {
-                id: "panel_edge",
-                category: "panel",
-                categoryName: "面板 / Panel",
-                title: "面板距離框架邊緣 3 吋 (7.62 cm) 以內損壞",
-                condition: "損壞 (裂縫、斷裂、穿孔或切口) 位於距離框架邊緣 3 吋 (7.62 cm) 以內。",
-                limitValue: "3 in / 7.62 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "例外：若裂紋起始於框架邊緣，且長度不超過 3 吋 (7.62 cm)，則可接受。"
-            },
-            {
-                id: "panel_inner_serviceable",
-                category: "panel",
-                categoryName: "面板 / Panel",
-                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞 (長度 7 吋以內)",
-                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，且損壞長度在 7 吋 (17.78 cm) 以內 (包含 1, 2, 3, 4, 5, 6 吋)。",
-                limitValue: "< 7 in / 17.78 cm",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "距離骨架邊緣 > 3 吋時，只要損壞長度在 7 吋以內均判定為符合標準。"
-            },
-            {
-                id: "panel_inner_unserviceable",
-                category: "panel",
-                categoryName: "面板 / Panel",
-                title: "面板距離框架邊緣超過 3 吋 (7.62 cm) 損壞 (長度 7 吋及以上)",
-                condition: "損壞位於距離骨架邊緣超過 3 吋 (7.62 cm) 的位置，且損壞長度達 7 吋 (17.78 cm) 或以上 (含 7 吋)。",
-                limitValue: "≥ 7 in / 17.78 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "損壞長度若達 7 吋或以上則屬結構安全疑慮，判定為不可接受。"
-            },
-            {
-                id: "panel_contour_serviceable",
-                category: "panel",
-                categoryName: "面板 / Panel",
-                title: "面板突出外部輪廓 2 吋 (5.08 cm) 以內 (面板凸輪廓)",
-                condition: "面板突出原有 ULD 外部輪廓在 2 吋 (5.08 cm) 以內 (包含 1 吋、2 吋)。",
-                limitValue: "≤ 2 in / 5.08 cm",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "面板突出未超過 2 吋 (5.08 cm) 為可接受範圍，判定為符合標準。"
-            },
-            {
-                id: "panel_contour",
-                category: "panel",
-                categoryName: "面板 / Panel",
-                title: "面板突出外部輪廓超過 2 吋 (5.08 cm) (面板輪廓)",
-                condition: "面板突出原有 ULD 外部輪廓超過 2 吋 (5.08 cm) (例如 2 吋、3 吋、4 吋及大於 2 吋的數字)。",
-                limitValue: "> 2 in / 5.08 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "突出超過 2 吋可能碰撞機身內部結構，嚴禁使用，判定為不可接受。"
-            },
-            {
-                id: "frame_dmg",
-                category: "frame",
-                categoryName: "骨架構件 / Frame Members",
-                title: "骨架結構與緊固件損壞/凹陷",
-                condition: "損壞長度超過 3 吋 (7.62 cm) 或寬度超過 0.5 吋 (1.27 cm)；或凹陷超過 2 吋 (5.08 cm)。",
-                limitValue: "3 in / 0.5 in / 2 in",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "適用於所有骨架構件、壓條與柱體之結構損壞與凹陷。"
-            },
-            {
-                id: "frame_fasteners",
-                category: "frame",
-                categoryName: "骨架構件 / Frame Members",
-                title: "底部上方面板固定件缺失",
-                condition: "底部上方面板每側缺失 1 個固定件。",
-                limitValue: "1 個固定件 / 側",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "依據 FORM: 83-48-002 標準，底部上方面板每側缺失 1 個固定件即屬不可接受。"
-            },
-            {
-                id: "door_canvas_serviceable",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "捲簾門帆布總損壞面積超過 8×12 吋 (20.32 x 30.48cm) (即 96 平方吋 / 619.34 平方公分)",
-                condition: "帆布總損壞面積在 95 平方吋 (95 sq in) 或以下。",
-                limitValue: "≤ 95 sq in",
-                verdict: "符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "8 吋或以上同 96 sq 平方吋或以上顯示不可接受。"
-            },
-            {
-                id: "door_canvas_unserviceable",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "捲簾門帆布總損壞面積超過 8×12 吋 (20.32 x 30.48cm) (即 96 平方吋 / 619.34 平方公分)",
-                condition: "帆布總損壞面積達 96 平方吋 (96 sq in) 或以上 (即超過 8×12 吋 / 619.34 平方公分)。",
-                limitValue: "≥ 96 sq in",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "8 吋或以上同 96 sq 平方吋或以上顯示不可接受。"
-            },
-            {
-                id: "door_hardware",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "門體五金部件缺失與損壞",
-                condition: "部件缺失或損壞，導致門體無法固定。",
-                limitValue: "部件缺失 / 無法固定",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "包含五金扣件、鎖頭等影響門體固定功能之損壞。"
-            },
-            {
-                id: "door_cable_serviceable",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "門纜磨損與鋼絲外露 (1-11 吋以下 / 1-24% 以下)",
-                condition: "門纜磨損在 1-24% 以下，或門纜鋼絲外露在 1-11 吋 (27.94 cm) 以下。",
-                limitValue: "1-11 in / 1-24%",
-                verdict: "門纜磨損可符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "輸入 1-11 吋以下同 1-24% 以下顯示門纜磨損可符合標準。"
-            },
-            {
-                id: "door_cable_unserviceable",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "門纜磨損與鋼絲外露 (12 吋或以上 / 25% 或以上)",
-                condition: "門纜磨損達 25% 或以上，或門纜鋼絲外露達 12 吋 (30.48 cm) 或以上。",
-                limitValue: "≥ 25% / ≥ 12 in",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 12 吋或以上同 25% 或以上顯示不可接受。"
-            },
-            {
-                id: "door_bar",
-                category: "door",
-                categoryName: "門體與五金 / Roll-up Door",
-                title: "門檻 (Door Bar Extrusion) 裂縫",
-                condition: "門檻裂縫長度超過 1 吋 (2.54 cm) 或寬度超過 0.37 吋 (0.94 cm)。",
-                limitValue: "1 in (長) / 0.37 in (寬)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "門檻擠型結構裂縫超標即判定不可接受。"
-            },
-            {
-                id: "base_bow_loaded_serviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "已裝載貨物 ULD 底板彎曲曲度 (1.24 吋或以下)",
-                condition: "已裝載貨物的 ULD 底板彎曲曲度在 1.24 吋 (3.15 cm) 或以下。",
-                limitValue: "≤ 1.24 in / 3.15 cm",
-                verdict: "已裝載貨物可符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "輸入 1.24 吋或以下數字顯示已裝載貨物可符合標準。"
-            },
-            {
-                id: "base_bow_loaded_unserviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "已裝載貨物 ULD 底板彎曲曲度 (1.25 吋或以上)",
-                condition: "已裝載貨物的 ULD 底板彎曲曲度達 1.25 吋 (3.17 cm) 或以上。",
-                limitValue: "≥ 1.25 in / 3.17 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 1.25 吋或以上數字顯示已裝載貨物不可接受。"
-            },
-            {
-                id: "base_bow_empty_serviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "空 ULD 底板彎曲曲度 (1.9 吋或以下)",
-                condition: "空 ULD 底板彎曲曲度在 1.9 吋 (4.82 cm) 或以下。",
-                limitValue: "≤ 1.9 in / 4.82 cm",
-                verdict: "空 ULD 底板彎曲曲度可符合標準 (Serviceable)",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "輸入 1.9 吋或以下數字顯示空 ULD 底板彎曲曲度可符合標準。"
-            },
-            {
-                id: "base_bow_empty_unserviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "空 ULD 底板彎曲曲度 (2 吋或以上)",
-                condition: "空 ULD 底板彎曲曲度達 2 吋 (5.08 cm) 或以上。",
-                limitValue: "≥ 2 in / 5.08 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 2 吋或以上數字顯示不可接受。"
-            },
-            {
-                id: "base_missing_rail",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板邊軌或板邊緣軌缺失 (Missing Base Side Rail / Edge Rail)",
-                condition: "底板邊軌 (Base side rail) 或板邊緣軌 (Edge rail) 缺失。",
-                limitValue: "邊軌缺失 (Missing)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "底板邊軌或邊緣軌缺失會嚴重影響 ULD 結構完整性與機艙鎖扣安全。"
-            },
-            {
-                id: "base_tear_edge_serviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板穿孔或撕裂 - 距離板邊緣小於 3 吋 (1-2 吋或以下)",
-                condition: "距離板邊緣小於 3 吋 (7.62 cm) 處，底板穿孔或撕裂尺寸在 1-2 吋或以下。",
-                limitValue: "1-2 in (距離板邊緣 < 3 in)",
-                verdict: "距離板邊緣小於3吋可符合標準",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "輸入 1-2 吋或以下數顯示距離板邊緣小於3吋可符合標準。"
-            },
-            {
-                id: "base_tear_edge_unserviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板穿孔或撕裂 - 距離板邊緣小於 3 吋 (3 吋或以上)",
-                condition: "距離板邊緣小於 3 吋 (7.62 cm) 處，底板穿孔或撕裂尺寸達 3 吋或以上。",
-                limitValue: "≥ 3 in (距離板邊緣 < 3 in)",
-                verdict: "不可接受",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "輸入 3 吋或以上顯示距離板邊緣小於3吋不可接受。"
-            },
-            {
-                id: "base_tear_outer_serviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板穿孔或撕裂 - 距離板邊緣 3 吋以外 (1-11 吋或以下)",
-                condition: "距離板邊緣 3 吋以外 (7.62 cm 外)，底板穿孔或撕裂尺寸在 1-11 吋或以下。",
-                limitValue: "1-11 in (距離板邊緣 > 3 in)",
-                verdict: "距離板邊緣3吋以外可符合標準",
-                verdictClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
-                note: "輸入 1-11 吋或以下距離板邊緣3吋以外可符合標準。"
-            },
-            {
-                id: "base_tear_outer_unserviceable",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板穿孔或撕裂 - 距離板邊緣 3 吋以外 (12 吋或以上)",
-                condition: "距離板邊緣 3 吋以外 (7.62 cm 外)，底板穿孔或撕裂尺寸達 12 吋或以上。",
-                limitValue: "≥ 12 in (距離板邊緣 > 3 in)",
-                verdict: "不可接受",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "12 吋或以上顯示不可接受。"
-            },
-            {
-                id: "base_corner",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "板角完好性 (Corner Casting)",
-                condition: "板角 (Corner casting) 缺失或不完好。",
-                limitValue: "必須完好 (Must be present)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "注意：板角側軌焊接處之裂縫可接受 (Base side rail corner welds can be cracked)。"
-            },
-            {
-                id: "base_separation",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板與邊軌分離 (Separation of Base & Edge Rail)",
-                condition: "底板 (Base) 與邊軌 (Edge / Side Rail) 出現脫離或分離現象。",
-                limitValue: "不得分離 (No Separation)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "底板與邊軌分離嚴重的影響 ULD 結構強度與機艙鎖扣安全。"
-            },
-            {
-                id: "base_rivets",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "底板鉚釘缺失或鬆動",
-                condition: "缺失或鬆動的鉚釘超過 5 個。",
-                limitValue: "> 5 個鉚釘",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "任意兩個缺失釘扣之間必須至少有 5 個完好鉚釘。"
-            },
-            {
-                id: "base_impact_safety",
-                category: "base",
-                categoryName: "底板與側軌 / Base & Rails",
-                title: "影響裝載固定或危害機身內部之損壞",
-                condition: "損壞程度已影響裝載與固定，或可能對機身內部造成損害，不可接受。",
-                limitValue: "影響裝載固定 / 危害機身",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "若損壞程度已影響貨物裝載及鎖扣固定，或在運輸過程可能損害飛機內部結構，即判定不可接受。"
-            },
-            {
-                id: "net_tso",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "TSO 標籤 (TSO Tag / Placard)",
-                condition: "未附有或無法清晰辨識 TSO 標籤。",
-                limitValue: "必須清晰可見 (Present & Legible)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "TSO 標籤為集裝網適航與合法使用之必要標籤。"
-            },
-            {
-                id: "net_fittings",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "D-Ring (Double Stud Fittings)狀況",
-                condition: "所有 D-ring 雙腳鎖扣不齊全或功能異常。",
-                limitValue: "必須齊全且功能正常",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "所有D-Ring (Double Stud Fittings)數量齊全且功能正常.（正常集裝網總數有18個D-Ring (Double Stud Fittings).（5條角繩總數有19個D-Ring (Double Stud Fittings)."
-            },
-            {
-                id: "net_hooks",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "網鉤 (Adjusting Hooks)",
-                condition: "每側缺失或不可使用的網鉤超過一個 (即每側缺失/損壞不得超過 1 個)。",
-                limitValue: "每側 ≤ 1 個缺失/損壞",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "每側缺失或不可使用的網鉤不得超過1個.（正常集裝網總數有18個網鉤 (Adjusting Hooks) .（5條角繩總數有17個網鉤 (Adjusting Hooks)"
-            },
-            {
-                id: "net_lashing",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "網角繩 (Lashing Line / Corner Rope)",
-                condition: "網角繩單處斷裂 / 磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)。",
-                limitValue: "25% / 0.25 in / 0.63 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "網角繩損壞超過 25% 或 0.25 吋即屬不可接受。"
-            },
-            {
-                id: "net_roping_bottom",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "集裝網最底層及底層上方兩排繩索 (Border & Lower 2 Rows Roping)",
-                condition: "最底層或底層上方兩排之單處斷裂/磨損超過材料 25% 或超過 0.25 吋 (0.63 cm)。",
-                limitValue: "25% / 0.25 in / 0.63 cm",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "若出現三處或以上輕微磨損，即使未超過單處標準，該網仍不可使用。"
-            },
-            {
-                id: "net_roping_above",
-                category: "net",
-                categoryName: "集裝網 / Cargo Nets",
-                title: "集裝網底層兩排以上繩索 (Above Bottom Two Rows Roping)",
-                condition: "底層兩排以上：兩個繩結之間不得有超過一條完全斷裂 / 磨損的繩索 (不包含角繩)。若兩個繩結之間有超過 1 條完全斷裂/磨損，判定為不可接受。",
-                limitValue: "≤ 1 條斷裂繩索 / 兩繩結間",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-amber-100 text-amber-900 border-amber-300",
-                note: "符合標準：底層兩排以上，兩個繩結之間不得有超過一條完全斷裂/磨損的繩索（不包含角繩）。"
-            },
-            {
-                id: "strap_temporary",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "臨時綁帶 (Temporary Restraint Straps) 損壞",
-                condition: "存在任何形式的損壞 (不得有任何損壞)。",
-                limitValue: "不得有任何損壞 (No Damage)",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "依據 FORM: 83-48-002 標準，臨時綁帶 (Temporary Restraint Straps / TRSL) 必須完好，不得有任何損壞。"
-            },
-            {
-                id: "strap_primary",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "主要 SCAF 藍色軍帶損壞/過期",
-                condition: "未附有清晰可辨 TSO 標籤、已超過有效期限、或存在任何形式損壞。",
-                limitValue: "任何損壞 / 過期",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "僅可在特殊貨物 (Special Cargo) 的 SCAF 報告所規定條件下使用。"
-            },
-            {
-                id: "strap_secondary_fray",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "次要貨物綁固帶 (黃色) 切口與磨損",
-                condition: "單一切口或磨損超過綁帶寬度的 25%。",
-                limitValue: "25% 綁帶寬度",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "綁帶本體材料撕裂、切口或磨損超過寬度 25% 均判定不可接受。"
-            },
-            {
-                id: "strap_secondary_knot",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "次要貨物綁固帶 (黃色) 存在解不開的結",
-                condition: "存在一個或以上解不開的結。",
-                limitValue: "≥ 1 個解不開的結",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "綁帶存在任何無法解開的繩結均屬不可接受。"
-            },
-            {
-                id: "strap_secondary_lock",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "次要貨物綁固帶 (黃色) 扣環與配件損壞",
-                condition: "扣環無法保持鎖定狀態；或所連接的固定 D Ring、掛鉤或環扣出現彎曲、裂紋、斷裂或缺失。",
-                limitValue: "無法鎖定 / 配件損壞",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "扣環鎖定機制失效、無法保持鎖定狀態或金屬五金配件彎曲/裂紋/缺失均屬不可接受。"
-            },
-            {
-                id: "strap_secondary_expiry",
-                category: "strap",
-                categoryName: "軍帶與綁固帶 / Straps",
-                title: "次要貨物綁固帶 (黃色) 已超過有效期限",
-                condition: "已超過有效期限 (如適用)。",
-                limitValue: "超過有效期限",
-                verdict: "不可接受 (Unserviceable)",
-                verdictClass: "bg-red-100 text-red-800 border-red-300",
-                note: "綁固帶若印有有效期限，逾期即判定不可接受。"
-            }
-        ];
 
         const uldData = {
             "amp": { 
@@ -2097,7 +1632,7 @@
                                 <input type="number" id="calc-cable-pct" min="0" max="100" placeholder="例如: 15 或 28" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
                                 <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">%</span>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">磨損達 25% 或以上不可接受。</p>
+                            <p class="text-[10px] text-slate-400 mt-1">磨損超過 25% 不可接受 (25% 或以下合格)。</p>
                         </div>
                         <div>
                             <label class="block font-bold text-slate-700 mb-1">門纜鋼絲外露長度 (Cable Exposed)</label>
@@ -2105,7 +1640,7 @@
                                 <input type="number" id="calc-cable-exposed" min="0" step="0.5" placeholder="例如: 8 或 13" class="flex-1 p-2 bg-slate-50 border border-slate-300 rounded-lg font-bold">
                                 <span class="p-2 bg-slate-100 border border-slate-300 rounded-lg font-bold">吋 (in)</span>
                             </div>
-                            <p class="text-[10px] text-slate-400 mt-1">鋼絲外露達 12 吋 (30.48 cm) 或以上不可接受。</p>
+                            <p class="text-[10px] text-slate-400 mt-1">鋼絲外露超過 12 吋 (30.48 cm) 不可接受 (12 吋或以下合格)。</p>
                         </div>
                     </div>
                 `;
@@ -2442,14 +1977,14 @@
                         limitClause = "距離框架邊緣 3 吋以內損壞不可接受 (起始於邊緣且 ≤ 3 吋除外)";
                     }
                 } else {
-                    if (lenInches >= 7.0) {
+                    if (lenInches > 7.0) {
                         isServiceable = false;
-                        reason = `損壞距離骨架邊緣超過 3 吋，但損壞長度達 ${lenInches.toFixed(2)} 吋 (≥ 7 吋 / 17.78 cm)，已達拒收臨界。`;
-                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度不得達到或超過 7 吋 (17.78 cm)";
+                        reason = `損壞距離骨架邊緣超過 3 吋，且損壞長度達 ${lenInches.toFixed(2)} 吋 (> 7 吋 / 17.78 cm)，已超過 7 吋安全限制。`;
+                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度不得超過 7 吋 (17.78 cm)";
                     } else {
                         isServiceable = true;
-                        reason = `損壞距離骨架邊緣超過 3 吋，且損壞長度為 ${lenInches.toFixed(2)} 吋 (< 7 吋 / 17.78 cm)，在安全容許範圍內。`;
-                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度 < 7 吋 (17.78 cm)";
+                        reason = `損壞距離骨架邊緣超過 3 吋，且損壞長度為 ${lenInches.toFixed(2)} 吋 (≤ 7 吋 / 17.78 cm)，符合標準可正常使用。`;
+                        limitClause = "距離骨架邊緣 > 3 吋處，損壞長度 ≤ 7 吋 (17.78 cm)";
                     }
                 }
             } else if (scenario === 'panel_contour') {
@@ -2519,17 +2054,17 @@
                 const exp = parseFloat(document.getElementById('calc-cable-exposed').value) || 0;
                 title = "捲簾門纜繩磨損判定 (Door Cable)";
 
-                if (pct >= 25 || exp >= 12) {
+                if (pct > 25 || exp > 12) {
                     isServiceable = false;
                     const fl = [];
-                    if (pct >= 25) fl.push(`磨損 ${pct}% (≥ 25%)`);
-                    if (exp >= 12) fl.push(`鋼絲外露 ${exp} 吋 (≥ 12 吋)`);
+                    if (pct > 25) fl.push(`磨損 ${pct}% (> 25%)`);
+                    if (exp > 12) fl.push(`鋼絲外露 ${exp} 吋 (> 12 吋)`);
                     reason = `門纜繩狀況不合格：${fl.join('、')}。`;
-                    limitClause = "門纜磨損達 25% 或外露達 12 吋均不可接受";
+                    limitClause = "門纜磨損超過 25% 或外露超過 12 吋不可接受";
                 } else {
                     isServiceable = true;
-                    reason = `門纜磨損 ${pct}% (< 25%) 且鋼絲外露 ${exp} 吋 (< 12 吋)，符合標準。`;
-                    limitClause = "磨損 < 25% 且外露 < 12 吋";
+                    reason = `門纜磨損 ${pct}% (≤ 25%) 且鋼絲外露 ${exp} 吋 (≤ 12 吋)，符合標準可正常使用。`;
+                    limitClause = "磨損 ≤ 25% 且外露 ≤ 12 吋";
                 }
             } else if (scenario === 'door_bar') {
                 const len = parseFloat(document.getElementById('calc-doorbar-len').value) || 0;
