@@ -113,6 +113,7 @@
 
     <!-- CDN Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -127,6 +128,16 @@
         }
         @media (min-width: 768px) { #viewport-container { height: 580px; } }
         @media (min-width: 1280px) { #viewport-container { height: 660px; } }
+
+        #contour-canvas-container {
+            position: relative;
+            width: 100%;
+            height: 520px;
+            touch-action: none;
+            background-color: #0f172a;
+        }
+        @media (min-width: 768px) { #contour-canvas-container { height: 600px; } }
+        @media (min-width: 1280px) { #contour-canvas-container { height: 680px; } }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -150,6 +161,51 @@
         }
         .animate-install-glow {
             animation: pulse-subtle 2s infinite ease-in-out;
+        }
+
+        /* 3D Floating Dimension Badges for Contour 3D */
+        .dim-label {
+            position: absolute;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            white-space: nowrap;
+            transition: opacity 0.15s ease;
+            z-index: 10;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+        }
+        .dim-front {
+            background: rgba(14, 165, 233, 0.92);
+            color: #ffffff;
+            border: 1px solid #7dd3fc;
+        }
+        .dim-side {
+            background: rgba(245, 158, 11, 0.92);
+            color: #ffffff;
+            border: 1px solid #fde68a;
+        }
+        .dim-title {
+            background: rgba(43, 22, 16, 0.94);
+            color: #ffb500;
+            border: 1px solid #ffb500;
+            font-size: 12px;
+            padding: 3px 8px;
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        .dim-title:hover {
+            background: #ffb500;
+            color: #2b1610;
+            border-color: #ffe17d;
+        }
+        .contour-glass-panel {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
     </style>
 </head>
@@ -224,8 +280,8 @@
                 </div>
             </div>
 
-            <!-- Page Navigation Tabs Switcher (3 Focused Modes) -->
-            <div class="grid grid-cols-3 bg-slate-900/70 p-1 rounded-lg border border-amber-500/30 text-xs font-bold gap-1">
+            <!-- Page Navigation Tabs Switcher (4 Modes: 3 Original + Newly Added Contour 3D Tab) -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 bg-slate-900/70 p-1 rounded-lg border border-amber-500/30 text-xs font-bold gap-1">
                 <button id="nav-tab-uld" onclick="switchPage('uld')" class="py-1.5 px-2 rounded-md bg-[#ffb500] text-[#2b1610] shadow transition flex items-center justify-center gap-1.5 font-bold truncate">
                     <i class="fa-solid fa-boxes-packing"></i> <span>📦 3D 檢查 (<span id="uld-count-badge">13</span>)</span>
                 </button>
@@ -235,6 +291,9 @@
                 <button id="nav-tab-logger" onclick="switchPage('logger')" class="py-1.5 px-2 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold truncate">
                     <i class="fa-solid fa-clipboard-list text-emerald-400"></i> <span>📋 檢驗速錄</span>
                 </button>
+                <button id="nav-tab-contour" onclick="switchPage('contour')" class="py-1.5 px-2 rounded-md text-slate-300 hover:text-white transition flex items-center justify-center gap-1.5 font-bold truncate">
+                    <i class="fa-solid fa-cubes text-sky-400"></i> <span>📐 Contour 3D (16)</span>
+                </button>
             </div>
         </div>
     </header>
@@ -242,7 +301,7 @@
     <main class="max-w-7xl mx-auto w-full p-2.5 sm:p-4 md:p-5 flex-grow grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5">
 
         <!-- Left Selector & Criteria Column -->
-        <div class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
+        <div id="left-column-wrapper" class="lg:col-span-4 flex flex-col gap-3.5 md:gap-4">
             
             <!-- ULD Category List Panel -->
             <div id="left-panel-uld" class="bg-white border border-slate-200 rounded-xl p-3 md:p-3.5 shadow-sm">
@@ -348,7 +407,7 @@
         </div>
 
         <!-- Right 3D, Search Results, Calculator & Defect Logger Panels -->
-        <div class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
+        <div id="right-column-wrapper" class="lg:col-span-8 flex flex-col gap-3.5 md:gap-4">
 
             <!-- 1. ULD 3D 檢視面板 -->
             <div id="main-view-uld" class="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col relative">
@@ -630,6 +689,285 @@
                             </button>
                         </div>
                         <pre id="log-preview-output" class="p-3 bg-slate-900 text-amber-300 text-[11px] rounded-xl font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-all">填寫上方表單並點擊「一鍵生成交接通報摘要」，標準交接文字將顯示於此並自動複製至剪貼簿。</pre>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 5. 新增整合分頁：Contour Code Picture 3D CAD (背景與卡片配色完全跟隨 index.html) -->
+        <div id="main-view-contour" class="lg:col-span-12 hidden flex-col gap-3.5 md:gap-4">
+            
+            <!-- Contour Section Sub-Header Bar (Styled identically to index.html white/slate/UPS cards) -->
+            <div class="bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="w-9 h-9 rounded-lg bg-amber-50 border border-amber-300 flex items-center justify-center text-amber-700 shadow-sm">
+                        <i class="fa-solid fa-cubes text-lg"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-slate-800">Contour Code Picture 3D CAD</h1>
+                            <span class="hidden xl:inline-block text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-amber-100 text-[#2b1610] font-bold border border-amber-300">ULD / Aviation Pallet</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 hidden md:block">航空貨盤輪廓平面圖轉 3D 立體結構模型・支援 360° 全視角與尺寸標註</p>
+                    </div>
+
+                    <!-- Page Switcher (Page 1: Original 3D Viewer | Page 2: Newly Added Page) -->
+                    <div class="flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200 ml-0 sm:ml-2">
+                        <button id="tab-page-1" onclick="switchWebPage('page1')" class="px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-[#ffb500] text-[#2b1610] shadow-sm">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>頁面 1：3D 結構檢視</span>
+                        </button>
+                        <button id="tab-page-2" onclick="switchWebPage('page2')" class="px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                            <i class="fa-solid fa-table-list"></i>
+                            <span>頁面 2：原圖平面對照表</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Center Mode Switcher: Single Model vs All Showroom -->
+                <div id="header-3d-modes" class="hidden lg:flex items-center bg-slate-100 p-1 rounded-lg border border-slate-200">
+                    <button id="btn-mode-single" onclick="setDisplayMode('single')" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow-sm">
+                        <i class="fa-solid fa-cube"></i>
+                        <span>單一模型精細檢視</span>
+                    </button>
+                    <button id="btn-mode-all" onclick="setDisplayMode('showroom')" class="px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+                        <i class="fa-solid fa-table-cells-large"></i>
+                        <span>全圖表 12 宮格 3D 總覽</span>
+                    </button>
+                </div>
+
+                <!-- Right Actions -->
+                <div class="flex items-center gap-2">
+                    <!-- Unit Toggle -->
+                    <button id="btn-unit" onclick="toggleUnit()" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-300 text-xs font-mono font-bold text-slate-700 transition flex items-center gap-1.5" title="切換尺寸單位 (英吋 in / 公分 cm)">
+                        <i class="fa-solid fa-ruler-combined text-amber-600"></i>
+                        <span id="unit-label">單位: IN (英吋)</span>
+                    </button>
+
+                    <!-- Export OBJ Button -->
+                    <button onclick="exportCurrentOBJ()" class="px-3 py-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-800 text-xs font-bold transition flex items-center gap-1.5" title="匯出目前 3D 模型為 .OBJ 檔案">
+                        <i class="fa-solid fa-download text-emerald-600"></i>
+                        <span class="hidden md:inline">匯出 3D (.OBJ)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Page 1 Container: 3D Structure Viewer (Matching index.html grid & card background colors) -->
+            <div id="page-1-container" class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 md:gap-5 relative">
+
+                <!-- Left Sidebar: Contour Code Selector (Matches Left & Right Columns of Blueprint) -->
+                <aside id="sidebar-left" class="lg:col-span-4 bg-white border border-slate-200 rounded-xl flex flex-col shadow-sm z-20 transition-all duration-300 overflow-hidden">
+                    <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-xs font-extrabold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                                <i class="fa-solid fa-layer-group text-amber-600"></i>
+                                <span>圖表輪廓代碼清單 (16組)</span>
+                            </h2>
+                            <p class="text-[11px] text-slate-500 mt-0.5">點擊任一代碼即時載入 3D 結構</p>
+                        </div>
+                        <!-- Filter Column Pill -->
+                        <div class="flex bg-slate-200/80 rounded p-0.5 border border-slate-300 text-[11px]">
+                            <button onclick="filterColumn('all')" id="flt-all" class="px-2 py-0.5 rounded bg-amber-600 text-white font-bold shadow-sm">全部</button>
+                            <button onclick="filterColumn('left')" id="flt-left" class="px-2 py-0.5 rounded text-slate-600 hover:text-slate-900 font-bold">左欄</button>
+                            <button onclick="filterColumn('right')" id="flt-right" class="px-2 py-0.5 rounded text-slate-600 hover:text-slate-900 font-bold">右欄</button>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Contour List -->
+                    <div id="contour-list" class="flex-1 overflow-y-auto p-2.5 space-y-2 max-h-[480px] lg:max-h-[560px]">
+                        <!-- Populated dynamically via JS -->
+                    </div>
+
+                    <!-- Bottom Hint -->
+                    <div class="p-3 bg-slate-50 border-t border-slate-200 text-[11px] text-slate-600 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <span><i class="fa-solid fa-computer-mouse text-amber-600 mr-1"></i>左鍵拖曳：360° 旋轉</span>
+                            <span>右鍵拖曳：平移</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span><i class="fa-solid fa-magnifying-glass text-amber-600 mr-1"></i>滾輪／雙指：縮放</span>
+                            <span>點擊視角鈕：正交投影</span>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Center 3D Viewport -->
+                <div class="lg:col-span-8 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm relative flex flex-col">
+                    <!-- Mobile Sidebar Toggle Button -->
+                    <button onclick="toggleLeftSidebar()" class="lg:hidden absolute top-3 left-3 z-30 px-3 py-2 rounded-lg contour-glass-panel border border-slate-300 text-xs font-bold text-slate-800 flex items-center gap-1.5 shadow-lg">
+                        <i class="fa-solid fa-bars text-amber-600"></i>
+                        <span>選擇輪廓型號</span>
+                    </button>
+
+                    <!-- Top Floating HUD: Active Contour Info Badge -->
+                    <div id="hud-header" class="absolute top-3 left-3 lg:left-4 z-20 pointer-events-none hidden xl:flex items-center gap-3 contour-glass-panel px-4 py-2.5 rounded-xl border border-slate-300 shadow-lg">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span id="hud-code" class="text-base font-extrabold font-mono text-[#2b1610]">A4 (AAZ)</span>
+                                <span id="hud-sub" class="text-xs px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 font-mono font-bold">125 x 88 | High 64"</span>
+                            </div>
+                            <p id="hud-desc" class="text-xs text-slate-600 mt-0.5 font-medium">雙側正面斜削角 + 單側側面斜削角複合結構</p>
+                        </div>
+                        <div class="h-8 w-px bg-slate-300 mx-1"></div>
+                        <div class="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[11px] font-mono">
+                            <div class="text-slate-600">計算體積: <span id="hud-vol-ft" class="text-emerald-700 font-bold">356.2 ft³</span></div>
+                            <div class="text-slate-600">公制容積: <span id="hud-vol-m" class="text-emerald-700 font-bold">10.09 m³</span></div>
+                            <div class="text-slate-600">底盤面積: <span id="hud-area" class="text-sky-700 font-bold">76.4 ft²</span></div>
+                            <div class="text-slate-600">位置區域: <span id="hud-pos" class="text-amber-700 font-bold">Main / Upper Deck</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Top Right Floating Toolbar: Display Options (Wireframe, Dimensions, Pallet, Cutaway) -->
+                    <div class="absolute top-3 right-3 z-20 flex flex-wrap gap-1.5 justify-end max-w-[75%] sm:max-w-none">
+                        <button id="toggle-dims" onclick="toggleOption('dims')" class="px-2.5 py-1.5 rounded-lg border border-amber-500 bg-[#ffb500] text-[#2b1610] text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-ruler-horizontal"></i>
+                            <span>3D 尺寸標註</span>
+                        </button>
+                        <button id="toggle-pallet" onclick="toggleOption('pallet')" class="px-2.5 py-1.5 rounded-lg border border-amber-500 bg-[#ffb500] text-[#2b1610] text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-border-all"></i>
+                            <span>鋁合金底盤</span>
+                        </button>
+                        <button id="toggle-fuselage" onclick="toggleOption('fuselage')" class="px-2.5 py-1.5 rounded-lg contour-glass-panel border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-plane"></i>
+                            <span>機艙截面包絡線</span>
+                        </button>
+                        <button id="toggle-wireframe" onclick="toggleOption('wireframe')" class="px-2.5 py-1.5 rounded-lg contour-glass-panel border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-border-none"></i>
+                            <span>透視線框</span>
+                        </button>
+                        <button id="toggle-autorotate" onclick="toggleOption('autorotate')" class="px-2.5 py-1.5 rounded-lg contour-glass-panel border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>自動旋轉</span>
+                        </button>
+                        <button id="toggle-blueprint" onclick="toggleBlueprintPanel()" class="px-2.5 py-1.5 rounded-lg border border-amber-500 bg-[#ffb500] text-[#2b1610] text-xs font-bold transition flex items-center gap-1.5 shadow">
+                            <i class="fa-solid fa-compass-drafting"></i>
+                            <span>2D 藍圖對照</span>
+                        </button>
+                    </div>
+
+                    <!-- 3D Canvas Container (Same slate-900 3D stage background as index.html) -->
+                    <div id="contour-canvas-container" class="flex-1 relative cursor-grab active:cursor-grabbing overflow-hidden">
+                        <!-- HTML 3D Dimension Labels Overlay -->
+                        <div id="labels-container" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+                    </div>
+
+                    <!-- Bottom Floating Multi-Angle Camera Control Dock -->
+                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 contour-glass-panel px-3 py-2 rounded-2xl border border-slate-300 shadow-xl flex items-center gap-1.5 sm:gap-2 max-w-[96%] overflow-x-auto">
+                        <span class="text-[11px] font-mono uppercase text-slate-600 font-bold px-1.5 hidden sm:inline">視角切換:</span>
+                        <button onclick="setCameraView('iso')" id="cam-iso" class="px-3 py-1.5 rounded-xl bg-[#ffb500] text-[#2b1610] text-xs font-extrabold transition flex items-center gap-1.5 shrink-0 shadow ring-2 ring-amber-400">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>3D 等角透視</span>
+                        </button>
+                        <button onclick="setCameraView('front')" id="cam-front" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shrink-0 border border-slate-300">
+                            <span class="w-2 h-2 rounded-full bg-sky-500"></span>
+                            <span>Front View (正視圖)</span>
+                        </button>
+                        <button onclick="setCameraView('side')" id="cam-side" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shrink-0 border border-slate-300">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                            <span>Side View (側視圖)</span>
+                        </button>
+                        <button onclick="setCameraView('top')" id="cam-top" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shrink-0 border border-slate-300">
+                            <i class="fa-solid fa-arrows-up-down-left-right text-emerald-600"></i>
+                            <span>Top View (俯視圖)</span>
+                        </button>
+                        <button onclick="setCameraView('back')" id="cam-back" class="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shrink-0 border border-slate-300">
+                            <i class="fa-solid fa-eye text-purple-600"></i>
+                            <span>背視斜角</span>
+                        </button>
+                        <div class="h-5 w-px bg-slate-300 mx-0.5 shrink-0"></div>
+                        <!-- Explosive / Slice Slider -->
+                        <div class="flex items-center gap-2 px-2 shrink-0" title="調整模型透明度以檢視內部與背面稜線">
+                            <span class="text-[11px] text-slate-600 font-bold">不透明度</span>
+                            <input id="opacity-slider" type="range" min="25" max="100" value="88" oninput="updateOpacity(this.value)" class="w-16 sm:w-20 accent-amber-600 cursor-pointer h-1.5 bg-slate-300 rounded-lg">
+                        </div>
+                    </div>
+
+                    <!-- Right Floating 2D Blueprint & Spec Verification Panel -->
+                    <div id="blueprint-panel" class="absolute bottom-20 right-3 z-20 w-80 sm:w-96 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-300 shadow-2xl overflow-hidden transition-all duration-300">
+                        <div class="px-3.5 py-2.5 bg-[#2b1610] border-b border-[#ffb500] flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-compass-drafting text-[#ffb500] text-xs"></i>
+                                <span class="text-xs font-bold text-white">原圖 2D 工程視圖與幾何參數</span>
+                            </div>
+                            <button onclick="toggleBlueprintPanel()" class="text-amber-200 hover:text-white text-xs px-1">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+
+                        <!-- 2D SVG Front & Side View Drawing matching the user's photo -->
+                        <div class="p-3 grid grid-cols-2 gap-2 bg-slate-50">
+                            <div class="bg-slate-900 border border-slate-300 rounded-xl p-2 flex flex-col items-center">
+                                <div class="w-full flex items-center justify-between text-[10px] font-mono text-sky-400 mb-1">
+                                    <span>FRONT VIEW (正視)</span>
+                                    <button onclick="setCameraView('front')" class="hover:underline text-slate-300 hover:text-sky-300">對齊3D</button>
+                                </div>
+                                <svg id="svg-front" viewBox="0 0 220 160" class="w-full h-28"></svg>
+                            </div>
+                            <div class="bg-slate-900 border border-slate-300 rounded-xl p-2 flex flex-col items-center">
+                                <div class="w-full flex items-center justify-between text-[10px] font-mono text-amber-400 mb-1">
+                                    <span>SIDE VIEW (側視)</span>
+                                    <button onclick="setCameraView('side')" class="hover:underline text-slate-300 hover:text-amber-300">對齊3D</button>
+                                </div>
+                                <svg id="svg-side" viewBox="0 0 220 160" class="w-full h-28"></svg>
+                            </div>
+                        </div>
+
+                        <!-- Dimension Specs Breakdown -->
+                        <div id="spec-details" class="px-3.5 py-2.5 text-xs space-y-1.5 border-t border-slate-200 bg-white max-h-44 overflow-y-auto">
+                            <!-- Populated via JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page 2 Container: Full Contour Code Picture Chart & Interactive Sheet Page (Identical Background Color to index.html) -->
+            <div id="page-2-container" class="hidden space-y-5">
+                <!-- Page 2 Top Banner -->
+                <div class="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2.5">
+                            <span class="px-2.5 py-0.5 rounded-md bg-amber-100 border border-amber-300 text-[#2b1610] text-xs font-mono font-bold">PAGE 2・CONTOUR CHART</span>
+                            <h2 class="text-lg sm:text-xl font-extrabold text-slate-800 tracking-tight">Contour Code Picture 完整工程平面圖與 3D 結構對照頁</h2>
+                        </div>
+                        <p class="text-xs text-slate-600 mt-1">此頁面採用與主網頁完全一致的背景色彩配置，1:1 呈現原圖左右雙欄（Left & Right Columns）所有正視圖、側視圖與立體幾何參數。點擊任一列即可立即切換至 3D 視角檢視。</p>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="switchWebPage('page1')" class="px-3.5 py-2 rounded-xl ups-gold-gradient text-[#2b1610] text-xs font-extrabold transition flex items-center gap-2 shadow-md hover:brightness-110">
+                            <i class="fa-solid fa-cube"></i>
+                            <span>返回頁面 1 (3D 模型檢視器)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Two-Column Original Blueprint Table Layout (Matching the Physical Contour Code Picture Sheet) -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                    <!-- Left Column Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <div class="px-4 py-3 bg-[#2b1610] border-b-2 border-[#ffb500] flex items-center justify-between">
+                            <span class="text-xs font-bold font-mono uppercase tracking-wider text-[#ffb500] flex items-center gap-2">
+                                <i class="fa-solid fa-table-columns"></i>
+                                Left Column (原圖左欄 6 列輪廓)
+                            </span>
+                            <span class="text-[11px] font-mono text-amber-200/80">Contour / Pallet Size / Front View / Side View</span>
+                        </div>
+                        <div id="page2-left-col" class="divide-y divide-slate-200">
+                            <!-- Dynamically populated via JS -->
+                        </div>
+                    </div>
+
+                    <!-- Right Column Table -->
+                    <div class="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+                        <div class="px-4 py-3 bg-[#2b1610] border-b-2 border-[#ffb500] flex items-center justify-between">
+                            <span class="text-xs font-bold font-mono uppercase tracking-wider text-[#ffb500] flex items-center gap-2">
+                                <i class="fa-solid fa-table-columns"></i>
+                                Right Column (原圖右欄 6 列輪廓)
+                            </span>
+                            <span class="text-[11px] font-mono text-amber-200/80">Contour / Pallet Size / Front View / Side View</span>
+                        </div>
+                        <div id="page2-right-col" class="divide-y divide-slate-200">
+                            <!-- Dynamically populated via JS -->
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1389,9 +1727,15 @@
         }
 
         function switchPage(page) {
+            // Support internal Page 1 / Page 2 switching if called with page1 / page2
+            if (page === 1 || page === '1' || page === 'page1' || page === 2 || page === '2' || page === 'page2') {
+                switchWebPage(page);
+                return;
+            }
+
             activePage = page;
             
-            const tabs = ['uld', 'calc', 'logger'];
+            const tabs = ['uld', 'calc', 'logger', 'contour'];
             tabs.forEach(t => {
                 const btn = document.getElementById(`nav-tab-${t}`);
                 if (!btn) return;
@@ -1402,6 +1746,9 @@
                 }
             });
 
+            const leftColWrapper = document.getElementById('left-column-wrapper');
+            const rightColWrapper = document.getElementById('right-column-wrapper');
+
             const leftUld = document.getElementById('left-panel-uld');
             const leftCalc = document.getElementById('left-panel-calc-info');
             const leftLogger = document.getElementById('left-panel-logger-info');
@@ -1410,21 +1757,51 @@
             const mainUld = document.getElementById('main-view-uld');
             const mainCalc = document.getElementById('main-view-calc');
             const mainLogger = document.getElementById('main-view-logger');
+            const mainContour = document.getElementById('main-view-contour');
 
             [leftUld, leftCalc, leftLogger, detailsPanel].forEach(el => el && el.classList.add('hidden'));
-            [mainUld, mainCalc, mainLogger].forEach(el => el && el.classList.add('hidden'));
+            [mainUld, mainCalc, mainLogger, mainContour].forEach(el => {
+                if (el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('flex');
+                }
+            });
 
-            if (page === 'uld') {
-                leftUld.classList.remove('hidden');
-                detailsPanel.classList.remove('hidden');
-                mainUld.classList.remove('hidden');
-            } else if (page === 'calc') {
-                leftCalc.classList.remove('hidden');
-                mainCalc.classList.remove('hidden');
-            } else if (page === 'logger') {
-                leftLogger.classList.remove('hidden');
-                mainLogger.classList.remove('hidden');
-                renderLocalLogsList();
+            if (page === 'contour') {
+                if (leftColWrapper) leftColWrapper.classList.add('hidden');
+                if (rightColWrapper) rightColWrapper.classList.add('hidden');
+                if (mainContour) {
+                    mainContour.classList.remove('hidden');
+                    mainContour.classList.add('flex');
+                }
+                setTimeout(() => {
+                    if (!contourInitialized) {
+                        initContourThreeScene();
+                        renderSidebarList();
+                        rebuildSceneContent();
+                        renderPage2Table();
+                    } else {
+                        resizeContourViewport();
+                        updateHtmlLabelsPosition();
+                    }
+                }, 30);
+            } else {
+                if (leftColWrapper) leftColWrapper.classList.remove('hidden');
+                if (rightColWrapper) rightColWrapper.classList.remove('hidden');
+
+                if (page === 'uld') {
+                    leftUld.classList.remove('hidden');
+                    detailsPanel.classList.remove('hidden');
+                    mainUld.classList.remove('hidden');
+                    setTimeout(onWindowResize, 20);
+                } else if (page === 'calc') {
+                    leftCalc.classList.remove('hidden');
+                    mainCalc.classList.remove('hidden');
+                } else if (page === 'logger') {
+                    leftLogger.classList.remove('hidden');
+                    mainLogger.classList.remove('hidden');
+                    renderLocalLogsList();
+                }
             }
         }
 
@@ -1520,8 +1897,27 @@
         function closeCardModal() { document.getElementById('card-modal').classList.add('hidden'); }
         function showLoading(t) { document.getElementById('loading-text').innerText = t; document.getElementById('canvas-loading').style.display = 'flex'; }
         function hideLoading() { document.getElementById('canvas-loading').style.display = 'none'; }
-        function onWindowResize() { const c = document.getElementById('viewport-container'); if (!c || !camera || !renderer) return; camera.aspect = c.clientWidth / c.clientHeight; camera.updateProjectionMatrix(); renderer.setSize(c.clientWidth, c.clientHeight); }
-        function animate() { requestAnimationFrame(animate); if(controls) controls.update(); if(renderer && scene && camera && activeRenderer === 'three') renderer.render(scene, camera); }
+        function onWindowResize() {
+            const c = document.getElementById('viewport-container');
+            if (c && camera && renderer && c.clientWidth > 0 && c.clientHeight > 0) {
+                camera.aspect = c.clientWidth / c.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(c.clientWidth, c.clientHeight);
+            }
+            resizeContourViewport();
+        }
+        function animate() {
+            requestAnimationFrame(animate);
+            if (controls) controls.update();
+            if (renderer && scene && camera && activeRenderer === 'three' && activePage === 'uld') {
+                renderer.render(scene, camera);
+            }
+            if (contourControls) contourControls.update();
+            if (contourRenderer && contourScene && contourCamera && activePage === 'contour' && contourState.currentPage === 'page1') {
+                contourRenderer.render(contourScene, contourCamera);
+                updateHtmlLabelsPosition();
+            }
+        }
 
         let lastEvaluationReport = null;
 
@@ -2524,7 +2920,6 @@ ${defectDesc}
         function initUniversalSync() {
             updateSyncStatus('online', '🟢 雲端已即時連線 (全員同步中)');
 
-            // 1. Initial snapshot fetch via Standard HTTPS Port 443
             fetch(`${SYNC_ENDPOINT}/json?poll=1&since=latest`)
                 .then(res => res.text())
                 .then(text => {
@@ -2547,7 +2942,6 @@ ${defectDesc}
                 })
                 .catch(() => {});
 
-            // 2. Realtime SSE over standard HTTPS Port 443 (Never blocked by firewalls or mobile carriers)
             try {
                 if (window.EventSource) {
                     eventSource = new EventSource(`${SYNC_ENDPOINT}/sse`);
@@ -2612,8 +3006,6 @@ ${defectDesc}
             localLogs.unshift(logData);
             saveLogsToStorage();
             renderLocalLogsList();
-
-            // Broadcast to all connected devices over port 443
             broadcastSync();
 
             if (!skipToast) showToast(`✅ 已全員同步 ${logData.uldNum} 至所有人的裝置！`);
@@ -2663,7 +3055,6 @@ ${defectDesc}
             });
         }
 
-        // Anyone can delete any report across all connected devices
         async function deleteLogItem(docId) {
             const docIdStr = String(docId);
             localLogs = localLogs.filter(l => String(l.docId || l.id) !== docIdStr);
@@ -2673,7 +3064,6 @@ ${defectDesc}
             showToast('已自全員設備中同步刪除！');
         }
 
-        // Anyone can clear all reports across all connected devices
         async function clearAllLogs() {
             if (localLogs.length === 0) return;
             localLogs = [];
@@ -2829,6 +3219,1459 @@ ${defectDesc}
             renderBilingualCardModal();
         }
 
+        /* ================= CONTOUR CODE PICTURE 3D CAD MODULE (16 MODELS) ================= */
+        const CONTOUR_MODELS = [
+            // ================= LEFT COLUMN OF TABLE =================
+            {
+                id: 'A2_AAP',
+                column: 'left',
+                row: 1,
+                code: 'A2 (AAP / AMP)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'Main / Lower Deck',
+                summary: '標準矩形航空貨盤輪廓（高 64"、深 88"）',
+                notes: '圖表左欄第 1 列：A2 (AAP)(AMP) 125 × 88/96 High 64。正視與側視皆為標準矩形結構。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 64], [-62.5, 64]],
+                sideProfile: [[-44, 0], [44, 0], [44, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: 'High 64 (A2)', p1: [62.5, 0], p2: [62.5, 64], offset: [14, 0] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '64', p1: [44, 0], p2: [44, 64], offset: [14, 0] }
+                ]
+            },
+            {
+                id: 'Q6_AMA',
+                column: 'left',
+                row: 1,
+                code: 'Q6 (AMA)',
+                palletSize: '125 x 96',
+                baseW: 125,
+                baseD: 96,
+                maxH: 96,
+                deck: 'Main Deck Rectangular',
+                summary: '大型全高矩形貨盤輪廓（高 96"、深 96"）',
+                notes: '圖表左欄第 1 列下半部：Q6 (AMA) 125 × 88/96 High 96。具備最大方正裝載容積。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 96], [-62.5, 96]],
+                sideProfile: [[-48, 0], [48, 0], [48, 96], [-48, 96]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 },
+                    { y: 96, xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: 'High 96 (Q6)', p1: [62.5, 0], p2: [62.5, 96], offset: [14, 0] }
+                ],
+                sideDims: [
+                    { label: '96', p1: [-48, 0], p2: [48, 0], offset: [0, -10] },
+                    { label: '96', p1: [48, 0], p2: [48, 96], offset: [14, 0] }
+                ]
+            },
+            {
+                id: 'A4_AAK',
+                column: 'left',
+                row: 2,
+                code: 'A4 (AAK)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'Main / Narrowbody Deck',
+                summary: '正視雙側對稱斜削角（19"×19"），側視全高矩形',
+                notes: '圖表左欄第 2 列：底寬 125"，兩側垂直高 45"，上方各內縮 19"×19" 斜角，頂寬 87" (125 - 19×2 = 87)；側視維持 88"×64" 矩形。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 45], [43.5, 64], [-43.5, 64], [-62.5, 45]],
+                sideProfile: [[-44, 0], [44, 0], [44, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -43.5, xMax: 43.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '87', p1: [-43.5, 64], p2: [43.5, 64], offset: [0, 10] },
+                    { label: '64', p1: [-62.5, 0], p2: [-62.5, 64], offset: [-14, 0] },
+                    { label: '45', p1: [62.5, 0], p2: [62.5, 45], offset: [12, 0] },
+                    { label: '19×19', p1: [62.5, 45], p2: [43.5, 64], offset: [12, 8] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '64', p1: [-44, 0], p2: [-44, 64], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'A4_AAZ',
+                column: 'left',
+                row: 3,
+                code: 'A4 (AAZ)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'Main Deck Compound',
+                summary: '正視雙側斜角（頂 87"）＋ 側視單側斜角（頂 74"）三維複合斜切',
+                notes: '圖表左欄第 3 列：正視與 AAK 相同（頂寬 87"、側牆高 45"），但側視右側在 45" 以上亦內縮 14"（88 - 14 = 74"），形成三面斜切頂部。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 45], [43.5, 64], [-43.5, 64], [-62.5, 45]],
+                sideProfile: [[-44, 0], [44, 0], [44, 45], [30, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -43.5, xMax: 43.5, zMin: -44, zMax: 30 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '87', p1: [-43.5, 64], p2: [43.5, 64], offset: [0, 10] },
+                    { label: '64', p1: [-62.5, 0], p2: [-62.5, 64], offset: [-14, 0] },
+                    { label: '45', p1: [62.5, 0], p2: [62.5, 45], offset: [12, 0] },
+                    { label: '19×19', p1: [62.5, 45], p2: [43.5, 64], offset: [12, 8] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '74', p1: [-44, 64], p2: [30, 64], offset: [0, 10] },
+                    { label: '64', p1: [-44, 0], p2: [-44, 64], offset: [-14, 0] },
+                    { label: '45', p1: [44, 0], p2: [44, 45], offset: [12, 0] },
+                    { label: '14×19', p1: [44, 45], p2: [30, 64], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'A3_AAA',
+                column: 'left',
+                row: 4,
+                code: 'A3 (AAA)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 81,
+                deck: 'Single-Aisle Main Deck',
+                summary: '高 81" 正視雙側大斜角（30"×36"），頂寬 65"、側視矩形',
+                notes: '圖表左欄第 4 列：底寬 125"，側牆高 45"，上方各內縮寬 30"、高 36" (45+36=81")，頂部平寬 65" (125-60=65")；側視維持 88"×81" 矩形。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 45], [32.5, 81], [-32.5, 81], [-62.5, 45]],
+                sideProfile: [[-44, 0], [44, 0], [44, 81], [-44, 81]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 81, xMin: -32.5, xMax: 32.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '65', p1: [-32.5, 81], p2: [32.5, 81], offset: [0, 10] },
+                    { label: '81', p1: [-62.5, 0], p2: [-62.5, 81], offset: [-14, 0] },
+                    { label: '45', p1: [62.5, 0], p2: [62.5, 45], offset: [12, 0] },
+                    { label: '30×36', p1: [62.5, 45], p2: [32.5, 81], offset: [14, 8] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '81', p1: [-44, 0], p2: [-44, 81], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'ZD_AAY',
+                column: 'left',
+                row: 5,
+                code: 'ZD (AAY)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 81,
+                deck: 'Main Deck Compound Taper',
+                summary: '高 81" 正視雙側斜角（頂 65"）＋ 側視右側斜角（頂 62"）',
+                notes: '圖表左欄第 5 列：正視與 A3 (AAA) 相同（頂寬 65"），側視右側自高 45" 起向內斜縮 26"×36"，使頂部深度縮為 62" (88-26=62")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 45], [32.5, 81], [-32.5, 81], [-62.5, 45]],
+                sideProfile: [[-44, 0], [44, 0], [44, 45], [18, 81], [-44, 81]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 81, xMin: -32.5, xMax: 32.5, zMin: -44, zMax: 18 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '65', p1: [-32.5, 81], p2: [32.5, 81], offset: [0, 10] },
+                    { label: '81', p1: [-62.5, 0], p2: [-62.5, 81], offset: [-14, 0] },
+                    { label: '45', p1: [62.5, 0], p2: [62.5, 45], offset: [12, 0] },
+                    { label: '30×36', p1: [62.5, 45], p2: [32.5, 81], offset: [14, 8] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '62', p1: [-44, 81], p2: [18, 81], offset: [0, 10] },
+                    { label: '81', p1: [-44, 0], p2: [-44, 81], offset: [-14, 0] },
+                    { label: '45', p1: [44, 0], p2: [44, 45], offset: [12, 0] },
+                    { label: '26×36', p1: [44, 45], p2: [18, 81], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'X6_AAD',
+                column: 'left',
+                row: 6,
+                code: 'X6 (AAD)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 96,
+                deck: 'Widebody Fuselage Side',
+                summary: '正視 125"×96" 矩形，側視右側雙段折角（45"→81"→96"，頂深 40"）',
+                notes: '圖表左欄第 6 列：側視完美貼合廣體客機艙頂弧度，右側自 45" 高起先內縮 26"（升 36" 至 81" 高），再內縮 22"（升 15" 至 96" 頂部），頂寬 40" (40+22+26=88")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 96], [-62.5, 96]],
+                sideProfile: [[-44, 0], [44, 0], [44, 45], [18, 81], [-4, 96], [-44, 96]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 81, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 18 },
+                    { y: 96, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: -4 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '96', p1: [-62.5, 0], p2: [-62.5, 96], offset: [-14, 0] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '40', p1: [-44, 96], p2: [-4, 96], offset: [0, 10] },
+                    { label: '96', p1: [-44, 0], p2: [-44, 96], offset: [-14, 0] },
+                    { label: '45', p1: [44, 0], p2: [44, 45], offset: [12, 0] },
+                    { label: '26×36', p1: [44, 45], p2: [18, 81], offset: [16, 4] },
+                    { label: '22×15', p1: [18, 81], p2: [-4, 96], offset: [14, 8] }
+                ]
+            },
+
+            // ================= RIGHT COLUMN OF TABLE =================
+            {
+                id: 'H2_LD',
+                column: 'right',
+                row: 1,
+                code: 'H2 (Lower Deck)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'Lower Deck Belly Hold',
+                summary: '下貨艙外擴型輪廓 H2：底寬 125"，兩側底部外擴 12"×15"，頂寬 149"',
+                notes: '圖表右欄第 1 列 (H2)：底寬 125"，自底部向上 15" 處兩側各向外延伸 12"，使總寬達 149" (125+12×2=149")，上方垂直牆高 49" (15+49=64")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [74.5, 15], [74.5, 64], [-74.5, 64], [-74.5, 15]],
+                sideProfile: [[-44, 0], [44, 0], [44, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 15, xMin: -74.5, xMax: 74.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -74.5, xMax: 74.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125 (底)', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: 'H2 = 149', p1: [-74.5, 64], p2: [74.5, 64], offset: [0, 10] },
+                    { label: '64', p1: [-74.5, 0], p2: [-74.5, 64], offset: [-14, 0] },
+                    { label: '49', p1: [74.5, 15], p2: [74.5, 64], offset: [14, 0] },
+                    { label: '12×15', p1: [62.5, 0], p2: [74.5, 15], offset: [16, -4] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '64', p1: [-44, 0], p2: [-44, 64], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'H3_LD',
+                column: 'right',
+                row: 1,
+                code: 'H3 (Lower Deck)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'Lower Deck Belly Hold',
+                summary: '下貨艙外擴型輪廓 H3：底寬 125"，兩側底部外擴 18"×15"，頂寬 161"',
+                notes: '圖表右欄第 1 列 (H3)：底寬 125"，自底部向上 15" 處兩側各向外延伸 18"，使總寬達 161" (125+18×2=161")，上方垂直牆高 49"。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [80.5, 15], [80.5, 64], [-80.5, 64], [-80.5, 15]],
+                sideProfile: [[-44, 0], [44, 0], [44, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 15, xMin: -80.5, xMax: 80.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -80.5, xMax: 80.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125 (底)', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: 'H3 = 161', p1: [-80.5, 64], p2: [80.5, 64], offset: [0, 10] },
+                    { label: '64', p1: [-80.5, 0], p2: [-80.5, 64], offset: [-14, 0] },
+                    { label: '49', p1: [80.5, 15], p2: [80.5, 64], offset: [14, 0] },
+                    { label: '18×15', p1: [62.5, 0], p2: [80.5, 15], offset: [16, -4] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '64', p1: [-44, 0], p2: [-44, 64], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'W2_LD',
+                column: 'right',
+                row: 1,
+                code: 'W2 (Lower Deck)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 64,
+                deck: 'B747 / Widebody Lower Deck',
+                summary: '下貨艙最大外擴輪廓 W2：底寬 125"，兩側外擴 25"×15"，頂寬 175"',
+                notes: '圖表右欄第 1 列 (W2)：底寬 125"，自底部向上 15" 處兩側各向外延伸 25"，使總寬達 175" (125+25×2=175")，上方垂直牆高 49"。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [87.5, 15], [87.5, 64], [-87.5, 64], [-87.5, 15]],
+                sideProfile: [[-44, 0], [44, 0], [44, 64], [-44, 64]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 15, xMin: -87.5, xMax: 87.5, zMin: -44, zMax: 44 },
+                    { y: 64, xMin: -87.5, xMax: 87.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125 (底)', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: 'W2 = 175', p1: [-87.5, 64], p2: [87.5, 64], offset: [0, 10] },
+                    { label: '64', p1: [-87.5, 0], p2: [-87.5, 64], offset: [-14, 0] },
+                    { label: '49', p1: [87.5, 15], p2: [87.5, 64], offset: [14, 0] },
+                    { label: '25×15', p1: [62.5, 0], p2: [87.5, 15], offset: [16, -4] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '64', p1: [-44, 0], p2: [-44, 64], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'Q6_MD11',
+                column: 'right',
+                row: 2,
+                code: 'Q6 (MD-11 Pos 13/14)',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 83,
+                deck: 'MD-11 Pos 13 & Pos 14',
+                summary: 'MD-11 專用高 83" 輪廓，正視頂部兩側微斜角（7"×5"），頂寬 111"',
+                notes: '圖表右欄第 2 列：底寬 125"，兩側垂直高 78"，頂部上方 5" 高度內各內縮 7"，使頂部平寬 111" (125-7×2=111")，總高 83"；側視 88"×83" 矩形。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 78], [55.5, 83], [-55.5, 83], [-62.5, 78]],
+                sideProfile: [[-44, 0], [44, 0], [44, 83], [-44, 83]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 78, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 83, xMin: -55.5, xMax: 55.5, zMin: -44, zMax: 44 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '111', p1: [-55.5, 83], p2: [55.5, 83], offset: [0, 10] },
+                    { label: '78', p1: [-62.5, 0], p2: [-62.5, 78], offset: [-14, 0] },
+                    { label: '83', p1: [62.5, 0], p2: [62.5, 83], offset: [14, 0] },
+                    { label: '7×5', p1: [62.5, 78], p2: [55.5, 83], offset: [12, 8] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '83', p1: [-44, 0], p2: [-44, 83], offset: [-14, 0] }
+                ]
+            },
+            {
+                id: 'XK_AMJ_88',
+                column: 'right',
+                row: 3,
+                code: 'XK (AMJ / QJ) - 88"',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 96,
+                deck: 'MD-11 / Main Deck',
+                summary: '高 96" 側視單側斜切輪廓（88" 底盤版：頂深 61"，斜角 27"×25"）',
+                notes: '圖表右欄第 3 列 (88" 底盤)：正視為 125"×96" 矩形；側視右側垂直牆高 71"，向上 25" 內縮 27"，頂部深度 61" (88-27=61")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 96], [-62.5, 96]],
+                sideProfile: [[-44, 0], [44, 0], [44, 71], [17, 96], [-44, 96]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 71, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 96, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 17 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '96', p1: [-62.5, 0], p2: [-62.5, 96], offset: [-14, 0] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '61', p1: [-44, 96], p2: [17, 96], offset: [0, 10] },
+                    { label: '96', p1: [-44, 0], p2: [-44, 96], offset: [-14, 0] },
+                    { label: '71', p1: [44, 0], p2: [44, 71], offset: [12, 0] },
+                    { label: '27×25', p1: [44, 71], p2: [17, 96], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'XK_AMJ_96',
+                column: 'right',
+                row: 3,
+                code: 'XK (AMJ / QJ) - 96"',
+                palletSize: '125 x 96',
+                baseW: 125,
+                baseD: 96,
+                maxH: 96,
+                deck: 'MD-11 / Main Deck',
+                summary: '高 96" 側視單側斜切輪廓（96" 底盤版：頂深 69"，斜角 27"×25"）',
+                notes: '圖表右欄第 3 列 (96" 底盤)：正視為 125"×96" 矩形；側視底深 96"，右側自高 71" 起內縮 27"×25"，頂部深度 69" (96-27=69")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 96], [-62.5, 96]],
+                sideProfile: [[-48, 0], [48, 0], [48, 71], [21, 96], [-48, 96]],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 },
+                    { y: 71, xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 },
+                    { y: 96, xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 21 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '96', p1: [-62.5, 0], p2: [-62.5, 96], offset: [-14, 0] }
+                ],
+                sideDims: [
+                    { label: '96', p1: [-48, 0], p2: [48, 0], offset: [0, -10] },
+                    { label: '69', p1: [-48, 96], p2: [21, 96], offset: [0, 10] },
+                    { label: '96', p1: [-48, 0], p2: [-48, 96], offset: [-14, 0] },
+                    { label: '71', p1: [48, 0], p2: [48, 71], offset: [12, 0] },
+                    { label: '27×25', p1: [48, 71], p2: [21, 96], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'Q7_AMD_88',
+                column: 'right',
+                row: 4,
+                code: 'Q7 (AMD / ZAD) - 88"',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 118,
+                deck: 'High-Cube Main Deck',
+                summary: '超高 118" 輪廓（88" 底盤版：頂深 58"，側視斜角 30"×22"）',
+                notes: '圖表右欄第 4 列 (88" 底盤)：總高 118"；側視右側垂直牆高 96"，上方 22" 高度內縮 30"，頂部平深 58" (88-30=58")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 118], [-62.5, 118]],
+                sideProfile: [[-44, 0], [44, 0], [44, 96], [14, 118], [-44, 118]],
+                slices: [
+                    { y: 0,   xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 96,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 118, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 14 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '118', p1: [-62.5, 0], p2: [-62.5, 118], offset: [-14, 0] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '58', p1: [-44, 118], p2: [14, 118], offset: [0, 10] },
+                    { label: '118', p1: [-44, 0], p2: [-44, 118], offset: [-14, 0] },
+                    { label: '96', p1: [44, 0], p2: [44, 96], offset: [12, 0] },
+                    { label: '30×22', p1: [44, 96], p2: [14, 118], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'Q7_AMD_96',
+                column: 'right',
+                row: 4,
+                code: 'Q7 (AMD / ZAD) - 96"',
+                palletSize: '125 x 96',
+                baseW: 125,
+                baseD: 96,
+                maxH: 118,
+                deck: 'High-Cube Main Deck',
+                summary: '超高 118" 輪廓（96" 底盤版：頂深 66"，側視斜角 30"×22"）',
+                notes: '圖表右欄第 4 列 (96" 底盤)：總高 118"；側視底深 96"，右側垂直牆高 96"，上方 22" 內縮 30"，頂部平深 66" (96-30=66")。',
+                frontProfile: [[-62.5, 0], [62.5, 0], [62.5, 118], [-62.5, 118]],
+                sideProfile: [[-48, 0], [48, 0], [48, 96], [18, 118], [-48, 118]],
+                slices: [
+                    { y: 0,   xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 },
+                    { y: 96,  xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 48 },
+                    { y: 118, xMin: -62.5, xMax: 62.5, zMin: -48, zMax: 18 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '118', p1: [-62.5, 0], p2: [-62.5, 118], offset: [-14, 0] }
+                ],
+                sideDims: [
+                    { label: '96', p1: [-48, 0], p2: [48, 0], offset: [0, -10] },
+                    { label: '66', p1: [-48, 118], p2: [18, 118], offset: [0, 10] },
+                    { label: '118', p1: [-48, 0], p2: [-48, 118], offset: [-14, 0] },
+                    { label: '96', p1: [48, 0], p2: [48, 96], offset: [12, 0] },
+                    { label: '30×22', p1: [48, 96], p2: [18, 118], offset: [14, 8] }
+                ]
+            },
+            {
+                id: 'X6_747_POS1',
+                column: 'right',
+                row: 5,
+                code: 'X6 (747) Pos 1.',
+                palletSize: '125 x 88',
+                baseW: 125,
+                baseD: 88,
+                maxH: 90,
+                deck: 'Boeing 747 Nose Pos 1 (Max 2274 kgs)',
+                summary: '波音 747 機首第 1 艙位（Pos 1）多階梯形複合內縮結構（高 90"）',
+                notes: '圖表右下角特殊結構：底座高 45" (寬125"×深88")；往上分為兩層各高 22" 的階梯與斜切包絡區（正視兩側內縮 32" 留中間核心 61"，側視由 88" 階梯內縮 44"、22" 至頂深 22"）。3D 模型同時呈現實心階梯結構與斜線包絡面。',
+                isStepped747: true,
+                frontProfile: [
+                    [-62.5, 0], [62.5, 0], [62.5, 45],
+                    [46.5, 67], [30.5, 90], [-30.5, 90], [-46.5, 67], [-62.5, 45]
+                ],
+                sideProfile: [
+                    [-44, 0], [44, 0], [44, 45],
+                    [0, 45], [0, 67], [-22, 67], [-22, 90], [-44, 90]
+                ],
+                slices: [
+                    { y: 0,  xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 }
+                ],
+                steppedBoxes: [
+                    { xMin: -62.5, xMax: 62.5, yMin: 0, yMax: 45, zMin: -44, zMax: 44, type: 'main' },
+                    { xMin: -46.5, xMax: 46.5, yMin: 45, yMax: 67, zMin: -44, zMax: 0, type: 'main' },
+                    { xMin: -30.5, xMax: 30.5, yMin: 67, yMax: 90, zMin: -44, zMax: -22, type: 'main' }
+                ],
+                hatchedEnvelopeSlices: [
+                    { y: 45, xMin: -62.5, xMax: 62.5, zMin: -44, zMax: 44 },
+                    { y: 67, xMin: -46.5, xMax: 46.5, zMin: -44, zMax: 0 },
+                    { y: 90, xMin: -30.5, xMax: 30.5, zMin: -44, zMax: -22 }
+                ],
+                frontDims: [
+                    { label: '125', p1: [-62.5, 0], p2: [62.5, 0], offset: [0, -10] },
+                    { label: '61 (核心)', p1: [-30.5, 90], p2: [30.5, 90], offset: [0, 10] },
+                    { label: '32', p1: [-62.5, 45], p2: [-30.5, 45], offset: [0, 8] },
+                    { label: '45', p1: [62.5, 0], p2: [62.5, 45], offset: [12, 0] },
+                    { label: '22+22', p1: [46.5, 45], p2: [30.5, 90], offset: [16, 4] }
+                ],
+                sideDims: [
+                    { label: '88', p1: [-44, 0], p2: [44, 0], offset: [0, -10] },
+                    { label: '22', p1: [-44, 90], p2: [-22, 90], offset: [0, 10] },
+                    { label: '90', p1: [-44, 0], p2: [-44, 90], offset: [-14, 0] },
+                    { label: '45', p1: [44, 0], p2: [44, 45], offset: [12, 0] },
+                    { label: '44', p1: [0, 45], p2: [44, 45], offset: [0, 8] }
+                ]
+            }
+        ];
+
+        let contourInitialized = false;
+        let contourState = {
+            currentPage: 'page1',
+            mode: 'single',
+            selectedId: 'A4_AAZ',
+            columnFilter: 'all',
+            unit: 'in',
+            showDims: true,
+            showPallet: true,
+            showFuselage: false,
+            wireframe: false,
+            autoRotate: false,
+            opacity: 0.88,
+            blueprintOpen: true
+        };
+
+        let contourScene, contourCamera, contourRenderer, contourControls;
+        let rootGroup, dimsGroup, fuselageGroup;
+        let activeLabels = [];
+
+        function formatUnitVal(valString) {
+            if (contourState.unit === 'in') return valString;
+            return valString.replace(/\d+(\.\d+)?/g, (match) => {
+                const num = parseFloat(match);
+                return (num * 2.54).toFixed(0);
+            }) + ' cm';
+        }
+
+        function calculateModelVolumeCubicInches(model) {
+            if (model.isStepped747) {
+                let v = 0;
+                model.steppedBoxes.forEach(b => {
+                    v += (b.xMax - b.xMin) * (b.yMax - b.yMin) * (b.zMax - b.zMin);
+                });
+                return v;
+            }
+            let totalVol = 0;
+            for (let i = 0; i < model.slices.length - 1; i++) {
+                const s1 = model.slices[i];
+                const s2 = model.slices[i + 1];
+                const h = s2.y - s1.y;
+                const w1 = s1.xMax - s1.xMin;
+                const d1 = s1.zMax - s1.zMin;
+                const w2 = s2.xMax - s2.xMin;
+                const d2 = s2.zMax - s2.zMin;
+                const a1 = w1 * d1;
+                const a2 = w2 * d2;
+                const wMid = (w1 + w2) / 2;
+                const dMid = (d1 + d2) / 2;
+                const aMid = wMid * dMid;
+                totalVol += (h / 6) * (a1 + 4 * aMid + a2);
+            }
+            return totalVol;
+        }
+
+        function createSlicedContourGeometry(slices) {
+            const positions = [];
+
+            function addQuad(p1, p2, p3, p4) {
+                positions.push(...p1, ...p2, ...p3);
+                positions.push(...p1, ...p3, ...p4);
+            }
+
+            const n = slices.length;
+            for (let i = 0; i < n - 1; i++) {
+                const b = slices[i];
+                const t = slices[i + 1];
+
+                const bFL = [b.xMin, b.y, b.zMax];
+                const bFR = [b.xMax, b.y, b.zMax];
+                const bBR = [b.xMax, b.y, b.zMin];
+                const bBL = [b.xMin, b.y, b.zMin];
+
+                const tFL = [t.xMin, t.y, t.zMax];
+                const tFR = [t.xMax, t.y, t.zMax];
+                const tBR = [t.xMax, t.y, t.zMin];
+                const tBL = [t.xMin, t.y, t.zMin];
+
+                addQuad(bFL, bFR, tFR, tFL);
+                addQuad(bFR, bBR, tBR, tFR);
+                addQuad(bBR, bBL, tBL, tBR);
+                addQuad(bBL, bFL, tFL, tBL);
+            }
+
+            const s0 = slices[0];
+            addQuad(
+                [s0.xMin, s0.y, s0.zMin],
+                [s0.xMax, s0.y, s0.zMin],
+                [s0.xMax, s0.y, s0.zMax],
+                [s0.xMin, s0.y, s0.zMax]
+            );
+
+            const sTop = slices[n - 1];
+            addQuad(
+                [sTop.xMin, sTop.y, sTop.zMax],
+                [sTop.xMax, sTop.y, sTop.zMax],
+                [sTop.xMax, sTop.y, sTop.zMin],
+                [sTop.xMin, sTop.y, sTop.zMin]
+            );
+
+            const geom = new THREE.BufferGeometry();
+            geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geom.computeVertexNormals();
+            return geom;
+        }
+
+        function buildContourMeshGroup(model, includePallet = true) {
+            const group = new THREE.Group();
+
+            const mainMat = new THREE.MeshPhysicalMaterial({
+                color: 0x0ea5e9,
+                metalness: 0.22,
+                roughness: 0.28,
+                transparent: true,
+                opacity: contourState.opacity,
+                wireframe: contourState.wireframe,
+                side: THREE.DoubleSide,
+                depthWrite: contourState.opacity > 0.8
+            });
+
+            const edgeMat = new THREE.LineBasicMaterial({
+                color: 0x7dd3fc,
+                linewidth: 2
+            });
+
+            if (model.isStepped747) {
+                model.steppedBoxes.forEach((box) => {
+                    const w = box.xMax - box.xMin;
+                    const h = box.yMax - box.yMin;
+                    const d = box.zMax - box.zMin;
+                    const boxGeom = new THREE.BoxGeometry(w, h, d);
+                    boxGeom.translate((box.xMin + box.xMax) / 2, (box.yMin + box.yMax) / 2, (box.zMin + box.zMax) / 2);
+
+                    const mesh = new THREE.Mesh(boxGeom, mainMat);
+                    group.add(mesh);
+
+                    const edges = new THREE.EdgesGeometry(boxGeom, 12);
+                    group.add(new THREE.LineSegments(edges, edgeMat));
+                });
+
+                const envGeom = createSlicedContourGeometry(model.hatchedEnvelopeSlices);
+                const envMat = new THREE.MeshPhysicalMaterial({
+                    color: 0xf59e0b,
+                    metalness: 0.1,
+                    roughness: 0.4,
+                    transparent: true,
+                    opacity: Math.min(0.32, contourState.opacity * 0.4),
+                    wireframe: contourState.wireframe,
+                    side: THREE.DoubleSide,
+                    depthWrite: false
+                });
+                const envMesh = new THREE.Mesh(envGeom, envMat);
+                group.add(envMesh);
+
+                const envEdges = new THREE.EdgesGeometry(envGeom, 10);
+                const envLineMat = new THREE.LineBasicMaterial({ color: 0xfbbf24, transparent: true, opacity: 0.75 });
+                group.add(new THREE.LineSegments(envEdges, envLineMat));
+            } else {
+                const geom = createSlicedContourGeometry(model.slices);
+                const mesh = new THREE.Mesh(geom, mainMat);
+                group.add(mesh);
+
+                const edges = new THREE.EdgesGeometry(geom, 5);
+                const edgeLines = new THREE.LineSegments(edges, edgeMat);
+                group.add(edgeLines);
+
+                const ribPoints = [];
+                for (let y = 16; y < model.maxH; y += 16) {
+                    let sA = model.slices[0], sB = model.slices[model.slices.length - 1];
+                    for (let i = 0; i < model.slices.length - 1; i++) {
+                        if (y >= model.slices[i].y && y <= model.slices[i + 1].y) {
+                            sA = model.slices[i];
+                            sB = model.slices[i + 1];
+                            break;
+                        }
+                    }
+                    const t = (sB.y === sA.y) ? 0 : (y - sA.y) / (sB.y - sA.y);
+                    const xMin = sA.xMin + (sB.xMin - sA.xMin) * t;
+                    const xMax = sA.xMax + (sB.xMax - sA.xMax) * t;
+                    const zMin = sA.zMin + (sB.zMin - sA.zMin) * t;
+                    const zMax = sA.zMax + (sB.zMax - sA.zMax) * t;
+
+                    const p1 = new THREE.Vector3(xMin, y, zMax);
+                    const p2 = new THREE.Vector3(xMax, y, zMax);
+                    const p3 = new THREE.Vector3(xMax, y, zMin);
+                    const p4 = new THREE.Vector3(xMin, y, zMin);
+                    ribPoints.push(p1, p2, p2, p3, p3, p4, p4, p1);
+                }
+                if (ribPoints.length > 0) {
+                    const ribGeom = new THREE.BufferGeometry().setFromPoints(ribPoints);
+                    const ribMat = new THREE.LineBasicMaterial({ color: 0x38bdf8, transparent: true, opacity: 0.22 });
+                    group.add(new THREE.LineSegments(ribGeom, ribMat));
+                }
+            }
+
+            if (includePallet && contourState.showPallet) {
+                const palletGrp = new THREE.Group();
+                const pThick = 2.2;
+                const pGeom = new THREE.BoxGeometry(model.baseW + 2, pThick, model.baseD + 2);
+                pGeom.translate(0, -pThick / 2, 0);
+                const pMat = new THREE.MeshStandardMaterial({
+                    color: 0x64748b,
+                    metalness: 0.75,
+                    roughness: 0.3
+                });
+                palletGrp.add(new THREE.Mesh(pGeom, pMat));
+
+                const pEdges = new THREE.EdgesGeometry(pGeom);
+                palletGrp.add(new THREE.LineSegments(pEdges, new THREE.LineBasicMaterial({ color: 0x94a3b8 })));
+
+                const lugMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.5, roughness: 0.4 });
+                for (let x = -model.baseW / 2 + 10; x <= model.baseW / 2 - 10; x += 21) {
+                    const lugG = new THREE.BoxGeometry(3.2, 0.8, 1.4);
+                    const lug1 = new THREE.Mesh(lugG, lugMat);
+                    lug1.position.set(x, -0.4, model.baseD / 2 + 0.8);
+                    const lug2 = lug1.clone();
+                    lug2.position.set(x, -0.4, -model.baseD / 2 - 0.8);
+                    palletGrp.add(lug1, lug2);
+                }
+                group.add(palletGrp);
+            }
+
+            return group;
+        }
+
+        function build3DDimensionsForModel(model) {
+            if (!dimsGroup) return;
+            dimsGroup.clear();
+            clearHtmlLabels();
+
+            if (!contourState.showDims || contourState.mode !== 'single') return;
+
+            const frontLineMat = new THREE.LineBasicMaterial({ color: 0x38bdf8 });
+            const sideLineMat = new THREE.LineBasicMaterial({ color: 0xf59e0b });
+
+            const zFront = model.baseD / 2 + 8;
+            model.frontDims.forEach(d => {
+                const ox = d.offset[0] || 0;
+                const oy = d.offset[1] || 0;
+
+                const start = new THREE.Vector3(d.p1[0] + ox, d.p1[1] + oy, zFront);
+                const end = new THREE.Vector3(d.p2[0] + ox, d.p2[1] + oy, zFront);
+
+                const ext1 = new THREE.Vector3(d.p1[0], d.p1[1], model.baseD / 2);
+                const ext2 = new THREE.Vector3(d.p2[0], d.p2[1], model.baseD / 2);
+
+                const pts = [ext1, start, start, end, end, ext2];
+                const lGeom = new THREE.BufferGeometry().setFromPoints(pts);
+                dimsGroup.add(new THREE.LineSegments(lGeom, frontLineMat));
+
+                const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+                addHtmlLabel(formatUnitVal(d.label), mid, 'dim-front');
+            });
+
+            const maxX = Math.max(model.baseW / 2, ...model.slices.map(s => s.xMax));
+            const xSide = maxX + 10;
+            model.sideDims.forEach(d => {
+                const oz = d.offset[0] || 0;
+                const oy = d.offset[1] || 0;
+
+                const start = new THREE.Vector3(xSide, d.p1[1] + oy, d.p1[0] + oz);
+                const end = new THREE.Vector3(xSide, d.p2[1] + oy, d.p2[0] + oz);
+
+                const ext1 = new THREE.Vector3(maxX, d.p1[1], d.p1[0]);
+                const ext2 = new THREE.Vector3(maxX, d.p2[1], d.p2[0]);
+
+                const pts = [ext1, start, start, end, end, ext2];
+                const lGeom = new THREE.BufferGeometry().setFromPoints(pts);
+                dimsGroup.add(new THREE.LineSegments(lGeom, sideLineMat));
+
+                const mid = new THREE.Vector3().addVectors(start, end).multiplyScalar(0.5);
+                addHtmlLabel(formatUnitVal(d.label), mid, 'dim-side');
+            });
+
+            addHtmlLabel('FRONT VIEW (正視面 125")', new THREE.Vector3(0, -6, model.baseD / 2 + 22), 'dim-front');
+            addHtmlLabel('SIDE VIEW (側視面 ' + model.baseD + '")', new THREE.Vector3(maxX + 24, -6, 0), 'dim-side');
+        }
+
+        function buildFuselageEnvelope(model) {
+            if (!fuselageGroup) return;
+            fuselageGroup.clear();
+            if (!contourState.showFuselage || contourState.mode !== 'single') return;
+
+            const isLowerDeck = model.id.includes('_LD');
+            const curvePoints = [];
+
+            if (isLowerDeck) {
+                const R = 108;
+                const cy = 68;
+                for (let deg = 200; deg <= 340; deg += 4) {
+                    const rad = THREE.MathUtils.degToRad(deg);
+                    curvePoints.push(new THREE.Vector3(Math.cos(rad) * R, cy + Math.sin(rad) * R, 0));
+                }
+                [-model.baseD / 2, 0, model.baseD / 2].forEach(z => {
+                    const pts = curvePoints.map(p => new THREE.Vector3(p.x, Math.max(-4, p.y), z));
+                    const geom = new THREE.BufferGeometry().setFromPoints(pts);
+                    fuselageGroup.add(new THREE.Line(geom, new THREE.LineBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.65 })));
+                });
+            } else {
+                const maxX = model.baseW / 2 + 6;
+                const maxH = model.maxH + 5;
+                for (let deg = 0; deg <= 180; deg += 5) {
+                    const rad = THREE.MathUtils.degToRad(deg);
+                    const x = Math.cos(rad) * maxX;
+                    const y = Math.sin(rad) * (maxH - 25) + 25;
+                    curvePoints.push(new THREE.Vector3(x, y, 0));
+                }
+                [-model.baseD / 2, 0, model.baseD / 2].forEach(z => {
+                    const pts = curvePoints.map(p => new THREE.Vector3(p.x, p.y, z));
+                    const geom = new THREE.BufferGeometry().setFromPoints(pts);
+                    fuselageGroup.add(new THREE.Line(geom, new THREE.LineBasicMaterial({ color: 0x10b981, transparent: true, opacity: 0.6 })));
+                });
+            }
+        }
+
+        function clearHtmlLabels() {
+            const container = document.getElementById('labels-container');
+            if (container) container.innerHTML = '';
+            activeLabels = [];
+        }
+
+        function addHtmlLabel(text, worldPos, cssClass, onClickCallback = null) {
+            const container = document.getElementById('labels-container');
+            if (!container) return;
+            const el = document.createElement('div');
+            el.className = `dim-label ${cssClass}`;
+            el.textContent = text;
+            if (onClickCallback) {
+                el.addEventListener('click', onClickCallback);
+            }
+            container.appendChild(el);
+            activeLabels.push({ el, worldPos: worldPos.clone() });
+        }
+
+        function updateHtmlLabelsPosition() {
+            if (!contourCamera || !contourRenderer) return;
+            const width = contourRenderer.domElement.clientWidth;
+            const height = contourRenderer.domElement.clientHeight;
+            if (width === 0 || height === 0) return;
+
+            activeLabels.forEach(item => {
+                const pos = item.worldPos.clone();
+                pos.project(contourCamera);
+
+                if (pos.z > 1) {
+                    item.el.style.opacity = '0';
+                    return;
+                }
+                const x = (pos.x * 0.5 + 0.5) * width;
+                const y = (-(pos.y * 0.5) + 0.5) * height;
+                item.el.style.left = `${x}px`;
+                item.el.style.top = `${y}px`;
+                item.el.style.opacity = '1';
+            });
+        }
+
+        function render2DBlueprintSVGs(model) {
+            drawProfileSVG('svg-front', model.frontProfile, model.frontDims, '#38bdf8', model.isStepped747 ? 'front747' : null);
+            drawProfileSVG('svg-side', model.sideProfile, model.sideDims, '#f59e0b', model.isStepped747 ? 'side747' : null);
+        }
+
+        function drawProfileSVG(svgId, profilePts, dims, strokeColor, specialMode) {
+            const svg = document.getElementById(svgId);
+            if (!svg) return;
+            svg.innerHTML = generateProfileSVGMarkup(svgId, profilePts, dims, strokeColor, specialMode);
+        }
+
+        function generateProfileSVGMarkup(svgId, profilePts, dims, strokeColor, specialMode) {
+            const xs = profilePts.map(p => p[0]);
+            const ys = profilePts.map(p => p[1]);
+            const minX = Math.min(...xs);
+            const maxX = Math.max(...xs);
+            const minY = 0;
+            const maxY = Math.max(...ys);
+
+            const w = maxX - minX;
+            const h = maxY - minY;
+
+            const pad = 28;
+            const viewW = 220;
+            const viewH = 160;
+            const scale = Math.min((viewW - pad * 2) / w, (viewH - pad * 2) / h);
+
+            const cx = viewW / 2;
+            const baseY = viewH - pad;
+
+            const mapPt = (pt) => {
+                const x = cx + (pt[0] - (minX + maxX) / 2) * scale;
+                const y = baseY - (pt[1] - minY) * scale;
+                return [x, y];
+            };
+
+            const polyStr = profilePts.map(p => mapPt(p).join(',')).join(' ');
+
+            let extraSvg = '';
+            if (specialMode === 'front747') {
+                const corePts = [[-30.5, 45], [-30.5, 90], [30.5, 90], [30.5, 45]].map(p => mapPt(p).join(',')).join(' ');
+                extraSvg += `<polyline points="${corePts}" fill="none" stroke="#fbbf24" stroke-width="1.2" stroke-dasharray="3,2"/>`;
+            }
+
+            let dimTexts = '';
+            dims.slice(0, 4).forEach(d => {
+                const p1 = mapPt(d.p1);
+                const p2 = mapPt(d.p2);
+                const mx = (p1[0] + p2[0]) / 2 + (d.offset[0] ? Math.sign(d.offset[0]) * 11 : 0);
+                const my = (p1[1] + p2[1]) / 2 - (d.offset[1] ? Math.sign(d.offset[1]) * 8 : 0);
+                dimTexts += `<text x="${mx}" y="${my}" fill="#e2e8f0" font-size="9" font-family="JetBrains Mono" text-anchor="middle" dominant-baseline="middle">${formatUnitVal(d.label)}</text>`;
+            });
+
+            return `
+                <defs>
+                    <pattern id="grid-${svgId}" width="12" height="12" patternUnits="userSpaceOnUse">
+                        <path d="M 12 0 L 0 0 0 12" fill="none" stroke="#1e293b" stroke-width="0.6"/>
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#grid-${svgId})" rx="6"/>
+                <polygon points="${polyStr}" fill="${strokeColor}22" stroke="${strokeColor}" stroke-width="2" stroke-linejoin="round"/>
+                ${extraSvg}
+                ${dimTexts}
+            `;
+        }
+
+        function renderPage2Table() {
+            const leftContainer = document.getElementById('page2-left-col');
+            const rightContainer = document.getElementById('page2-right-col');
+            if (!leftContainer || !rightContainer) return;
+
+            leftContainer.innerHTML = '';
+            rightContainer.innerHTML = '';
+
+            CONTOUR_MODELS.forEach((m) => {
+                const isSelected = m.id === contourState.selectedId;
+                const volIn3 = calculateModelVolumeCubicInches(m);
+                const volM3 = (volIn3 * 0.000016387064).toFixed(2);
+
+                const frontSvg = generateProfileSVGMarkup(`p2-front-${m.id}`, m.frontProfile, m.frontDims, '#38bdf8', m.isStepped747 ? 'front747' : null);
+                const sideSvg = generateProfileSVGMarkup(`p2-side-${m.id}`, m.sideProfile, m.sideDims, '#f59e0b', m.isStepped747 ? 'side747' : null);
+
+                const rowEl = document.createElement('div');
+                rowEl.className = `p-3.5 transition-all hover:bg-slate-50 grid grid-cols-12 gap-3 items-center ${isSelected ? 'bg-amber-50/70 ring-1 ring-inset ring-amber-400' : 'bg-white'}`;
+                rowEl.innerHTML = `
+                    <!-- Contour & Pallet Size Column -->
+                    <div class="col-span-12 sm:col-span-4 space-y-1.5">
+                        <div class="flex items-center gap-2">
+                            <span class="font-mono font-extrabold text-sm text-[#2b1610]">${m.code}</span>
+                            <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold border border-amber-300">Row ${m.row}</span>
+                        </div>
+                        <div class="text-xs font-mono text-slate-700">
+                            Pallet: <span class="text-amber-700 font-bold">${m.palletSize}"</span> | High <span class="text-emerald-700 font-bold">${m.maxH}"</span>
+                        </div>
+                        <p class="text-[11px] text-slate-600 leading-snug">${m.summary}</p>
+                        <div class="text-[11px] font-mono text-slate-500">立體容積: <span class="text-emerald-700 font-bold">${volM3} m³</span></div>
+                        <div class="pt-1">
+                            <button onclick="openModelIn3DPage('${m.id}')" class="px-2.5 py-1.5 rounded-lg ups-gold-gradient text-[#2b1610] text-[11px] font-extrabold transition inline-flex items-center gap-1.5 shadow-sm hover:brightness-110">
+                                <i class="fa-solid fa-cube"></i>
+                                <span>在頁面 1 檢視 3D 模型</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Front View Blueprint -->
+                    <div class="col-span-6 sm:col-span-4 bg-slate-900 border border-slate-300 rounded-xl p-2 flex flex-col items-center">
+                        <span class="text-[10px] font-mono text-sky-400 mb-1">Front View (正視圖)</span>
+                        <svg viewBox="0 0 220 160" class="w-full h-24">${frontSvg}</svg>
+                    </div>
+
+                    <!-- Side View Blueprint -->
+                    <div class="col-span-6 sm:col-span-4 bg-slate-900 border border-slate-300 rounded-xl p-2 flex flex-col items-center">
+                        <span class="text-[10px] font-mono text-amber-400 mb-1">Side View (側視圖)</span>
+                        <svg viewBox="0 0 220 160" class="w-full h-24">${sideSvg}</svg>
+                    </div>
+                `;
+
+                if (m.column === 'left') {
+                    leftContainer.appendChild(rowEl);
+                } else {
+                    rightContainer.appendChild(rowEl);
+                }
+            });
+        }
+
+        function switchWebPage(pageId) {
+            if (pageId === 1 || pageId === '1' || pageId === 'page1') {
+                pageId = 'page1';
+            } else if (pageId === 2 || pageId === '2' || pageId === 'page2') {
+                pageId = 'page2';
+            }
+            contourState.currentPage = pageId;
+            const p1 = document.getElementById('page-1-container');
+            const p2 = document.getElementById('page-2-container');
+            const tab1 = document.getElementById('tab-page-1');
+            const tab2 = document.getElementById('tab-page-2');
+            const headerModes = document.getElementById('header-3d-modes');
+
+            if (pageId === 'page1') {
+                if (p1) p1.classList.remove('hidden');
+                if (p2) p2.classList.add('hidden');
+                if (tab1) tab1.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-[#ffb500] text-[#2b1610] shadow-sm';
+                if (tab2) tab2.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+                if (headerModes) headerModes.classList.remove('lg:hidden');
+
+                setTimeout(() => {
+                    resizeContourViewport();
+                    updateHtmlLabelsPosition();
+                }, 20);
+            } else {
+                if (p1) p1.classList.add('hidden');
+                if (p2) p2.classList.remove('hidden');
+                if (tab2) tab2.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-[#ffb500] text-[#2b1610] shadow-sm';
+                if (tab1) tab1.className = 'px-2.5 py-1 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+                if (headerModes) headerModes.classList.add('lg:hidden');
+                renderPage2Table();
+            }
+        }
+        window.switchWebPage = switchWebPage;
+
+        function rebuildSceneContent() {
+            if (!rootGroup) return;
+            rootGroup.clear();
+            dimsGroup.clear();
+            fuselageGroup.clear();
+            clearHtmlLabels();
+
+            const activeModel = CONTOUR_MODELS.find(m => m.id === contourState.selectedId) || CONTOUR_MODELS[0];
+
+            if (contourState.mode === 'single') {
+                const meshGroup = buildContourMeshGroup(activeModel, true);
+                rootGroup.add(meshGroup);
+
+                build3DDimensionsForModel(activeModel);
+                buildFuselageEnvelope(activeModel);
+            } else {
+                const cols = 4;
+                const spacingX = 210;
+                const spacingZ = 165;
+
+                CONTOUR_MODELS.forEach((m, idx) => {
+                    const c = idx % cols;
+                    const r = Math.floor(idx / cols);
+                    const gx = (c - (cols - 1) / 2) * spacingX;
+                    const gz = (r - 1.5) * spacingZ;
+
+                    const mg = buildContourMeshGroup(m, true);
+                    mg.position.set(gx, 0, gz);
+                    rootGroup.add(mg);
+
+                    addHtmlLabel(
+                        `${m.code} (${m.maxH}")`,
+                        new THREE.Vector3(gx, m.maxH + 16, gz),
+                        'dim-title',
+                        () => {
+                            contourState.selectedId = m.id;
+                            renderSidebarList();
+                            setDisplayMode('single');
+                        }
+                    );
+                });
+            }
+
+            render2DBlueprintSVGs(activeModel);
+            updateHUDAndSpecs(activeModel);
+        }
+
+        function openModelIn3DPage(modelId) {
+            selectModel(modelId);
+            switchWebPage('page1');
+            setDisplayMode('single');
+        }
+
+        function updateHUDAndSpecs(model) {
+            document.getElementById('hud-code').textContent = model.code;
+            document.getElementById('hud-sub').textContent = `${model.palletSize}" | High ${model.maxH}"`;
+            document.getElementById('hud-desc').textContent = model.summary;
+            document.getElementById('hud-pos').textContent = model.deck;
+
+            const volIn3 = calculateModelVolumeCubicInches(model);
+            const volFt3 = (volIn3 / 1728).toFixed(1);
+            const volM3 = (volIn3 * 0.000016387064).toFixed(2);
+            const areaFt2 = ((model.baseW * model.baseD) / 144).toFixed(1);
+
+            document.getElementById('hud-vol-ft').textContent = `${volFt3} ft³`;
+            document.getElementById('hud-vol-m').textContent = `${volM3} m³`;
+            document.getElementById('hud-area').textContent = `${areaFt2} ft²`;
+
+            const specEl = document.getElementById('spec-details');
+            if (!specEl) return;
+            const cmW = (model.baseW * 2.54).toFixed(1);
+            const cmD = (model.baseD * 2.54).toFixed(1);
+            const cmH = (model.maxH * 2.54).toFixed(1);
+
+            specEl.innerHTML = `
+                <div class="text-slate-700 leading-relaxed font-medium">${model.notes}</div>
+                <div class="grid grid-cols-3 gap-1.5 pt-1 text-[11px] font-mono">
+                    <div class="bg-slate-50 p-1.5 rounded border border-slate-200">
+                        <span class="text-slate-500 block text-[10px]">底盤寬度 (Front)</span>
+                        <span class="text-sky-700 font-bold">${model.baseW}" (${cmW}cm)</span>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded border border-slate-200">
+                        <span class="text-slate-500 block text-[10px]">底盤深度 (Side)</span>
+                        <span class="text-amber-700 font-bold">${model.baseD}" (${cmD}cm)</span>
+                    </div>
+                    <div class="bg-slate-50 p-1.5 rounded border border-slate-200">
+                        <span class="text-slate-500 block text-[10px]">最大高度 (High)</span>
+                        <span class="text-emerald-700 font-bold">${model.maxH}" (${cmH}cm)</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSidebarList() {
+            const listEl = document.getElementById('contour-list');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+
+            const filtered = CONTOUR_MODELS.filter(m => contourState.columnFilter === 'all' || m.column === contourState.columnFilter);
+
+            filtered.forEach(m => {
+                const isSelected = m.id === contourState.selectedId;
+                const card = document.createElement('button');
+                card.className = `w-full text-left p-2.5 rounded-xl border transition-all flex items-start justify-between gap-2 ${
+                    isSelected
+                        ? 'bg-[#ffb500] text-[#2b1610] border-amber-500 shadow-md font-extrabold ring-2 ring-amber-400/50'
+                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200'
+                }`;
+                card.onclick = () => selectModel(m.id);
+
+                const colBadge = m.column === 'left'
+                    ? `<span class="text-[10px] px-1.5 py-0.5 rounded ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-sky-100 text-sky-800'} font-mono font-bold">左欄 R${m.row}</span>`
+                    : `<span class="text-[10px] px-1.5 py-0.5 rounded ${isSelected ? 'bg-[#2b1610] text-[#ffb500]' : 'bg-amber-100 text-amber-900'} font-mono font-bold">右欄 R${m.row}</span>`;
+
+                card.innerHTML = `
+                    <div class="min-w-0">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-extrabold font-mono text-xs sm:text-sm ${isSelected ? 'text-[#2b1610]' : 'text-slate-900'}">${m.code}</span>
+                            ${colBadge}
+                        </div>
+                        <p class="text-[11px] ${isSelected ? 'text-[#2b1610]/90 font-semibold' : 'text-slate-500'} truncate mt-0.5">${m.summary}</p>
+                    </div>
+                    <div class="text-right shrink-0 font-mono">
+                        <span class="inline-block text-[11px] px-1.5 py-0.5 rounded ${isSelected ? 'bg-white/90 text-[#2b1610] border-amber-600' : 'bg-white border-slate-300 text-slate-700'} border font-bold">${m.palletSize}</span>
+                        <div class="text-[10px] ${isSelected ? 'text-[#2b1610] font-extrabold' : 'text-emerald-700 font-bold'} mt-0.5">H: ${m.maxH}"</div>
+                    </div>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function selectModel(id) {
+            contourState.selectedId = id;
+            renderSidebarList();
+            rebuildSceneContent();
+            renderPage2Table();
+            if (contourState.mode === 'single') {
+                const model = CONTOUR_MODELS.find(m => m.id === id);
+                if (model && contourControls) {
+                    contourControls.target.set(0, model.maxH * 0.42, 0);
+                    contourControls.update();
+                }
+            }
+        }
+
+        function filterColumn(col) {
+            contourState.columnFilter = col;
+            ['all', 'left', 'right'].forEach(c => {
+                const btn = document.getElementById('flt-' + c);
+                if (!btn) return;
+                if (c === col) {
+                    btn.className = 'px-2 py-0.5 rounded bg-amber-600 text-white font-bold shadow-sm';
+                } else {
+                    btn.className = 'px-2 py-0.5 rounded text-slate-600 hover:text-slate-900 font-bold';
+                }
+            });
+            renderSidebarList();
+        }
+
+        function setDisplayMode(mode) {
+            contourState.mode = mode;
+            const btnSingle = document.getElementById('btn-mode-single');
+            const btnAll = document.getElementById('btn-mode-all');
+
+            if (mode === 'single') {
+                if (btnSingle) btnSingle.className = 'px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow-sm';
+                if (btnAll) btnAll.className = 'px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+                setCameraView('iso');
+            } else {
+                if (btnAll) btnAll.className = 'px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 bg-amber-600 text-white shadow-sm';
+                if (btnSingle) btnSingle.className = 'px-3 py-1.5 rounded-md text-xs font-bold transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+                animateCameraTo(new THREE.Vector3(0, 390, 560), new THREE.Vector3(0, 20, 0));
+            }
+            rebuildSceneContent();
+        }
+
+        let camAnimFrame = null;
+        function animateCameraTo(targetPos, targetLookAt) {
+            if (!contourCamera || !contourControls) return;
+            if (camAnimFrame) cancelAnimationFrame(camAnimFrame);
+            const startPos = contourCamera.position.clone();
+            const startLook = contourControls.target.clone();
+            const duration = 550;
+            const startTime = performance.now();
+
+            function step(now) {
+                const t = Math.min(1, (now - startTime) / duration);
+                const ease = 1 - Math.pow(1 - t, 3);
+
+                contourCamera.position.lerpVectors(startPos, targetPos, ease);
+                contourControls.target.lerpVectors(startLook, targetLookAt, ease);
+                contourControls.update();
+
+                if (t < 1) {
+                    camAnimFrame = requestAnimationFrame(step);
+                }
+            }
+            camAnimFrame = requestAnimationFrame(step);
+        }
+
+        function setCameraView(view) {
+            ['iso', 'front', 'side', 'top', 'back'].forEach(v => {
+                const btn = document.getElementById('cam-' + v);
+                if (btn) {
+                    if (v === view) {
+                        btn.className = 'px-3 py-1.5 rounded-xl bg-[#ffb500] text-[#2b1610] text-xs font-extrabold transition flex items-center gap-1.5 shrink-0 shadow ring-2 ring-amber-400';
+                    } else {
+                        btn.className = 'px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-1.5 shrink-0 border border-slate-300';
+                    }
+                }
+            });
+
+            if (contourState.mode === 'showroom') {
+                if (view === 'top') {
+                    animateCameraTo(new THREE.Vector3(0, 780, 1), new THREE.Vector3(0, 0, 0));
+                } else if (view === 'front') {
+                    animateCameraTo(new THREE.Vector3(0, 120, 680), new THREE.Vector3(0, 30, 0));
+                } else {
+                    animateCameraTo(new THREE.Vector3(0, 390, 560), new THREE.Vector3(0, 20, 0));
+                }
+                return;
+            }
+
+            const model = CONTOUR_MODELS.find(m => m.id === contourState.selectedId) || CONTOUR_MODELS[0];
+            const cy = model.maxH * 0.45;
+            const look = new THREE.Vector3(0, cy, 0);
+
+            switch (view) {
+                case 'front':
+                    animateCameraTo(new THREE.Vector3(0, cy, 240), look);
+                    break;
+                case 'side':
+                    animateCameraTo(new THREE.Vector3(240, cy, 0), look);
+                    break;
+                case 'top':
+                    animateCameraTo(new THREE.Vector3(0, 270, 0.1), new THREE.Vector3(0, 0, 0));
+                    break;
+                case 'back':
+                    animateCameraTo(new THREE.Vector3(-175, cy + 85, -175), look);
+                    break;
+                case 'iso':
+                default:
+                    animateCameraTo(new THREE.Vector3(165, cy + 95, 185), look);
+                    break;
+            }
+        }
+
+        function toggleOption(opt) {
+            if (opt === 'dims') {
+                contourState.showDims = !contourState.showDims;
+                updateBtnStyle('toggle-dims', contourState.showDims);
+            } else if (opt === 'pallet') {
+                contourState.showPallet = !contourState.showPallet;
+                updateBtnStyle('toggle-pallet', contourState.showPallet);
+            } else if (opt === 'fuselage') {
+                contourState.showFuselage = !contourState.showFuselage;
+                updateBtnStyle('toggle-fuselage', contourState.showFuselage);
+            } else if (opt === 'wireframe') {
+                contourState.wireframe = !contourState.wireframe;
+                updateBtnStyle('toggle-wireframe', contourState.wireframe);
+            } else if (opt === 'autorotate') {
+                contourState.autoRotate = !contourState.autoRotate;
+                if (contourControls) contourControls.autoRotate = contourState.autoRotate;
+                updateBtnStyle('toggle-autorotate', contourState.autoRotate);
+            }
+            rebuildSceneContent();
+        }
+
+        function updateBtnStyle(btnId, active) {
+            const el = document.getElementById(btnId);
+            if (!el) return;
+            if (active) {
+                el.className = 'px-2.5 py-1.5 rounded-lg border border-amber-500 bg-[#ffb500] text-[#2b1610] text-xs font-bold transition flex items-center gap-1.5 shadow';
+            } else {
+                el.className = 'px-2.5 py-1.5 rounded-lg contour-glass-panel border border-slate-300 text-slate-700 hover:text-slate-900 text-xs font-bold transition flex items-center gap-1.5 shadow';
+            }
+        }
+
+        function updateOpacity(val) {
+            contourState.opacity = parseInt(val, 10) / 100;
+            rebuildSceneContent();
+        }
+
+        function toggleUnit() {
+            contourState.unit = contourState.unit === 'in' ? 'cm' : 'in';
+            document.getElementById('unit-label').textContent = contourState.unit === 'in' ? '單位: IN (英吋)' : '單位: CM (公分)';
+            rebuildSceneContent();
+            renderPage2Table();
+        }
+
+        function toggleBlueprintPanel() {
+            contourState.blueprintOpen = !contourState.blueprintOpen;
+            const panel = document.getElementById('blueprint-panel');
+            if (panel) {
+                if (contourState.blueprintOpen) {
+                    panel.classList.remove('translate-y-8', 'opacity-0', 'pointer-events-none');
+                } else {
+                    panel.classList.add('translate-y-8', 'opacity-0', 'pointer-events-none');
+                }
+            }
+            updateBtnStyle('toggle-blueprint', contourState.blueprintOpen);
+        }
+
+        function toggleLeftSidebar() {
+            const sb = document.getElementById('sidebar-left');
+            if (sb) {
+                sb.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function exportCurrentOBJ() {
+            if (!rootGroup) {
+                showToast('請先載入 3D 結構模型');
+                return;
+            }
+            const model = CONTOUR_MODELS.find(m => m.id === contourState.selectedId) || CONTOUR_MODELS[0];
+            let objContent = `# Aviation ULD Contour 3D Model: ${model.code}\n# Units: Inches (Pallet: ${model.palletSize}, Height: ${model.maxH})\n\n`;
+            let vertexOffset = 1;
+
+            rootGroup.traverse(child => {
+                if (child.isMesh && child.geometry) {
+                    const posAttr = child.geometry.attributes.position;
+                    if (!posAttr) return;
+
+                    objContent += `o ${model.id}_part_${vertexOffset}\n`;
+                    for (let i = 0; i < posAttr.count; i++) {
+                        const vx = posAttr.getX(i).toFixed(3);
+                        const vy = posAttr.getY(i).toFixed(3);
+                        const vz = posAttr.getZ(i).toFixed(3);
+                        objContent += `v ${vx} ${vy} ${vz}\n`;
+                    }
+                    for (let i = 0; i < posAttr.count; i += 3) {
+                        const i1 = vertexOffset + i;
+                        const i2 = vertexOffset + i + 1;
+                        const i3 = vertexOffset + i + 2;
+                        objContent += `f ${i1} ${i2} ${i3}\n`;
+                    }
+                    vertexOffset += posAttr.count;
+                }
+            });
+
+            const blob = new Blob([objContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Contour_${model.id}.obj`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showToast(`已匯出 Contour_${model.id}.obj`);
+        }
+
+        function initContourThreeScene() {
+            const container = document.getElementById('contour-canvas-container');
+            if (!container) return;
+            const w = container.clientWidth || 800;
+            const h = container.clientHeight || 580;
+
+            contourScene = new THREE.Scene();
+            contourScene.background = new THREE.Color(0x0f172a);
+
+            contourCamera = new THREE.PerspectiveCamera(42, w / h, 1, 3500);
+            contourCamera.position.set(165, 125, 185);
+
+            contourRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            contourRenderer.setSize(w, h);
+            contourRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(contourRenderer.domElement);
+
+            contourControls = new THREE.OrbitControls(contourCamera, contourRenderer.domElement);
+            contourControls.enableDamping = true;
+            contourControls.dampingFactor = 0.06;
+            contourControls.maxPolarAngle = Math.PI / 2 + 0.15;
+            contourControls.minDistance = 60;
+            contourControls.maxDistance = 1600;
+            contourControls.target.set(0, 30, 0);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
+            contourScene.add(ambientLight);
+
+            const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.85);
+            dirLight1.position.set(220, 350, 260);
+            contourScene.add(dirLight1);
+
+            const dirLight2 = new THREE.DirectionalLight(0x38bdf8, 0.4);
+            dirLight2.position.set(-220, 180, -200);
+            contourScene.add(dirLight2);
+
+            const gridHelper = new THREE.GridHelper(900, 45, 0x334155, 0x1e293b);
+            gridHelper.position.y = -2.3;
+            contourScene.add(gridHelper);
+
+            rootGroup = new THREE.Group();
+            dimsGroup = new THREE.Group();
+            fuselageGroup = new THREE.Group();
+            contourScene.add(rootGroup);
+            contourScene.add(dimsGroup);
+            contourScene.add(fuselageGroup);
+
+            contourInitialized = true;
+        }
+
+        function resizeContourViewport() {
+            const container = document.getElementById('contour-canvas-container');
+            if (!container || !contourCamera || !contourRenderer) return;
+            const nw = container.clientWidth;
+            const nh = container.clientHeight;
+            if (nw > 0 && nh > 0) {
+                contourCamera.aspect = nw / nh;
+                contourCamera.updateProjectionMatrix();
+                contourRenderer.setSize(nw, nh);
+            }
+        }
+
         function checkUrlHash() {
             const hash = window.location.hash;
             if (hash === '#card') {
@@ -2837,6 +4680,8 @@ ${defectDesc}
                 switchPage('calc');
             } else if (hash === '#logger') {
                 switchPage('logger');
+            } else if (hash === '#contour') {
+                switchPage('contour');
             } else {
                 switchPage('uld');
             }
