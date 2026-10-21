@@ -207,9 +207,189 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
+
+        /* ================= 3D UPS LOGO & "ULD Inspect 360" SPLASH INTRO STYLES ================= */
+        #ups-3d-intro-overlay {
+            background: radial-gradient(circle at 50% 42%, #4a261b 0%, #351c15 45%, #24120c 80%, #160a06 100%);
+            perspective: 1400px;
+            overflow: hidden;
+            transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1), transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #ups-3d-intro-overlay.intro-exit {
+            opacity: 0;
+            transform: scale(1.12);
+            pointer-events: none;
+        }
+
+        .ups-3d-stage {
+            transform-style: preserve-3d;
+            perspective: 1400px;
+        }
+
+        /* 360-degree continuous 3D rotation animations */
+        @keyframes upsLogoSpin360 {
+            0%   { transform: rotateX(8deg) rotateY(0deg) rotateZ(-1.5deg) translateY(0px); }
+            25%  { transform: rotateX(-6deg) rotateY(90deg) rotateZ(1.5deg) translateY(-6px); }
+            50%  { transform: rotateX(-8deg) rotateY(180deg) rotateZ(1.5deg) translateY(0px); }
+            75%  { transform: rotateX(6deg) rotateY(270deg) rotateZ(-1.5deg) translateY(6px); }
+            100% { transform: rotateX(8deg) rotateY(360deg) rotateZ(-1.5deg) translateY(0px); }
+        }
+
+        @keyframes upsTextSpin360 {
+            0%   { transform: rotateX(6deg) rotateY(0deg) translateY(0px); }
+            25%  { transform: rotateX(-5deg) rotateY(90deg) translateY(-4px); }
+            50%  { transform: rotateX(-6deg) rotateY(180deg) translateY(0px); }
+            75%  { transform: rotateX(5deg) rotateY(270deg) translateY(4px); }
+            100% { transform: rotateX(6deg) rotateY(360deg) translateY(0px); }
+        }
+
+        @keyframes upsTextSpinReverse360 {
+            0%   { transform: rotateX(6deg) rotateY(360deg) translateY(0px); }
+            50%  { transform: rotateX(-6deg) rotateY(180deg) translateY(-4px); }
+            100% { transform: rotateX(6deg) rotateY(0deg) translateY(0px); }
+        }
+
+        @keyframes orbitRingSpin {
+            0%   { transform: translate(-50%, -50%) rotateX(72deg) rotateZ(0deg); }
+            100% { transform: translate(-50%, -50%) rotateX(72deg) rotateZ(360deg); }
+        }
+
+        @keyframes shimmerSweep {
+            0%, 100% { opacity: 0.15; transform: translateZ(16.5px) scale(0.98); }
+            50%      { opacity: 0.55; transform: translateZ(16.5px) scale(1.01); }
+        }
+
+        .ups-logo-3d-rig {
+            position: relative;
+            width: 175px;
+            height: 208px;
+            transform-style: preserve-3d;
+            animation: upsLogoSpin360 7.5s linear infinite;
+            will-change: transform;
+        }
+        @media (min-width: 640px) {
+            .ups-logo-3d-rig {
+                width: 215px;
+                height: 255px;
+            }
+        }
+
+        .ups-logo-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* 3D Extruded Text Rig for "ULD Inspect 360" */
+        .ups-text-3d-rig {
+            position: relative;
+            height: 76px;
+            width: 100%;
+            max-width: 680px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform-style: preserve-3d;
+            animation: upsTextSpin360 7.5s linear infinite;
+            will-change: transform;
+        }
+        @media (min-width: 640px) {
+            .ups-text-3d-rig {
+                height: 96px;
+            }
+        }
+
+        .ups-text-3d-rig.reverse-spin {
+            animation: upsTextSpinReverse360 7.5s linear infinite;
+        }
+
+        .ups-3d-paused {
+            animation-play-state: paused !important;
+        }
+
+        .ups-text-layer {
+            position: absolute;
+            white-space: nowrap;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.85rem, 6vw, 3.65rem);
+            letter-spacing: 0.04em;
+            line-height: 1;
+            user-select: none;
+            pointer-events: none;
+            text-transform: none;
+        }
+
+        .ups-text-front {
+            background: linear-gradient(180deg, #fffbeb 0%, #ffe17d 28%, #ffb500 62%, #d48800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(255, 181, 0, 0.35));
+        }
+
+        .ups-text-mid {
+            color: #9a5b00;
+            text-shadow: 0 0 2px rgba(43, 22, 16, 0.8);
+        }
+
+        .ups-text-deep {
+            color: #5c3409;
+        }
+
+        .ups-orbit-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 310px;
+            height: 310px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 181, 0, 0.38);
+            box-shadow: 0 0 35px rgba(255, 181, 0, 0.2), inset 0 0 25px rgba(255, 181, 0, 0.15);
+            transform-style: preserve-3d;
+            animation: orbitRingSpin 12s linear infinite;
+            pointer-events: none;
+        }
+        @media (min-width: 640px) {
+            .ups-orbit-ring {
+                width: 410px;
+                height: 410px;
+            }
+        }
+
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col select-none">
+
+    <!-- ================= 3D UPS LOGO & "ULD Inspect 360" 360° SPLASH INTRO OVERLAY ================= -->
+    <div id="ups-3d-intro-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 text-white select-none">
+        <!-- Three.js 3D Golden Rings & Particles Background on UPS Brown Backdrop -->
+        <canvas id="ups-intro-3d-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-85"></canvas>
+
+        <!-- Ambient UPS Brown & Gold Radial Spotlight -->
+        <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_45%,rgba(255,181,0,0.16)_0%,rgba(53,28,21,0.4)_48%,rgba(27,13,8,0.88)_100%)]"></div>
+
+        <!-- Center 3D Stage: Only 3D UPS Logo + 3D "ULD Inspect 360" Text (Click Logo to Enter) -->
+        <div id="ups-intro-interactive-zone" class="relative z-20 flex flex-col items-center justify-center ups-3d-stage">
+            <!-- 3D Golden Orbital Ring -->
+            <div class="ups-orbit-ring"></div>
+
+            <!-- 3D Extruded UPS Logo (360° Rotating - Click to Enter Page) -->
+            <div id="ups-logo-3d-container" onclick="enterMainAppFromIntro()" class="ups-logo-3d-rig mb-6 sm:mb-8 cursor-pointer" title="點擊進入頁面">
+                <!-- Populated with 30 extruded 3D Z-layers of the official Wikimedia UPS SVG logo -->
+            </div>
+
+            <!-- 3D Extruded "ULD Inspect 360" Text (360° Rotating) -->
+            <div id="ups-text-3d-container" onclick="enterMainAppFromIntro()" class="ups-text-3d-rig cursor-pointer">
+                <!-- Populated with 24 extruded 3D Z-layers of "ULD Inspect 360" -->
+            </div>
+        </div>
+    </div>
+
 
     <!-- Offline Notification Banner -->
     <div id="offline-bar" class="hidden bg-amber-600 text-white text-xs py-1 px-3 text-center font-bold sticky top-0 z-50 shadow">
@@ -4687,7 +4867,196 @@ ${defectDesc}
             }
         }
 
+        /* ================= 3D UPS LOGO & "ULD Inspect 360" 360° INTRO ENGINE ================= */
+        const UPS_LOGO_SVG_URL = "https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg";
+        let introSpinMode = 'sync'; // 'sync' | 'counter' | 'manual'
+        let introPaused = false;
+        let introDragging = false;
+        let introStartX = 0, introStartY = 0;
+        let manualRotY = 0, manualRotX = 6;
+        let introThreeRenderer = null, introThreeScene = null, introThreeCamera = null;
+        let introRingGroup = null, introParticles = null;
+        let introAnimFrameId = null;
+
+        function buildUps3DIntroLayers() {
+            const logoContainer = document.getElementById('ups-logo-3d-container');
+            const textContainer = document.getElementById('ups-text-3d-container');
+            if (!logoContainer || !textContainer) return;
+
+            // 1. Build 30 stacked 3D depth layers for the UPS Logo (translateZ from -14.5px to +14.5px)
+            logoContainer.innerHTML = '';
+            const totalLogoLayers = 30;
+            const logoDepthSpan = 29; // px total thickness
+            for (let i = 0; i < totalLogoLayers; i++) {
+                const z = -logoDepthSpan / 2 + (i / (totalLogoLayers - 1)) * logoDepthSpan;
+                const img = document.createElement('img');
+                img.src = UPS_LOGO_SVG_URL;
+                img.alt = "UPS 3D Logo";
+                img.className = "ups-logo-layer";
+
+                const isFront = (i === totalLogoLayers - 1);
+                const isBack = (i === 0);
+
+                if (isFront) {
+                    img.style.transform = `translateZ(${z.toFixed(2)}px)`;
+                    img.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.55)) brightness(1.05)';
+                } else if (isBack) {
+                    // Back face rotated 180deg so the logo reads properly when viewed from behind during 360° spin
+                    img.style.transform = `translateZ(${z.toFixed(2)}px) rotateY(180deg)`;
+                    img.style.filter = 'brightness(0.95) contrast(1.05)';
+                } else {
+                    // Extruded metallic gold / bronze side bevel layers
+                    const edgeShade = 0.52 + 0.35 * Math.sin((i / totalLogoLayers) * Math.PI);
+                    img.style.transform = `translateZ(${z.toFixed(2)}px) scale(1.008)`;
+                    img.style.filter = `sepia(1) saturate(3.8) hue-rotate(4deg) brightness(${edgeShade.toFixed(2)})`;
+                }
+                logoContainer.appendChild(img);
+            }
+
+            // 2. Build 24 stacked 3D depth layers for "ULD Inspect 360" text
+            textContainer.innerHTML = '';
+            const totalTextLayers = 24;
+            const textDepthSpan = 22; // px total 3D extrusion thickness
+            const phrase = "ULD Inspect 360";
+
+            for (let i = 0; i < totalTextLayers; i++) {
+                const z = -textDepthSpan / 2 + (i / (totalTextLayers - 1)) * textDepthSpan;
+                const span = document.createElement('div');
+                span.textContent = phrase;
+
+                const isFront = (i === totalTextLayers - 1);
+                const isBack = (i === 0);
+
+                if (isFront) {
+                    span.className = "ups-text-layer ups-text-front";
+                    span.style.transform = `translateZ(${z.toFixed(2)}px)`;
+                } else if (isBack) {
+                    // Readable 3D back face when rotated 180°
+                    span.className = "ups-text-layer ups-text-front";
+                    span.style.transform = `translateZ(${z.toFixed(2)}px) rotateY(180deg)`;
+                } else {
+                    const ratio = i / totalTextLayers;
+                    span.className = ratio > 0.5 ? "ups-text-layer ups-text-mid" : "ups-text-layer ups-text-deep";
+                    span.style.transform = `translateZ(${z.toFixed(2)}px)`;
+                }
+                textContainer.appendChild(span);
+            }
+        }
+
+        function initIntroThreeStage() {
+            const canvas = document.getElementById('ups-intro-3d-canvas');
+            if (!canvas || typeof THREE === 'undefined') return;
+
+            const w = window.innerWidth || 800;
+            const h = window.innerHeight || 600;
+
+            introThreeScene = new THREE.Scene();
+            introThreeCamera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
+            introThreeCamera.position.set(0, 0, 16);
+
+            introThreeRenderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
+            introThreeRenderer.setSize(w, h);
+            introThreeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+            const ambLight = new THREE.AmbientLight(0xffebc2, 0.8);
+            introThreeScene.add(ambLight);
+
+            const pointLight1 = new THREE.PointLight(0xffb500, 1.8, 50);
+            pointLight1.position.set(10, 12, 12);
+            introThreeScene.add(pointLight1);
+
+            const pointLight2 = new THREE.PointLight(0xffe17d, 1.2, 50);
+            pointLight2.position.set(-10, -8, 10);
+            introThreeScene.add(pointLight2);
+
+            introRingGroup = new THREE.Group();
+            introThreeScene.add(introRingGroup);
+
+            // Outer 3D Golden Gyro Ring
+            const torusGeom1 = new THREE.TorusGeometry(6.2, 0.045, 16, 100);
+            const torusMat1 = new THREE.MeshStandardMaterial({
+                color: 0xffb500,
+                metalness: 0.85,
+                roughness: 0.2
+            });
+            const ring1 = new THREE.Mesh(torusGeom1, torusMat1);
+            ring1.rotation.x = Math.PI / 2.6;
+            introRingGroup.add(ring1);
+
+            // Second 3D Tilted Ring
+            const torusGeom2 = new THREE.TorusGeometry(7.4, 0.03, 16, 100);
+            const torusMat2 = new THREE.MeshStandardMaterial({
+                color: 0xffe17d,
+                metalness: 0.75,
+                roughness: 0.3,
+                transparent: true,
+                opacity: 0.65
+            });
+            const ring2 = new THREE.Mesh(torusGeom2, torusMat2);
+            ring2.rotation.x = -Math.PI / 3.2;
+            ring2.rotation.y = Math.PI / 6;
+            introRingGroup.add(ring2);
+
+            // Floating Golden Dust Particles in UPS Brown Space
+            const partCount = 140;
+            const posArray = new Float32Array(partCount * 3);
+            for (let i = 0; i < partCount * 3; i += 3) {
+                posArray[i] = (Math.random() - 0.5) * 32;
+                posArray[i + 1] = (Math.random() - 0.5) * 22;
+                posArray[i + 2] = (Math.random() - 0.5) * 16 - 2;
+            }
+            const partGeom = new THREE.BufferGeometry();
+            partGeom.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+            const partMat = new THREE.PointsMaterial({
+                color: 0xffd15c,
+                size: 0.11,
+                transparent: true,
+                opacity: 0.75
+            });
+            introParticles = new THREE.Points(partGeom, partMat);
+            introThreeScene.add(introParticles);
+
+            function animateIntroStage() {
+                introAnimFrameId = requestAnimationFrame(animateIntroStage);
+                const overlay = document.getElementById('ups-3d-intro-overlay');
+                if (!overlay || overlay.classList.contains('hidden')) return;
+
+                if (!introPaused) {
+                    if (introRingGroup) {
+                        introRingGroup.rotation.y += 0.008;
+                        introRingGroup.rotation.z += 0.003;
+                    }
+                    if (introParticles) {
+                        introParticles.rotation.y += 0.0025;
+                    }
+                }
+                introThreeRenderer.render(introThreeScene, introThreeCamera);
+            }
+            animateIntroStage();
+
+            window.addEventListener('resize', () => {
+                if (!introThreeRenderer || !introThreeCamera) return;
+                const nw = window.innerWidth || 800;
+                const nh = window.innerHeight || 600;
+                introThreeCamera.aspect = nw / nh;
+                introThreeCamera.updateProjectionMatrix();
+                introThreeRenderer.setSize(nw, nh);
+            });
+        }
+
+        function enterMainAppFromIntro() {
+            const overlay = document.getElementById('ups-3d-intro-overlay');
+            if (!overlay) return;
+            overlay.classList.add('intro-exit');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                onWindowResize();
+            }, 720);
+        }
+
         window.onload = function() {
+            buildUps3DIntroLayers();
+            initIntroThreeStage();
             init3D();
             checkUrlHash();
         };
