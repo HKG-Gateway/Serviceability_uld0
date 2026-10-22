@@ -362,142 +362,112 @@
         }
 
     
-        /* ================= 360° & 3D SPATIAL COCKPIT REDESIGN STYLES ================= */
+        /* ================= 360° & 3D SPATIAL COCKPIT REDESIGN STYLES (GPU-SAFE & ULTRA-SMOOTH) ================= */
         :root {
             --orbit-angle: 0deg;
-            --cockpit-tilt-left: -5deg;
-            --cockpit-tilt-right: 3.2deg;
+            --cockpit-tilt-left: -3.5deg;
+            --cockpit-tilt-right: 2.5deg;
         }
 
         body.spatial-360-body {
             background: radial-gradient(ellipse at 50% 0%, #301810 0%, #160c08 42%, #080d17 100%);
             color: #1e293b;
             overflow-x: hidden;
-            perspective: 1800px;
         }
 
-        /* 360° Ambient 3D Space & Rotating Perspective Grid Floor */
+        /* Lightweight 360° Ambient 3D Space & Perspective Grid Floor (No giant 220vw mask textures) */
         #spatial-360-environment {
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
-            perspective: 1200px;
-            transform-style: preserve-3d;
         }
 
         .spatial-360-floor-grid {
             position: absolute;
-            width: 220vw;
-            height: 220vw;
-            left: -60vw;
-            bottom: -115vw;
+            width: 120vw;
+            height: 65vh;
+            left: -10vw;
+            bottom: -15vh;
             background-image:
-                linear-gradient(to right, rgba(255, 181, 0, 0.14) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
-            background-size: 64px 64px;
-            transform: rotateX(76deg) rotateZ(var(--orbit-angle, 0deg));
-            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-            mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
-            -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
+                linear-gradient(to right, rgba(255, 181, 0, 0.11) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.11) 1px, transparent 1px);
+            background-size: 56px 56px;
+            transform: perspective(700px) rotateX(68deg);
+            opacity: 0.65;
         }
 
         .spatial-360-ceiling-ring {
             position: absolute;
-            top: -340px;
+            top: -260px;
             left: 50%;
-            width: 1020px;
-            height: 1020px;
+            width: 760px;
+            height: 760px;
             border-radius: 50%;
-            border: 2px dashed rgba(255, 181, 0, 0.26);
-            box-shadow: 0 0 85px rgba(255, 181, 0, 0.14), inset 0 0 65px rgba(56, 189, 248, 0.1);
-            transform: translateX(-50%) rotateX(74deg) rotateZ(calc(var(--orbit-angle, 0deg) * -1));
-            transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
-        }
-
-        .spatial-360-ceiling-ring::after {
-            content: '';
-            position: absolute;
-            inset: 70px;
-            border-radius: 50%;
-            border: 1px solid rgba(56, 189, 248, 0.25);
+            border: 2px dashed rgba(255, 181, 0, 0.22);
+            transform: translateX(-50%) perspective(700px) rotateX(70deg) rotateZ(var(--orbit-angle, 0deg));
+            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         /* 360° Header Visor & Orbital Navigation Dock */
         header.spatial-visor-header {
-            background: linear-gradient(180deg, rgba(43, 22, 16, 0.96) 0%, rgba(24, 12, 8, 0.93) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: linear-gradient(180deg, rgba(43, 22, 16, 0.98) 0%, rgba(24, 12, 8, 0.96) 100%);
             border-bottom: 2px solid #ffb500;
-            box-shadow: 0 16px 38px -6px rgba(0, 0, 0, 0.7), 0 2px 14px rgba(255, 181, 0, 0.28);
-            transform-style: preserve-3d;
+            box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.65);
         }
 
         /* 3D Orbital Tab Switcher Bar */
         .orbital-nav-dock {
-            perspective: 1100px;
-            transform-style: preserve-3d;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 16, 12, 0.94) 100%);
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 16, 12, 0.96) 100%);
             border: 1px solid rgba(255, 181, 0, 0.42);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.65), 0 8px 22px rgba(0,0,0,0.45);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.4);
             border-radius: 16px;
             padding: 6px;
         }
 
         .orbital-tab-btn {
             position: relative;
-            transform-style: preserve-3d;
-            transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+            transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
             border-radius: 11px;
             overflow: hidden;
         }
 
-
-
         .orbital-tab-btn:hover {
-            transform: translateY(-2px) translateZ(10px) rotateX(6deg);
+            transform: translateY(-1.5px);
         }
 
         .orbital-tab-active {
             background: linear-gradient(135deg, #ffe17d 0%, #ffb500 55%, #d48800 100%) !important;
             color: #2b1610 !important;
-            box-shadow: 0 7px 18px rgba(255, 181, 0, 0.48), 0 3px 0 #9a5b00, inset 0 1px 1px rgba(255, 255, 255, 0.85) !important;
-            transform: translateY(-2px) translateZ(14px);
+            box-shadow: 0 5px 14px rgba(255, 181, 0, 0.42), 0 2px 0 #9a5b00, inset 0 1px 1px rgba(255, 255, 255, 0.85) !important;
+            transform: translateY(-1px);
         }
 
         .orbital-tab-inactive {
-            background: rgba(30, 41, 59, 0.72);
+            background: rgba(30, 41, 59, 0.78);
             color: #cbd5e1;
             border: 1px solid rgba(148, 163, 184, 0.22);
-            box-shadow: 0 3px 0 rgba(0,0,0,0.45);
+            box-shadow: 0 2px 0 rgba(0,0,0,0.4);
         }
 
-        /* 3D Cockpit Workspace Stage & Curved Wing Arrangement */
+        /* 3D Cockpit Workspace Stage (No preserve-3d or permanent filter so children never clip or lag) */
         main.spatial-cockpit-main {
             position: relative;
             z-index: 10;
-            perspective: 1800px;
-            transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
+        /* Gentle Static 3D Cockpit Wing Angle (No hover re-rasterization or Z-clipping) */
         @media (min-width: 1024px) {
-            body.cockpit-curved-active #left-column-wrapper {
-                transform: perspective(1600px) rotateY(var(--cockpit-tilt-left, 5deg)) translateZ(8px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            body.cockpit-curved-active #left-column-wrapper,
+            body.cockpit-curved-active #page-1-container > aside#sidebar-left {
+                transform: perspective(1800px) rotateY(var(--cockpit-tilt-left, -3.5deg));
+                transition: transform 0.35s ease;
             }
-            body.cockpit-curved-active #left-column-wrapper:hover {
-                transform: perspective(1600px) rotateY(1.2deg) translateZ(18px);
-            }
-            body.cockpit-curved-active #right-column-wrapper {
-                transform: perspective(1600px) rotateY(var(--cockpit-tilt-right, -3.2deg)) translateZ(14px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            body.cockpit-curved-active #right-column-wrapper:hover {
-                transform: perspective(1600px) rotateY(0deg) translateZ(20px);
+            body.cockpit-curved-active #right-column-wrapper,
+            body.cockpit-curved-active #page-1-container > div.spatial-card-3d {
+                transform: perspective(1800px) rotateY(var(--cockpit-tilt-right, 2.5deg));
+                transition: transform 0.35s ease;
             }
         }
 
@@ -511,19 +481,16 @@
             }
         }
 
-        /* 3D Extruded Spatial Panel Cards */
+        /* 3D Extruded Spatial Panel Cards (Safe with overflow:hidden / overflow:auto) */
         .spatial-card-3d {
             position: relative;
-            background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
-            border: 1px solid rgba(255, 181, 0, 0.42) !important;
+            background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid rgba(255, 181, 0, 0.45) !important;
             border-radius: 18px !important;
             box-shadow:
-                0 22px 46px -12px rgba(0, 0, 0, 0.62),
-                0 5px 0 0 #b47b16,
-                0 6px 16px rgba(255, 181, 0, 0.18),
+                0 16px 36px -10px rgba(0, 0, 0, 0.55),
+                0 4px 0 0 #b47b16,
                 inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
-            transform-style: preserve-3d;
-            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .spatial-card-3d::before {
@@ -537,18 +504,18 @@
             border-radius: 999px;
             opacity: 0.9;
             pointer-events: none;
+            z-index: 2;
         }
 
         /* 3D Tactile ULD Selector Buttons */
         .uld-btn {
             position: relative;
-            transform-style: preserve-3d;
-            transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
-            box-shadow: 0 3px 0 #cbd5e1, 0 4px 10px rgba(15, 23, 42, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            box-shadow: 0 3px 0 #cbd5e1, 0 4px 8px rgba(15, 23, 42, 0.06);
         }
         .uld-btn:hover {
-            transform: translateY(-2px) scale(1.015);
-            box-shadow: 0 5px 0 #94a3b8, 0 8px 16px rgba(15, 23, 42, 0.14);
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 0 #94a3b8, 0 6px 12px rgba(15, 23, 42, 0.12);
         }
         .uld-btn:active {
             transform: translateY(1px);
@@ -562,72 +529,39 @@
             border-radius: 14px;
             pointer-events: none;
             z-index: 5;
-            box-shadow: inset 0 0 35px rgba(14, 165, 233, 0.14);
+            box-shadow: inset 0 0 28px rgba(14, 165, 233, 0.12);
         }
 
-        /* ================= 360° & 3D PAGE TRANSITION ANIMATIONS ================= */
+        /* ================= 360° & 3D PAGE TRANSITION ANIMATIONS (NO FILTER BLUR, ENDS AT TRANSFORM: NONE) ================= */
         @keyframes orbitTransitionClockwise {
             0% {
-                opacity: 0;
-                transform: perspective(1600px) rotateY(46deg) rotateX(7deg) translateZ(-320px) scale(0.86);
-                filter: brightness(1.3) blur(3px);
-            }
-            58% {
-                opacity: 1;
-                transform: perspective(1600px) rotateY(-4deg) rotateX(-1.5deg) translateZ(22px) scale(1.012);
-                filter: brightness(1.05) blur(0px);
+                opacity: 0.15;
+                transform: perspective(1400px) rotateY(18deg) scale(0.96);
             }
             100% {
                 opacity: 1;
-                transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1);
-                filter: brightness(1) blur(0px);
+                transform: none;
             }
         }
 
         @keyframes orbitTransitionCounterClockwise {
             0% {
-                opacity: 0;
-                transform: perspective(1600px) rotateY(-46deg) rotateX(7deg) translateZ(-320px) scale(0.86);
-                filter: brightness(1.3) blur(3px);
-            }
-            58% {
-                opacity: 1;
-                transform: perspective(1600px) rotateY(4deg) rotateX(-1.5deg) translateZ(22px) scale(1.012);
-                filter: brightness(1.05) blur(0px);
+                opacity: 0.15;
+                transform: perspective(1400px) rotateY(-18deg) scale(0.96);
             }
             100% {
                 opacity: 1;
-                transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1);
-                filter: brightness(1) blur(0px);
-            }
-        }
-
-        @keyframes subpage3DFlipTransition {
-            0% {
-                opacity: 0;
-                transform: perspective(1500px) rotateX(28deg) rotateY(-20deg) translateZ(-200px) scale(0.9);
-            }
-            65% {
-                opacity: 1;
-                transform: perspective(1500px) rotateX(-2deg) rotateY(2deg) translateZ(14px) scale(1.01);
-            }
-            100% {
-                opacity: 1;
-                transform: perspective(1500px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1);
+                transform: none;
             }
         }
 
         @keyframes itemCard3DPulse {
             0% {
-                transform: perspective(1000px) rotateY(-15deg) scale(0.95);
-                opacity: 0.65;
-            }
-            60% {
-                transform: perspective(1000px) rotateY(3deg) scale(1.01);
-                opacity: 1;
+                transform: scale(0.98);
+                opacity: 0.75;
             }
             100% {
-                transform: perspective(1000px) rotateY(0deg) scale(1);
+                transform: none;
                 opacity: 1;
             }
         }
@@ -635,28 +569,25 @@
         @keyframes modal3DUnfold {
             0% {
                 opacity: 0;
-                transform: perspective(1300px) rotateX(26deg) translateY(32px) translateZ(-160px) scale(0.86);
+                transform: perspective(1000px) rotateX(12deg) translateY(16px) scale(0.94);
             }
             100% {
                 opacity: 1;
-                transform: perspective(1300px) rotateX(0deg) translateY(0px) translateZ(0px) scale(1);
+                transform: none;
             }
         }
 
         .anim-orbit-cw {
-            animation: orbitTransitionClockwise 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: orbitTransitionClockwise 0.42s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-orbit-ccw {
-            animation: orbitTransitionCounterClockwise 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-        }
-        .anim-subpage-flip {
-            animation: subpage3DFlipTransition 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: orbitTransitionCounterClockwise 0.42s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-item-3d-pulse {
-            animation: itemCard3DPulse 0.44s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: itemCard3DPulse 0.3s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-modal-3d {
-            animation: modal3DUnfold 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: modal3DUnfold 0.35s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         /* 360° Page Transition Holographic Portal Overlay */
@@ -669,83 +600,34 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.26s ease;
-            perspective: 1200px;
+            transition: opacity 0.22s ease;
         }
         #orbit-transition-overlay.active {
             opacity: 1;
         }
         .orbit-hud-ring {
-            width: 270px;
-            height: 270px;
+            width: 240px;
+            height: 240px;
             border-radius: 50%;
             border: 3px dashed rgba(255, 181, 0, 0.9);
-            background: radial-gradient(circle, rgba(43, 22, 16, 0.92) 0%, rgba(15, 23, 42, 0.72) 65%, transparent 100%);
-            box-shadow: 0 0 65px rgba(255, 181, 0, 0.5), inset 0 0 38px rgba(56, 189, 248, 0.38);
+            background: radial-gradient(circle, rgba(43, 22, 16, 0.94) 0%, rgba(15, 23, 42, 0.82) 68%, transparent 100%);
+            box-shadow: 0 0 50px rgba(255, 181, 0, 0.45), inset 0 0 30px rgba(56, 189, 248, 0.3);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: rotateX(20deg) scale(0.82);
-            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: scale(0.86);
+            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #orbit-transition-overlay.active .orbit-hud-ring {
-            transform: rotateX(0deg) scale(1);
+            transform: scale(1);
         }
 
         /* Bottom 360° Quick-Spin Floating Dock */
         #spatial-360-bottom-dock {
-            background: linear-gradient(135deg, rgba(28, 14, 10, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: linear-gradient(135deg, rgba(28, 14, 10, 0.96) 0%, rgba(15, 23, 42, 0.96) 100%);
             border: 1.5px solid rgba(255, 181, 0, 0.6);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 22px rgba(255, 181, 0, 0.24);
-        }
-
-    
-        /* ================= CONTOUR 3D PAGE 1 & PAGE 2 UNIFIED 360°/3D STYLES (MATCHING OTHER PAGES) ================= */
-        #main-view-contour,
-        #page-1-container,
-        #page-2-container {
-            perspective: 1800px;
-            transform-style: preserve-3d;
-        }
-
-        /* Same gentle 3D cockpit wing angle on Page 1 as #left-column-wrapper / #right-column-wrapper */
-        @media (min-width: 1024px) {
-            body.cockpit-curved-active #page-1-container > div.spatial-card-3d {
-                transform: perspective(1600px) rotateY(var(--cockpit-tilt-right, 3.2deg)) translateZ(14px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            body.cockpit-curved-active #page-1-container > div.spatial-card-3d:hover {
-                transform: perspective(1600px) rotateY(0deg) translateZ(20px);
-            }
-            body.cockpit-curved-active #page-1-container > aside#sidebar-left {
-                transform: perspective(1600px) rotateY(var(--cockpit-tilt-left, -5deg)) translateZ(8px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            body.cockpit-curved-active #page-1-container > aside#sidebar-left:hover {
-                transform: perspective(1600px) rotateY(1.2deg) translateZ(18px);
-            }
-            /* Same gentle 3D cockpit angle on Page 2 left & right columns */
-            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:first-child {
-                transform: perspective(1600px) rotateY(2.5deg) translateZ(8px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:first-child:hover {
-                transform: perspective(1600px) rotateY(0deg) translateZ(14px);
-            }
-            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:last-child {
-                transform: perspective(1600px) rotateY(-2.5deg) translateZ(8px);
-                transform-origin: center center;
-                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-            }
-            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:last-child:hover {
-                transform: perspective(1600px) rotateY(0deg) translateZ(14px);
-            }
+            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.65), 0 0 16px rgba(255, 181, 0, 0.2);
         }
 
         /* Sub-page switcher buttons matching the main navigation dock style */
@@ -772,16 +654,180 @@
             color: #ffffff !important;
         }
 
-        /* Contour sidebar buttons matching .uld-btn tactile style */
-        .contour-sidebar-card-3d {
-            transition: all 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
-            box-shadow: 0 3px 0 #cbd5e1, 0 4px 10px rgba(15, 23, 42, 0.06);
+        /* ================= CALCULATOR 360° / 3D VERDICT ANIMATION PROMPT STYLES (ZERO CLIPPING) ================= */
+        #calc-verdict-360-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 95;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(15, 23, 42, 0.58);
+            cursor: pointer;
+            padding: 16px;
         }
-        .contour-sidebar-card-3d:hover {
-            transform: translateY(-2px) scale(1.01);
-            box-shadow: 0 5px 0 #94a3b8, 0 8px 16px rgba(15, 23, 42, 0.12);
+        #calc-verdict-360-overlay.active {
+            display: flex;
+            animation: calcOverlayFadeIn 0.22s ease-out forwards;
         }
 
+        @keyframes calcOverlayFadeIn {
+            0%   { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .calc-verdict-hud-stage {
+            position: relative;
+            width: 290px;
+            height: 290px;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 22px;
+            animation: calcStagePop3D 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes calcStagePop3D {
+            0% {
+                opacity: 0;
+                transform: perspective(900px) rotateY(-95deg) rotateX(15deg) scale(0.72);
+            }
+            65% {
+                opacity: 1;
+                transform: perspective(900px) rotateY(8deg) rotateX(-3deg) scale(1.03);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(900px) rotateY(0deg) rotateX(0deg) scale(1);
+            }
+        }
+
+        .calc-verdict-hud-stage.verdict-pass {
+            border: 3px dashed #34d399;
+            background: radial-gradient(circle, rgba(6, 78, 59, 0.97) 0%, rgba(15, 23, 42, 0.94) 72%, rgba(15, 23, 42, 0.85) 100%);
+            box-shadow: 0 0 65px rgba(16, 185, 129, 0.6), inset 0 0 36px rgba(52, 211, 153, 0.35);
+        }
+
+        .calc-verdict-hud-stage.verdict-fail {
+            border: 3px dashed #f87171;
+            background: radial-gradient(circle, rgba(127, 29, 29, 0.97) 0%, rgba(15, 23, 42, 0.94) 72%, rgba(15, 23, 42, 0.85) 100%);
+            box-shadow: 0 0 70px rgba(239, 68, 68, 0.68), inset 0 0 38px rgba(248, 113, 113, 0.42);
+        }
+
+        /* 360° Dual-Axis Gyroscopic Rings inside Verdict HUD (Pure 2D/3D ring overlay, never clips text) */
+        .calc-verdict-gyro-ring {
+            position: absolute;
+            inset: 12px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+            animation: calcGyroOrbit360 3.2s linear infinite;
+        }
+        .calc-verdict-gyro-ring::after {
+            content: '';
+            position: absolute;
+            inset: 10px;
+            border-radius: 50%;
+            border: 1.5px dashed currentColor;
+            opacity: 0.65;
+            animation: calcOrbitRingContinuous 5s linear infinite reverse;
+        }
+        .verdict-pass .calc-verdict-gyro-ring {
+            color: #6ee7b7;
+            border-color: rgba(110, 231, 183, 0.6);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
+        }
+        .verdict-fail .calc-verdict-gyro-ring {
+            color: #fca5a5;
+            border-color: rgba(252, 165, 165, 0.65);
+            box-shadow: 0 0 22px rgba(239, 68, 68, 0.45);
+        }
+
+        @keyframes calcGyroOrbit360 {
+            0%   { transform: rotateX(52deg) rotateY(0deg) rotateZ(0deg); }
+            50%  { transform: rotateX(-52deg) rotateY(180deg) rotateZ(180deg); }
+            100% { transform: rotateX(52deg) rotateY(360deg) rotateZ(360deg); }
+        }
+
+        /* In-Card 3D Result Banner Animations (No filter, ends at transform:none so zero clipping) */
+        @keyframes calcBanner3DReveal {
+            0% {
+                opacity: 0;
+                transform: perspective(900px) rotateX(-16deg) translateY(10px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @keyframes calcIconMedallionSpin360 {
+            0%   { transform: perspective(500px) rotateY(-180deg) scale(0.8); }
+            100% { transform: perspective(500px) rotateY(0deg) scale(1); }
+        }
+
+        @keyframes calcOrbitRingContinuous {
+            0%   { transform: rotateZ(0deg); }
+            100% { transform: rotateZ(360deg); }
+        }
+
+        .calc-banner-3d-pass {
+            animation: calcBanner3DReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 14px 30px -8px rgba(16, 185, 129, 0.3), 0 4px 0 0 #059669 !important;
+            position: relative;
+        }
+
+        .calc-banner-3d-fail {
+            animation: calcBanner3DReveal 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+            box-shadow: 0 14px 30px -8px rgba(239, 68, 68, 0.32), 0 4px 0 0 #dc2626 !important;
+            position: relative;
+        }
+
+        .calc-medallion-360-wrap {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: calcIconMedallionSpin360 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            flex-shrink: 0;
+        }
+        .calc-medallion-360-wrap.medallion-pass {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 14px rgba(16, 185, 129, 0.38), 0 3px 0 #064e3b;
+            border: 1.5px solid #6ee7b7;
+        }
+        .calc-medallion-360-wrap.medallion-fail {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: #ffffff;
+            box-shadow: 0 6px 14px rgba(239, 68, 68, 0.4), 0 3px 0 #7f1d1d;
+            border: 1.5px solid #fca5a5;
+        }
+        .calc-medallion-orbit-ring {
+            position: absolute;
+            inset: -5px;
+            border-radius: 18px;
+            border: 1.5px dashed currentColor;
+            opacity: 0.55;
+            pointer-events: none;
+            animation: calcOrbitRingContinuous 8s linear infinite;
+        }
+
+        /* Contour sidebar buttons matching .uld-btn tactile style */
+        .contour-sidebar-card-3d {
+            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+            box-shadow: 0 3px 0 #cbd5e1, 0 4px 8px rgba(15, 23, 42, 0.05);
+        }
+        .contour-sidebar-card-3d:hover {
+            transform: translateY(-1.5px);
+            box-shadow: 0 4px 0 #94a3b8, 0 6px 12px rgba(15, 23, 42, 0.1);
+        }
     </style>
 </head>
 <body class="spatial-360-body cockpit-curved-active text-slate-800 font-sans min-h-screen flex flex-col select-none pb-16">
@@ -800,6 +846,31 @@
             </div>
             <div id="orbit-hud-angle" class="text-2xl font-black font-mono text-[#ffb500] drop-shadow">000°</div>
             <div id="orbit-hud-label" class="text-xs font-extrabold text-white mt-1 px-3 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40">📦 3D 檢查</div>
+        </div>
+    </div>
+
+    <!-- ================= CALCULATOR 360° / 3D VERDICT HOLOGRAPHIC PROMPT OVERLAY ================= -->
+    <div id="calc-verdict-360-overlay" onclick="dismissCalcVerdict360Overlay()" aria-hidden="true">
+        <div id="calc-verdict-hud-box" class="calc-verdict-hud-stage verdict-pass">
+            <div class="calc-verdict-gyro-ring"></div>
+            <div class="calc-verdict-3d-emblem flex flex-col items-center justify-center z-10">
+                <div id="calc-hud-top-tag" class="hidden"></div>
+                <div id="calc-hud-icon" class="text-4xl mb-1.5 text-emerald-300 drop-shadow-[0_4px_12px_rgba(16,185,129,0.6)]">
+                    <i class="fa-solid fa-circle-check"></i>
+                </div>
+                <div id="calc-hud-verdict-zh" class="text-2xl font-black tracking-tight text-white drop-shadow">
+                    🟢 可使用
+                </div>
+                <div id="calc-hud-verdict-en" class="text-xs font-mono font-extrabold tracking-widest uppercase text-emerald-200 mt-0.5">
+                    SERVICEABLE • PASS
+                </div>
+                <div id="calc-hud-comp-name" class="text-[11px] font-bold text-white/90 mt-2 px-3 py-1 rounded-full bg-black/35 border border-white/20 max-w-[230px] truncate">
+                    面板損壞檢查判定
+                </div>
+                <div class="text-[10px] text-white/70 mt-2.5 font-medium tracking-wide">
+                    點擊畫面任意處關閉
+                </div>
+            </div>
         </div>
     </div>
 
@@ -2453,12 +2524,18 @@
                 }
             }
 
-            // Trigger 3D Stage Rotation Animation
+            // Dismiss calculator overlay if open when switching pages
+            dismissCalcVerdict360Overlay(true);
+
+            // Trigger 3D Stage Rotation Animation and clean up class after completion
             const stage = document.getElementById('main-3d-cockpit-stage');
-            if (stage) {
+            if (stage && fromPage !== toPage) {
                 stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                void stage.offsetWidth; // Force reflow for smooth restart
+                void stage.offsetWidth;
                 stage.classList.add(isClockwise ? 'anim-orbit-cw' : 'anim-orbit-ccw');
+                setTimeout(() => {
+                    stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
+                }, 440);
             }
         }
 
@@ -2703,14 +2780,17 @@
         }
         function animate() {
             requestAnimationFrame(animate);
-            if (controls) controls.update();
-            if (renderer && scene && camera && activeRenderer === 'three' && activePage === 'uld') {
-                renderer.render(scene, camera);
-            }
-            if (contourControls) contourControls.update();
-            if (contourRenderer && contourScene && contourCamera && activePage === 'contour' && contourState.currentPage === 'page1') {
-                contourRenderer.render(contourScene, contourCamera);
-                updateHtmlLabelsPosition();
+            if (activePage === 'uld' && activeRenderer === 'three') {
+                if (controls) controls.update();
+                if (renderer && scene && camera) {
+                    renderer.render(scene, camera);
+                }
+            } else if (activePage === 'contour' && contourState.currentPage === 'page1') {
+                if (contourControls) contourControls.update();
+                if (contourRenderer && contourScene && contourCamera) {
+                    contourRenderer.render(contourScene, contourCamera);
+                    updateHtmlLabelsPosition();
+                }
             }
         }
 
@@ -3559,23 +3639,29 @@
             const std = document.getElementById('calc-result-standard');
             const details = document.getElementById('calc-result-details');
 
-            banner.classList.remove('hidden');
+            // Restart 3D banner animation cleanly on repeated clicks
+            banner.classList.remove('hidden', 'calc-banner-3d-pass', 'calc-banner-3d-fail');
+            void banner.offsetWidth;
 
             if (isServiceable) {
-                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-emerald-50 border-emerald-500 text-emerald-900 shadow-md";
-                icon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-600"></i>`;
+                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-emerald-50 border-emerald-500 text-emerald-900 shadow-md calc-banner-3d-pass";
+                icon.className = "calc-medallion-360-wrap medallion-pass text-2xl";
+                icon.innerHTML = `<span class="calc-medallion-orbit-ring"></span><i class="fa-solid fa-circle-check"></i>`;
                 tit.innerText = "🟢 SERVICEABLE (合格 / 可正常使用)";
                 sub.innerText = title;
-                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-emerald-200 text-emerald-900";
+                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-emerald-200 text-emerald-900 border border-emerald-400 shadow-sm";
                 std.innerText = standardDoc;
             } else {
-                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-red-50 border-red-500 text-red-900 shadow-md";
-                icon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-red-600"></i>`;
+                banner.className = "p-4 rounded-2xl border-2 transition-all space-y-3 bg-red-50 border-red-500 text-red-900 shadow-md calc-banner-3d-fail";
+                icon.className = "calc-medallion-360-wrap medallion-fail text-2xl";
+                icon.innerHTML = `<span class="calc-medallion-orbit-ring"></span><i class="fa-solid fa-triangle-exclamation"></i>`;
                 tit.innerText = "🔴 UNSERVICEABLE (拒收 / 不可使用)";
                 sub.innerText = title;
-                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-red-200 text-red-900";
+                std.className = "text-[11px] font-mono px-2.5 py-1 rounded-full font-bold bg-red-200 text-red-900 border border-red-400 shadow-sm";
                 std.innerText = standardDoc;
             }
+
+            triggerCalc360VerdictPrompt(isServiceable, title);
 
             details.innerHTML = `
                 <p><b>實測狀況判定：</b>${reason}</p>
@@ -3592,6 +3678,54 @@
             };
 
             if (navigator.vibrate) navigator.vibrate(isServiceable ? 30 : [50, 50, 50]);
+        }
+
+        let calcVerdictOpenedAt = 0;
+        function dismissCalcVerdict360Overlay(force = false) {
+            if (!force && (Date.now() - calcVerdictOpenedAt < 120)) return;
+            const overlay = document.getElementById('calc-verdict-360-overlay');
+            if (overlay) {
+                overlay.classList.remove('active');
+            }
+        }
+
+        function triggerCalc360VerdictPrompt(isServiceable, componentTitle) {
+            // Dismiss mobile virtual keyboard cleanly so fixed viewport coordinates never shift or blank out
+            if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) {
+                document.activeElement.blur();
+            }
+
+            const overlay = document.getElementById('calc-verdict-360-overlay');
+            const hudBox = document.getElementById('calc-verdict-hud-box');
+            const hudIcon = document.getElementById('calc-hud-icon');
+            const zhText = document.getElementById('calc-hud-verdict-zh');
+            const enText = document.getElementById('calc-hud-verdict-en');
+            const compName = document.getElementById('calc-hud-comp-name');
+
+            if (overlay && hudBox && hudIcon && zhText && enText && compName) {
+                overlay.classList.remove('active');
+                void overlay.offsetWidth;
+
+                if (isServiceable) {
+                    hudBox.className = "calc-verdict-hud-stage verdict-pass";
+                    hudIcon.className = "text-4xl mb-1.5 text-emerald-300 drop-shadow-[0_4px_12px_rgba(16,185,129,0.7)]";
+                    hudIcon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+                    zhText.innerText = "🟢 可使用";
+                    enText.className = "text-xs font-mono font-extrabold tracking-widest uppercase text-emerald-200 mt-0.5";
+                    enText.innerText = "SERVICEABLE • 合格放行";
+                } else {
+                    hudBox.className = "calc-verdict-hud-stage verdict-fail";
+                    hudIcon.className = "text-4xl mb-1.5 text-red-400 drop-shadow-[0_4px_12px_rgba(239,68,68,0.8)]";
+                    hudIcon.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i>';
+                    zhText.innerText = "🔴 不可使用";
+                    enText.className = "text-xs font-mono font-extrabold tracking-widest uppercase text-red-200 mt-0.5";
+                    enText.innerText = "UNSERVICEABLE • 拒收停用";
+                }
+
+                compName.innerText = componentTitle;
+                calcVerdictOpenedAt = Date.now();
+                overlay.classList.add('active');
+            }
         }
 
         function resetCalculatorForm() {
@@ -5040,6 +5174,9 @@ ${defectDesc}
                 stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
                 void stage.offsetWidth;
                 stage.classList.add(isToP1 ? 'anim-orbit-ccw' : 'anim-orbit-cw');
+                setTimeout(() => {
+                    stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
+                }, 440);
             }
         }
 
@@ -5693,11 +5830,24 @@ ${defectDesc}
         function enterMainAppFromIntro() {
             const overlay = document.getElementById('ups-3d-intro-overlay');
             if (!overlay) return;
+            introPaused = true;
             overlay.classList.add('intro-exit');
             setTimeout(() => {
                 overlay.classList.add('hidden');
+                if (introAnimFrameId) {
+                    cancelAnimationFrame(introAnimFrameId);
+                    introAnimFrameId = null;
+                }
+                if (introThreeRenderer) {
+                    introThreeRenderer.dispose();
+                    introThreeRenderer = null;
+                }
+                const logoC = document.getElementById('ups-logo-3d-container');
+                const textC = document.getElementById('ups-text-3d-container');
+                if (logoC) logoC.innerHTML = '';
+                if (textC) textC.innerHTML = '';
                 onWindowResize();
-            }, 720);
+            }, 680);
         }
 
         window.onload = function() {
