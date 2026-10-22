@@ -219,14 +219,16 @@
             background: radial-gradient(circle at 50% 42%, #4a261b 0%, #351c15 45%, #24120c 80%, #160a06 100%);
             perspective: 1400px;
             overflow: hidden;
+            will-change: opacity;
+            backface-visibility: hidden;
         }
         #ups-3d-intro-overlay.intro-exit {
             pointer-events: none;
-            animation: upsOverlayDelayedFadeOut 1.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            animation: upsOverlayDelayedFadeOut 1.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
 
         @keyframes upsOverlayDelayedFadeOut {
-            0%, 62% {
+            0%, 58% {
                 opacity: 1;
             }
             100% {
@@ -234,44 +236,40 @@
             }
         }
 
+        /* Gentle, slower 0% -> 100% GPU-accelerated 3D spin + zoom curve on outer rig */
         @keyframes upsLogoEnterSpinZoom {
             0% {
-                transform: rotateX(8deg) rotateY(0deg) scale(1);
-            }
-            35% {
-                transform: rotateX(4deg) rotateY(360deg) scale(1.75);
-            }
-            72% {
-                transform: rotateX(0deg) rotateY(760deg) scale(3.4);
+                transform: translate3d(0, 0, 0px) rotateY(0deg) scale3d(1, 1, 1);
             }
             100% {
-                transform: rotateX(0deg) rotateY(1080deg) scale(5.8);
+                transform: translate3d(0, 0, 680px) rotateY(540deg) scale3d(1.85, 1.85, 1.85);
             }
         }
 
         @keyframes upsOrbitRingEnterExpand {
             0% {
-                transform: translate(-50%, -50%) rotateX(72deg) rotateZ(0deg) scale(1);
+                transform: translate(-50%, -50%) rotateX(72deg) rotateZ(0deg) scale3d(1, 1, 1);
                 opacity: 1;
             }
             100% {
-                transform: translate(-50%, -50%) rotateX(58deg) rotateZ(540deg) scale(2.8);
+                transform: translate(-50%, -50%) rotateX(58deg) rotateZ(240deg) scale3d(2.1, 2.1, 1);
                 opacity: 0;
             }
         }
 
         #ups-3d-intro-overlay.intro-exit #ups-logo-3d-container {
-            animation: upsLogoEnterSpinZoom 1.18s cubic-bezier(0.32, 0, 0.2, 1) forwards !important;
+            animation: upsLogoEnterSpinZoom 1.85s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
         }
 
         #ups-3d-intro-overlay.intro-exit #ups-text-3d-container {
-            transition: opacity 0.45s ease, transform 0.55s ease;
+            transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
-            transform: translateY(36px) scale(0.85);
+            transform: translate3d(0, 28px, -120px) scale3d(0.88, 0.88, 1);
+            animation-play-state: paused !important;
         }
 
         #ups-3d-intro-overlay.intro-exit .ups-orbit-ring {
-            animation: upsOrbitRingEnterExpand 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+            animation: upsOrbitRingEnterExpand 1.75s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
         }
 
         .ups-3d-stage {
@@ -317,7 +315,7 @@
             width: 175px;
             height: 208px;
             transform-style: preserve-3d;
-            animation: upsLogoSpin360 7.5s linear infinite;
+            transform: translate3d(0, 0, 0px) rotateY(0deg) scale3d(1, 1, 1);
             will-change: transform;
         }
         @media (min-width: 640px) {
@@ -325,6 +323,16 @@
                 width: 215px;
                 height: 255px;
             }
+        }
+
+        .ups-logo-3d-inner {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            transform-style: preserve-3d;
+            animation: upsLogoSpin360 10.5s linear infinite;
+            will-change: transform;
         }
 
         .ups-logo-layer {
@@ -348,7 +356,7 @@
             align-items: center;
             justify-content: center;
             transform-style: preserve-3d;
-            animation: upsTextSpin360 7.5s linear infinite;
+            animation: upsTextSpin360 10.5s linear infinite;
             will-change: transform;
         }
         @media (min-width: 640px) {
@@ -358,7 +366,7 @@
         }
 
         .ups-text-3d-rig.reverse-spin {
-            animation: upsTextSpinReverse360 7.5s linear infinite;
+            animation: upsTextSpinReverse360 10.5s linear infinite;
         }
 
         .ups-3d-paused {
@@ -5850,10 +5858,12 @@ ${defectDesc}
             const textContainer = document.getElementById('ups-text-3d-container');
             if (!logoContainer || !textContainer) return;
 
-            // 1. Build 30 stacked 3D depth layers for the UPS Logo (translateZ from -14.5px to +14.5px)
+            // 1. Build 18 GPU-optimized 3D depth layers inside an inner spinning rig so click-to-zoom never snaps or drops frames
             logoContainer.innerHTML = '';
-            const totalLogoLayers = 30;
-            const logoDepthSpan = 29; // px total thickness
+            const logoInnerRig = document.createElement('div');
+            logoInnerRig.className = 'ups-logo-3d-inner';
+            const totalLogoLayers = 18;
+            const logoDepthSpan = 28; // px total thickness
             for (let i = 0; i < totalLogoLayers; i++) {
                 const z = -logoDepthSpan / 2 + (i / (totalLogoLayers - 1)) * logoDepthSpan;
                 const img = document.createElement('img');
@@ -5866,19 +5876,18 @@ ${defectDesc}
 
                 if (isFront) {
                     img.style.transform = `translateZ(${z.toFixed(2)}px)`;
-                    img.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.55)) brightness(1.05)';
                 } else if (isBack) {
                     // Back face rotated 180deg so the logo reads properly when viewed from behind during 360° spin
                     img.style.transform = `translateZ(${z.toFixed(2)}px) rotateY(180deg)`;
-                    img.style.filter = 'brightness(0.95) contrast(1.05)';
                 } else {
                     // Extruded metallic gold / bronze side bevel layers
-                    const edgeShade = 0.52 + 0.35 * Math.sin((i / totalLogoLayers) * Math.PI);
-                    img.style.transform = `translateZ(${z.toFixed(2)}px) scale(1.008)`;
-                    img.style.filter = `sepia(1) saturate(3.8) hue-rotate(4deg) brightness(${edgeShade.toFixed(2)})`;
+                    const edgeShade = 0.65 + 0.3 * Math.sin((i / totalLogoLayers) * Math.PI);
+                    img.style.transform = `translateZ(${z.toFixed(2)}px) scale(1.006)`;
+                    img.style.filter = `brightness(${edgeShade.toFixed(2)})`;
                 }
-                logoContainer.appendChild(img);
+                logoInnerRig.appendChild(img);
             }
+            logoContainer.appendChild(logoInnerRig);
 
             // 2. Build 24 stacked 3D depth layers for "ULD Inspect 360" text
             textContainer.innerHTML = '';
@@ -5983,21 +5992,23 @@ ${defectDesc}
             introParticles = new THREE.Points(partGeom, partMat);
             introThreeScene.add(introParticles);
 
+            let currentIntroSpeedMult = 1;
             function animateIntroStage() {
                 introAnimFrameId = requestAnimationFrame(animateIntroStage);
                 const overlay = document.getElementById('ups-3d-intro-overlay');
                 if (!overlay || overlay.classList.contains('hidden')) return;
 
                 if (!introPaused) {
-                    const speedMult = window.__introEnteringBoost ? 4.5 : 1;
+                    const targetMult = window.__introEnteringBoost ? 2.2 : 1;
+                    currentIntroSpeedMult += (targetMult - currentIntroSpeedMult) * 0.05;
                     if (introRingGroup) {
-                        introRingGroup.rotation.y += 0.008 * speedMult;
-                        introRingGroup.rotation.z += 0.003 * speedMult;
+                        introRingGroup.rotation.y += 0.006 * currentIntroSpeedMult;
+                        introRingGroup.rotation.z += 0.0022 * currentIntroSpeedMult;
                     }
                     if (introParticles) {
-                        introParticles.rotation.y += 0.0025 * speedMult;
+                        introParticles.rotation.y += 0.002 * currentIntroSpeedMult;
                         if (window.__introEnteringBoost && introThreeCamera) {
-                            introThreeCamera.position.z = Math.max(6, introThreeCamera.position.z - 0.14);
+                            introThreeCamera.position.z += (6.5 - introThreeCamera.position.z) * 0.035;
                         }
                     }
                 }
@@ -6040,7 +6051,7 @@ ${defectDesc}
                 if (logoC) logoC.innerHTML = '';
                 if (textC) textC.innerHTML = '';
                 onWindowResize();
-            }, 1180);
+            }, 1850);
         }
 
         window.onload = function() {
