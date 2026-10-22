@@ -133,11 +133,17 @@
             position: relative;
             width: 100%;
             height: 520px;
+            min-height: 520px;
             touch-action: none;
             background-color: #0f172a;
         }
-        @media (min-width: 768px) { #contour-canvas-container { height: 600px; } }
-        @media (min-width: 1280px) { #contour-canvas-container { height: 680px; } }
+        @media (min-width: 768px) { #contour-canvas-container { height: 600px; min-height: 600px; } }
+        @media (min-width: 1280px) { #contour-canvas-container { height: 680px; min-height: 680px; } }
+        #contour-canvas-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f1f5f9; }
@@ -213,12 +219,59 @@
             background: radial-gradient(circle at 50% 42%, #4a261b 0%, #351c15 45%, #24120c 80%, #160a06 100%);
             perspective: 1400px;
             overflow: hidden;
-            transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1), transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #ups-3d-intro-overlay.intro-exit {
-            opacity: 0;
-            transform: scale(1.12);
             pointer-events: none;
+            animation: upsOverlayDelayedFadeOut 1.18s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes upsOverlayDelayedFadeOut {
+            0%, 62% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        @keyframes upsLogoEnterSpinZoom {
+            0% {
+                transform: rotateX(8deg) rotateY(0deg) scale(1);
+            }
+            35% {
+                transform: rotateX(4deg) rotateY(360deg) scale(1.75);
+            }
+            72% {
+                transform: rotateX(0deg) rotateY(760deg) scale(3.4);
+            }
+            100% {
+                transform: rotateX(0deg) rotateY(1080deg) scale(5.8);
+            }
+        }
+
+        @keyframes upsOrbitRingEnterExpand {
+            0% {
+                transform: translate(-50%, -50%) rotateX(72deg) rotateZ(0deg) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotateX(58deg) rotateZ(540deg) scale(2.8);
+                opacity: 0;
+            }
+        }
+
+        #ups-3d-intro-overlay.intro-exit #ups-logo-3d-container {
+            animation: upsLogoEnterSpinZoom 1.18s cubic-bezier(0.32, 0, 0.2, 1) forwards !important;
+        }
+
+        #ups-3d-intro-overlay.intro-exit #ups-text-3d-container {
+            transition: opacity 0.45s ease, transform 0.55s ease;
+            opacity: 0;
+            transform: translateY(36px) scale(0.85);
+        }
+
+        #ups-3d-intro-overlay.intro-exit .ups-orbit-ring {
+            animation: upsOrbitRingEnterExpand 1.05s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
         }
 
         .ups-3d-stage {
@@ -362,112 +415,139 @@
         }
 
     
-        /* ================= 360° & 3D SPATIAL COCKPIT REDESIGN STYLES (GPU-SAFE & ULTRA-SMOOTH) ================= */
+        /* ================= 360° & 3D SPATIAL COCKPIT REDESIGN STYLES ================= */
         :root {
             --orbit-angle: 0deg;
-            --cockpit-tilt-left: -3.5deg;
-            --cockpit-tilt-right: 2.5deg;
+            --cockpit-tilt-left: -5deg;
+            --cockpit-tilt-right: 3.2deg;
         }
 
         body.spatial-360-body {
             background: radial-gradient(ellipse at 50% 0%, #301810 0%, #160c08 42%, #080d17 100%);
             color: #1e293b;
             overflow-x: hidden;
+            perspective: 1800px;
         }
 
-        /* Lightweight 360° Ambient 3D Space & Perspective Grid Floor (No giant 220vw mask textures) */
+        /* 360° Ambient 3D Space & Rotating Perspective Grid Floor */
         #spatial-360-environment {
             position: fixed;
             inset: 0;
             pointer-events: none;
             z-index: 0;
             overflow: hidden;
+            perspective: 1200px;
+            transform-style: preserve-3d;
         }
 
         .spatial-360-floor-grid {
             position: absolute;
-            width: 120vw;
-            height: 65vh;
-            left: -10vw;
-            bottom: -15vh;
+            width: 220vw;
+            height: 220vw;
+            left: -60vw;
+            bottom: -115vw;
             background-image:
-                linear-gradient(to right, rgba(255, 181, 0, 0.11) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(56, 189, 248, 0.11) 1px, transparent 1px);
-            background-size: 56px 56px;
-            transform: perspective(700px) rotateX(68deg);
-            opacity: 0.65;
+                linear-gradient(to right, rgba(255, 181, 0, 0.14) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
+            background-size: 64px 64px;
+            transform: rotateX(76deg) rotateZ(var(--orbit-angle, 0deg));
+            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+            mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
+            -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
         }
 
         .spatial-360-ceiling-ring {
             position: absolute;
-            top: -260px;
+            top: -340px;
             left: 50%;
-            width: 760px;
-            height: 760px;
+            width: 1020px;
+            height: 1020px;
             border-radius: 50%;
-            border: 2px dashed rgba(255, 181, 0, 0.22);
-            transform: translateX(-50%) perspective(700px) rotateX(70deg) rotateZ(var(--orbit-angle, 0deg));
-            transition: transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+            border: 2px dashed rgba(255, 181, 0, 0.26);
+            box-shadow: 0 0 85px rgba(255, 181, 0, 0.14), inset 0 0 65px rgba(56, 189, 248, 0.1);
+            transform: translateX(-50%) rotateX(74deg) rotateZ(calc(var(--orbit-angle, 0deg) * -1));
+            transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .spatial-360-ceiling-ring::after {
+            content: '';
+            position: absolute;
+            inset: 70px;
+            border-radius: 50%;
+            border: 1px solid rgba(56, 189, 248, 0.25);
         }
 
         /* 360° Header Visor & Orbital Navigation Dock */
         header.spatial-visor-header {
-            background: linear-gradient(180deg, rgba(43, 22, 16, 0.98) 0%, rgba(24, 12, 8, 0.96) 100%);
+            background: linear-gradient(180deg, rgba(43, 22, 16, 0.96) 0%, rgba(24, 12, 8, 0.93) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-bottom: 2px solid #ffb500;
-            box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.65);
+            box-shadow: 0 16px 38px -6px rgba(0, 0, 0, 0.7), 0 2px 14px rgba(255, 181, 0, 0.28);
+            transform-style: preserve-3d;
         }
 
         /* 3D Orbital Tab Switcher Bar */
         .orbital-nav-dock {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 16, 12, 0.96) 100%);
+            perspective: 1100px;
+            transform-style: preserve-3d;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.92) 0%, rgba(30, 16, 12, 0.94) 100%);
             border: 1px solid rgba(255, 181, 0, 0.42);
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6), 0 6px 16px rgba(0,0,0,0.4);
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.65), 0 8px 22px rgba(0,0,0,0.45);
             border-radius: 16px;
             padding: 6px;
         }
 
         .orbital-tab-btn {
             position: relative;
-            transition: transform 0.22s ease, background 0.22s ease, box-shadow 0.22s ease;
+            transform-style: preserve-3d;
+            transition: all 0.38s cubic-bezier(0.22, 1, 0.36, 1);
             border-radius: 11px;
             overflow: hidden;
         }
 
         .orbital-tab-btn:hover {
-            transform: translateY(-1.5px);
+            transform: translateY(-2px) translateZ(10px) rotateX(6deg);
         }
 
         .orbital-tab-active {
             background: linear-gradient(135deg, #ffe17d 0%, #ffb500 55%, #d48800 100%) !important;
             color: #2b1610 !important;
-            box-shadow: 0 5px 14px rgba(255, 181, 0, 0.42), 0 2px 0 #9a5b00, inset 0 1px 1px rgba(255, 255, 255, 0.85) !important;
-            transform: translateY(-1px);
+            box-shadow: 0 7px 18px rgba(255, 181, 0, 0.48), 0 3px 0 #9a5b00, inset 0 1px 1px rgba(255, 255, 255, 0.85) !important;
+            transform: translateY(-2px) translateZ(14px);
         }
 
         .orbital-tab-inactive {
-            background: rgba(30, 41, 59, 0.78);
+            background: rgba(30, 41, 59, 0.72);
             color: #cbd5e1;
             border: 1px solid rgba(148, 163, 184, 0.22);
-            box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.45);
         }
 
-        /* 3D Cockpit Workspace Stage (No preserve-3d or permanent filter so children never clip or lag) */
+        /* 3D Cockpit Workspace Stage & Curved Wing Arrangement */
         main.spatial-cockpit-main {
             position: relative;
             z-index: 10;
+            perspective: 1800px;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
-        /* Gentle Static 3D Cockpit Wing Angle (No hover re-rasterization or Z-clipping) */
         @media (min-width: 1024px) {
-            body.cockpit-curved-active #left-column-wrapper,
-            body.cockpit-curved-active #page-1-container > aside#sidebar-left {
-                transform: perspective(1800px) rotateY(var(--cockpit-tilt-left, -3.5deg));
-                transition: transform 0.35s ease;
+            body.cockpit-curved-active #left-column-wrapper {
+                transform: perspective(1600px) rotateY(var(--cockpit-tilt-left, -5deg)) translateZ(8px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
             }
-            body.cockpit-curved-active #right-column-wrapper,
-            body.cockpit-curved-active #page-1-container > div.spatial-card-3d {
-                transform: perspective(1800px) rotateY(var(--cockpit-tilt-right, 2.5deg));
-                transition: transform 0.35s ease;
+            body.cockpit-curved-active #left-column-wrapper:hover {
+                transform: perspective(1600px) rotateY(1.2deg) translateZ(18px);
+            }
+            body.cockpit-curved-active #right-column-wrapper {
+                transform: perspective(1600px) rotateY(var(--cockpit-tilt-right, 3.2deg)) translateZ(14px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            body.cockpit-curved-active #right-column-wrapper:hover {
+                transform: perspective(1600px) rotateY(0deg) translateZ(20px);
             }
         }
 
@@ -481,16 +561,18 @@
             }
         }
 
-        /* 3D Extruded Spatial Panel Cards (Safe with overflow:hidden / overflow:auto) */
+        /* 3D Extruded Spatial Panel Cards */
         .spatial-card-3d {
             position: relative;
-            background: linear-gradient(165deg, #ffffff 0%, #f8fafc 100%);
-            border: 1px solid rgba(255, 181, 0, 0.45) !important;
+            background: linear-gradient(165deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+            border: 1px solid rgba(255, 181, 0, 0.42) !important;
             border-radius: 18px !important;
             box-shadow:
-                0 16px 36px -10px rgba(0, 0, 0, 0.55),
-                0 4px 0 0 #b47b16,
+                0 22px 46px -12px rgba(0, 0, 0, 0.62),
+                0 5px 0 0 #b47b16,
+                0 6px 16px rgba(255, 181, 0, 0.18),
                 inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         .spatial-card-3d::before {
@@ -510,12 +592,13 @@
         /* 3D Tactile ULD Selector Buttons */
         .uld-btn {
             position: relative;
-            transition: transform 0.2s ease, box-shadow 0.2s ease !important;
-            box-shadow: 0 3px 0 #cbd5e1, 0 4px 8px rgba(15, 23, 42, 0.06);
+            transform-style: preserve-3d;
+            transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1) !important;
+            box-shadow: 0 3px 0 #cbd5e1, 0 4px 10px rgba(15, 23, 42, 0.08);
         }
         .uld-btn:hover {
-            transform: translateY(-1.5px);
-            box-shadow: 0 4px 0 #94a3b8, 0 6px 12px rgba(15, 23, 42, 0.12);
+            transform: translateY(-2px) scale(1.015);
+            box-shadow: 0 5px 0 #94a3b8, 0 8px 16px rgba(15, 23, 42, 0.14);
         }
         .uld-btn:active {
             transform: translateY(1px);
@@ -529,39 +612,66 @@
             border-radius: 14px;
             pointer-events: none;
             z-index: 5;
-            box-shadow: inset 0 0 28px rgba(14, 165, 233, 0.12);
+            box-shadow: inset 0 0 35px rgba(14, 165, 233, 0.14);
         }
 
-        /* ================= 360° & 3D PAGE TRANSITION ANIMATIONS (NO FILTER BLUR, ENDS AT TRANSFORM: NONE) ================= */
+        /* ================= 360° & 3D PAGE TRANSITION ANIMATIONS ================= */
         @keyframes orbitTransitionClockwise {
             0% {
-                opacity: 0.15;
-                transform: perspective(1400px) rotateY(18deg) scale(0.96);
+                opacity: 0;
+                transform: perspective(1600px) rotateY(46deg) rotateX(7deg) translateZ(-320px) scale(0.86);
+            }
+            58% {
+                opacity: 1;
+                transform: perspective(1600px) rotateY(-4deg) rotateX(-1.5deg) translateZ(22px) scale(1.012);
             }
             100% {
                 opacity: 1;
-                transform: none;
+                transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1);
             }
         }
 
         @keyframes orbitTransitionCounterClockwise {
             0% {
-                opacity: 0.15;
-                transform: perspective(1400px) rotateY(-18deg) scale(0.96);
+                opacity: 0;
+                transform: perspective(1600px) rotateY(-46deg) rotateX(7deg) translateZ(-320px) scale(0.86);
+            }
+            58% {
+                opacity: 1;
+                transform: perspective(1600px) rotateY(4deg) rotateX(-1.5deg) translateZ(22px) scale(1.012);
             }
             100% {
                 opacity: 1;
-                transform: none;
+                transform: perspective(1600px) rotateY(0deg) rotateX(0deg) translateZ(0px) scale(1);
+            }
+        }
+
+        @keyframes subpage3DFlipTransition {
+            0% {
+                opacity: 0;
+                transform: perspective(1500px) rotateX(28deg) rotateY(-20deg) translateZ(-200px) scale(0.9);
+            }
+            65% {
+                opacity: 1;
+                transform: perspective(1500px) rotateX(-2deg) rotateY(2deg) translateZ(14px) scale(1.01);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1500px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1);
             }
         }
 
         @keyframes itemCard3DPulse {
             0% {
-                transform: scale(0.98);
-                opacity: 0.75;
+                transform: perspective(1000px) rotateY(-15deg) scale(0.95);
+                opacity: 0.65;
+            }
+            60% {
+                transform: perspective(1000px) rotateY(3deg) scale(1.01);
+                opacity: 1;
             }
             100% {
-                transform: none;
+                transform: perspective(1000px) rotateY(0deg) scale(1);
                 opacity: 1;
             }
         }
@@ -569,25 +679,28 @@
         @keyframes modal3DUnfold {
             0% {
                 opacity: 0;
-                transform: perspective(1000px) rotateX(12deg) translateY(16px) scale(0.94);
+                transform: perspective(1300px) rotateX(26deg) translateY(32px) translateZ(-160px) scale(0.86);
             }
             100% {
                 opacity: 1;
-                transform: none;
+                transform: perspective(1300px) rotateX(0deg) translateY(0px) translateZ(0px) scale(1);
             }
         }
 
         .anim-orbit-cw {
-            animation: orbitTransitionClockwise 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: orbitTransitionClockwise 0.65s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-orbit-ccw {
-            animation: orbitTransitionCounterClockwise 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: orbitTransitionCounterClockwise 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .anim-subpage-flip {
+            animation: subpage3DFlipTransition 0.6s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-item-3d-pulse {
-            animation: itemCard3DPulse 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: itemCard3DPulse 0.44s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .anim-modal-3d {
-            animation: modal3DUnfold 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: modal3DUnfold 0.48s cubic-bezier(0.22, 1, 0.36, 1);
         }
 
         /* 360° Page Transition Holographic Portal Overlay */
@@ -600,34 +713,81 @@
             align-items: center;
             justify-content: center;
             opacity: 0;
-            transition: opacity 0.22s ease;
+            transition: opacity 0.26s ease;
+            perspective: 1200px;
         }
         #orbit-transition-overlay.active {
             opacity: 1;
         }
         .orbit-hud-ring {
-            width: 240px;
-            height: 240px;
+            width: 270px;
+            height: 270px;
             border-radius: 50%;
             border: 3px dashed rgba(255, 181, 0, 0.9);
-            background: radial-gradient(circle, rgba(43, 22, 16, 0.94) 0%, rgba(15, 23, 42, 0.82) 68%, transparent 100%);
-            box-shadow: 0 0 50px rgba(255, 181, 0, 0.45), inset 0 0 30px rgba(56, 189, 248, 0.3);
+            background: radial-gradient(circle, rgba(43, 22, 16, 0.92) 0%, rgba(15, 23, 42, 0.72) 65%, transparent 100%);
+            box-shadow: 0 0 65px rgba(255, 181, 0, 0.5), inset 0 0 38px rgba(56, 189, 248, 0.38);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            transform: scale(0.86);
-            transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+            transform: rotateX(20deg) scale(0.82);
+            transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
         }
         #orbit-transition-overlay.active .orbit-hud-ring {
-            transform: scale(1);
+            transform: rotateX(0deg) scale(1);
         }
 
         /* Bottom 360° Quick-Spin Floating Dock */
         #spatial-360-bottom-dock {
-            background: linear-gradient(135deg, rgba(28, 14, 10, 0.96) 0%, rgba(15, 23, 42, 0.96) 100%);
+            background: linear-gradient(135deg, rgba(28, 14, 10, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
             border: 1.5px solid rgba(255, 181, 0, 0.6);
-            box-shadow: 0 10px 26px rgba(0, 0, 0, 0.65), 0 0 16px rgba(255, 181, 0, 0.2);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 22px rgba(255, 181, 0, 0.24);
+        }
+
+        /* ================= CONTOUR 3D PAGE 1 & PAGE 2 UNIFIED 360°/3D STYLES (MATCHING OTHER PAGES) ================= */
+        #main-view-contour,
+        #page-1-container,
+        #page-2-container {
+            perspective: 1800px;
+        }
+
+        /* Same 3D cockpit wing angle on Page 1 & Page 2 as #left-column-wrapper / #right-column-wrapper */
+        @media (min-width: 1024px) {
+            body.cockpit-curved-active #page-1-container > div.spatial-card-3d {
+                transform: perspective(1600px) rotateY(var(--cockpit-tilt-right, 3.2deg)) translateZ(14px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            body.cockpit-curved-active #page-1-container > div.spatial-card-3d:hover {
+                transform: perspective(1600px) rotateY(0deg) translateZ(20px);
+            }
+            body.cockpit-curved-active #page-1-container > aside#sidebar-left {
+                transform: perspective(1600px) rotateY(var(--cockpit-tilt-left, -5deg)) translateZ(8px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            body.cockpit-curved-active #page-1-container > aside#sidebar-left:hover {
+                transform: perspective(1600px) rotateY(1.2deg) translateZ(18px);
+            }
+            /* Same gentle 3D cockpit angle on Page 2 left & right columns */
+            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:first-child {
+                transform: perspective(1600px) rotateY(2.5deg) translateZ(8px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:first-child:hover {
+                transform: perspective(1600px) rotateY(0deg) translateZ(14px);
+            }
+            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:last-child {
+                transform: perspective(1600px) rotateY(-2.5deg) translateZ(8px);
+                transform-origin: center center;
+                transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+            }
+            body.cockpit-curved-active #page-2-container .grid > div.spatial-card-3d:last-child:hover {
+                transform: perspective(1600px) rotateY(0deg) translateZ(14px);
+            }
         }
 
         /* Sub-page switcher buttons matching the main navigation dock style */
@@ -2535,7 +2695,7 @@
                 stage.classList.add(isClockwise ? 'anim-orbit-cw' : 'anim-orbit-ccw');
                 setTimeout(() => {
                     stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                }, 440);
+                }, 660);
             }
         }
 
@@ -2638,14 +2798,24 @@
                 }
                 setTimeout(() => {
                     if (!contourInitialized) {
-                        initContourThreeScene();
                         renderSidebarList();
-                        rebuildSceneContent();
                         renderPage2Table();
+                        initContourThreeScene();
+                        rebuildSceneContent();
+                        resizeContourViewport();
+                        updateHtmlLabelsPosition();
                     } else {
                         resizeContourViewport();
                         updateHtmlLabelsPosition();
                     }
+                    setTimeout(() => {
+                        resizeContourViewport();
+                        updateHtmlLabelsPosition();
+                    }, 180);
+                    setTimeout(() => {
+                        resizeContourViewport();
+                        updateHtmlLabelsPosition();
+                    }, 680);
                 }, 30);
             } else {
                 if (leftColWrapper) leftColWrapper.classList.remove('hidden');
@@ -3690,6 +3860,10 @@
         }
 
         function triggerCalc360VerdictPrompt(isServiceable, componentTitle) {
+            // Rotate 360° spatial floor grid & ceiling ring by a full 360° orbit on evaluation
+            cumulativeOrbitAngle += (isServiceable ? 360 : -360);
+            document.documentElement.style.setProperty('--orbit-angle', `${cumulativeOrbitAngle}deg`);
+
             // Dismiss mobile virtual keyboard cleanly so fixed viewport coordinates never shift or blank out
             if (document.activeElement && (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'SELECT')) {
                 document.activeElement.blur();
@@ -5005,9 +5179,10 @@ ${defectDesc}
         }
 
         function updateHtmlLabelsPosition() {
-            if (!contourCamera || !contourRenderer) return;
-            const width = contourRenderer.domElement.clientWidth;
-            const height = contourRenderer.domElement.clientHeight;
+            const container = document.getElementById('contour-canvas-container');
+            if (!contourCamera || !contourRenderer || !container) return;
+            const width = container.clientWidth || contourRenderer.domElement.clientWidth;
+            const height = container.clientHeight || contourRenderer.domElement.clientHeight;
             if (width === 0 || height === 0) return;
 
             activeLabels.forEach(item => {
@@ -5168,16 +5343,6 @@ ${defectDesc}
                     overlay.classList.remove('active');
                 }, 420);
             }
-
-            const stage = document.getElementById('main-3d-cockpit-stage');
-            if (stage) {
-                stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                void stage.offsetWidth;
-                stage.classList.add(isToP1 ? 'anim-orbit-ccw' : 'anim-orbit-cw');
-                setTimeout(() => {
-                    stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                }, 440);
-            }
         }
 
         function switchWebPage(pageId) {
@@ -5199,7 +5364,11 @@ ${defectDesc}
             const headerModes = document.getElementById('header-3d-modes');
 
             if (pageId === 'page1') {
-                if (p1) p1.classList.remove('hidden');
+                if (p1) {
+                    p1.classList.remove('hidden', 'anim-subpage-flip');
+                    void p1.offsetWidth;
+                    p1.classList.add('anim-subpage-flip');
+                }
                 if (p2) p2.classList.add('hidden');
                 if (tab1) tab1.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 contour-subpage-btn-active';
                 if (tab2) tab2.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 contour-subpage-btn-inactive';
@@ -5211,7 +5380,11 @@ ${defectDesc}
                 }, 20);
             } else {
                 if (p1) p1.classList.add('hidden');
-                if (p2) p2.classList.remove('hidden');
+                if (p2) {
+                    p2.classList.remove('hidden', 'anim-subpage-flip');
+                    void p2.offsetWidth;
+                    p2.classList.add('anim-subpage-flip');
+                }
                 if (tab2) tab2.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 contour-subpage-btn-active';
                 if (tab1) tab1.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 contour-subpage-btn-inactive';
                 if (headerModes) headerModes.classList.add('lg:hidden');
@@ -5597,6 +5770,14 @@ ${defectDesc}
             contourControls.minDistance = 60;
             contourControls.maxDistance = 1600;
             contourControls.target.set(0, 30, 0);
+            contourControls.update();
+
+            if (typeof ResizeObserver !== 'undefined') {
+                const ro = new ResizeObserver(() => {
+                    resizeContourViewport();
+                });
+                ro.observe(container);
+            }
 
             const ambientLight = new THREE.AmbientLight(0xffffff, 0.65);
             contourScene.add(ambientLight);
@@ -5632,6 +5813,9 @@ ${defectDesc}
                 contourCamera.aspect = nw / nh;
                 contourCamera.updateProjectionMatrix();
                 contourRenderer.setSize(nw, nh);
+                if (contourControls) contourControls.update();
+                if (contourScene) contourRenderer.render(contourScene, contourCamera);
+                updateHtmlLabelsPosition();
             }
         }
 
@@ -5805,12 +5989,16 @@ ${defectDesc}
                 if (!overlay || overlay.classList.contains('hidden')) return;
 
                 if (!introPaused) {
+                    const speedMult = window.__introEnteringBoost ? 4.5 : 1;
                     if (introRingGroup) {
-                        introRingGroup.rotation.y += 0.008;
-                        introRingGroup.rotation.z += 0.003;
+                        introRingGroup.rotation.y += 0.008 * speedMult;
+                        introRingGroup.rotation.z += 0.003 * speedMult;
                     }
                     if (introParticles) {
-                        introParticles.rotation.y += 0.0025;
+                        introParticles.rotation.y += 0.0025 * speedMult;
+                        if (window.__introEnteringBoost && introThreeCamera) {
+                            introThreeCamera.position.z = Math.max(6, introThreeCamera.position.z - 0.14);
+                        }
                     }
                 }
                 introThreeRenderer.render(introThreeScene, introThreeCamera);
@@ -5827,12 +6015,17 @@ ${defectDesc}
             });
         }
 
+        let isEnteringMainApp = false;
         function enterMainAppFromIntro() {
+            if (isEnteringMainApp) return;
             const overlay = document.getElementById('ups-3d-intro-overlay');
             if (!overlay) return;
-            introPaused = true;
+            isEnteringMainApp = true;
+            window.__introEnteringBoost = true;
+            if (navigator.vibrate) navigator.vibrate(25);
             overlay.classList.add('intro-exit');
             setTimeout(() => {
+                introPaused = true;
                 overlay.classList.add('hidden');
                 if (introAnimFrameId) {
                     cancelAnimationFrame(introAnimFrameId);
@@ -5847,7 +6040,7 @@ ${defectDesc}
                 if (logoC) logoC.innerHTML = '';
                 if (textC) textC.innerHTML = '';
                 onWindowResize();
-            }, 680);
+            }, 1180);
         }
 
         window.onload = function() {
