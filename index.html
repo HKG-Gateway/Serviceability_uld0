@@ -1509,7 +1509,7 @@
 
     </style>
 </head>
-<body class="spatial-360-body text-slate-800 font-sans min-h-screen flex flex-col select-none pb-16">
+<body class="spatial-360-body cockpit-curved-active text-slate-800 font-sans min-h-screen flex flex-col select-none pb-16">
 
     <!-- ================= 360° SPATIAL 3D ENVIRONMENT & HORIZON FLOOR ================= -->
     <div id="spatial-360-environment" aria-hidden="true">
@@ -1696,10 +1696,6 @@
 
             <!-- Bottom Helper Bar on Deep Brown Hub -->
             <div class="hub-footer-anim flex flex-wrap items-center justify-center gap-3 text-xs text-amber-200/90 font-medium">
-                <button type="button" onclick="replayIntroSplashFromHub()" class="px-3.5 py-1.5 rounded-full bg-[#2b1610] hover:bg-[#3d2015] border border-amber-400/50 text-[#ffe17d] font-bold transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-rotate-left text-[#ffb500]"></i>
-                    <span>返回 3D UPS 開場標誌</span>
-                </button>
                 <button type="button" onclick="openCardModal()" class="px-3.5 py-1.5 rounded-full bg-[#2b1610] hover:bg-[#3d2015] border border-amber-400/50 text-[#ffe17d] font-bold transition flex items-center gap-1.5">
                     <i class="fa-solid fa-id-card text-[#ffb500]"></i>
                     <span>查閱 FORM: 83-48-002 檢查卡</span>
@@ -1785,7 +1781,7 @@
                     <!-- Toggle 3D Curved Cockpit Tilt Button -->
                     <button id="btn-toggle-3d-tilt" onclick="toggleCockpit3DTilt()" title="切換 360° 環艙立體傾角 / 平面模式" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-[#ffe17d] border border-amber-400/50 text-xs font-bold transition shadow">
                         <i class="fa-solid fa-vr-cardboard text-[11px]"></i>
-                        <span id="cockpit-tilt-label">360° 環艙視角: 平面</span>
+                        <span id="cockpit-tilt-label">360° 環艙視角: 開</span>
                     </button>
 
                     <!-- Official Inspection Card Button -->
@@ -3367,7 +3363,7 @@
             }
         }
 
-        let cockpit3DTiltEnabled = false;
+        let cockpit3DTiltEnabled = true;
         function toggleCockpit3DTilt() {
             cockpit3DTiltEnabled = !cockpit3DTiltEnabled;
             const lbl = document.getElementById('cockpit-tilt-label');
