@@ -217,10 +217,8 @@
         /* ================= 3D UPS LOGO & "ULD Inspect 360" SPLASH INTRO STYLES ================= */
         #ups-3d-intro-overlay {
             background: radial-gradient(circle at 50% 42%, #4a261b 0%, #351c15 45%, #24120c 80%, #160a06 100%);
-            perspective: 1400px;
-            overflow: hidden;
-            will-change: opacity;
-            backface-visibility: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
         #ups-3d-intro-overlay.intro-exit {
             pointer-events: none;
@@ -277,7 +275,7 @@
             perspective: 1400px;
         }
 
-        /* 360-degree continuous 3D rotation animations */
+        /* 360-degree continuous 3D rotation animations (Matching User Video) */
         @keyframes upsLogoSpin360 {
             0%   { transform: rotateX(8deg) rotateY(0deg) rotateZ(-1.5deg) translateY(0px); }
             25%  { transform: rotateX(-6deg) rotateY(90deg) rotateZ(1.5deg) translateY(-6px); }
@@ -431,10 +429,9 @@
         }
 
         body.spatial-360-body {
-            background: radial-gradient(ellipse at 50% 0%, #301810 0%, #160c08 42%, #080d17 100%);
+            background: radial-gradient(ellipse at 50% 0%, #3a1d12 0%, #24120c 52%, #140905 100%);
             color: #1e293b;
             overflow-x: hidden;
-            perspective: 1800px;
         }
 
         /* 360° Ambient 3D Space & Rotating Perspective Grid Floor */
@@ -448,33 +445,9 @@
             transform-style: preserve-3d;
         }
 
-        .spatial-360-floor-grid {
-            position: absolute;
-            width: 220vw;
-            height: 220vw;
-            left: -60vw;
-            bottom: -115vw;
-            background-image:
-                linear-gradient(to right, rgba(255, 181, 0, 0.14) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(56, 189, 248, 0.14) 1px, transparent 1px);
-            background-size: 64px 64px;
-            transform: rotateX(76deg) rotateZ(var(--orbit-angle, 0deg));
-            transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-            mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
-            -webkit-mask-image: radial-gradient(circle at 50% 50%, rgba(0,0,0,0.9) 12%, transparent 68%);
-        }
-
+        .spatial-360-floor-grid,
         .spatial-360-ceiling-ring {
-            position: absolute;
-            top: -340px;
-            left: 50%;
-            width: 1020px;
-            height: 1020px;
-            border-radius: 50%;
-            border: 2px dashed rgba(255, 181, 0, 0.26);
-            box-shadow: 0 0 85px rgba(255, 181, 0, 0.14), inset 0 0 65px rgba(56, 189, 248, 0.1);
-            transform: translateX(-50%) rotateX(74deg) rotateZ(calc(var(--orbit-angle, 0deg) * -1));
-            transition: transform 0.95s cubic-bezier(0.22, 1, 0.36, 1);
+            display: none;
         }
 
         .spatial-360-ceiling-ring::after {
@@ -487,12 +460,9 @@
 
         /* 360° Header Visor & Orbital Navigation Dock */
         header.spatial-visor-header {
-            background: linear-gradient(180deg, rgba(43, 22, 16, 0.96) 0%, rgba(24, 12, 8, 0.93) 100%);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            background: linear-gradient(180deg, #2b1610 0%, #1a0c08 100%);
             border-bottom: 2px solid #ffb500;
-            box-shadow: 0 16px 38px -6px rgba(0, 0, 0, 0.7), 0 2px 14px rgba(255, 181, 0, 0.28);
-            transform-style: preserve-3d;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.55);
         }
 
         /* 3D Orbital Tab Switcher Bar */
@@ -747,11 +717,9 @@
 
         /* Bottom 360° Quick-Spin Floating Dock */
         #spatial-360-bottom-dock {
-            background: linear-gradient(135deg, rgba(28, 14, 10, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            border: 1.5px solid rgba(255, 181, 0, 0.6);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 22px rgba(255, 181, 0, 0.24);
+            background: linear-gradient(135deg, #2b1610 0%, #160a06 100%);
+            border: 1.5px solid rgba(255, 181, 0, 0.65);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
         }
 
         /* ================= CONTOUR 3D PAGE 1 & PAGE 2 UNIFIED 360°/3D STYLES (MATCHING OTHER PAGES) ================= */
@@ -996,9 +964,552 @@
             transform: translateY(-1.5px);
             box-shadow: 0 4px 0 #94a3b8, 0 6px 12px rgba(15, 23, 42, 0.1);
         }
+    
+        /* ================= 60FPS VIDEO-STYLE TRANSITION & 3D GOLDEN FLOATING BUOY BUTTONS ================= */
+        @keyframes videoHubHeaderIn {
+            0% {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Left-to-Right Staggered Pop-In matching the uploaded video (No negative translateZ, so zero 3D plane clipping!) */
+        @keyframes videoBuoyPopIn {
+            0% {
+                opacity: 0;
+                transform: translateY(44px) scale(0.86);
+            }
+            70% {
+                opacity: 1;
+                transform: translateY(-5px) scale(1.02);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Gentle 3D Buoy Bobbing */
+        @keyframes buoyGentleFloat {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-7px);
+            }
+        }
+
+        /* Video End-Transition: Camera Zoom-Through Forward into Selected Tab */
+        @keyframes videoHubZoomForward {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(1.24);
+            }
+        }
+
+        @keyframes pageSmoothReveal {
+            0% {
+                opacity: 0;
+                transform: translateY(14px) scale(0.98);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .anim-video-page-arrival {
+            animation: pageSmoothReveal 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* Step 1: Opening 3D UPS Logo Stage -> Click Logo for 360° Spin & Zoom into 4-Button Hub */
+        #ups-intro-interactive-zone {
+            transform-style: preserve-3d;
+            perspective: 1400px;
+        }
+        #ups-intro-interactive-zone.logo-warp-to-hub {
+            pointer-events: none;
+            animation: upsOverlayDelayedFadeOut 1.85s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        #ups-intro-interactive-zone.logo-warp-to-hub #ups-logo-3d-container {
+            animation: upsLogoEnterSpinZoom 1.85s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+        }
+        #ups-intro-interactive-zone.logo-warp-to-hub #ups-text-3d-container {
+            transition: opacity 0.75s cubic-bezier(0.4, 0, 0.2, 1), transform 0.85s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+            transform: translate3d(0, 28px, -120px) scale3d(0.88, 0.88, 1);
+            animation-play-state: paused !important;
+        }
+        #ups-intro-interactive-zone.logo-warp-to-hub .ups-orbit-ring {
+            animation: upsOrbitRingEnterExpand 1.75s cubic-bezier(0.4, 0, 0.2, 1) forwards !important;
+        }
+
+        /* Step 2: Video-Style 3D Golden Buoy Hub Stage */
+        #ups-3d-hub-stage {
+            display: none;
+            width: 100%;
+            max-width: 1160px;
+            margin: auto;
+            position: relative;
+            z-index: 30;
+        }
+        #ups-3d-hub-stage.hub-visible {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #ups-3d-hub-stage.hub-zoom-exit {
+            pointer-events: none;
+            animation: videoHubZoomForward 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .hub-header-anim {
+            animation: videoHubHeaderIn 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        /* Staggered 4-Buoy Left-to-Right Entrance matching Video Frames 2-6 */
+        #ups-3d-hub-stage.hub-visible .buoy-card-entrance.stagger-0 {
+            animation: videoBuoyPopIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.04s both;
+        }
+        #ups-3d-hub-stage.hub-visible .buoy-card-entrance.stagger-1 {
+            animation: videoBuoyPopIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.14s both;
+        }
+        #ups-3d-hub-stage.hub-visible .buoy-card-entrance.stagger-2 {
+            animation: videoBuoyPopIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.24s both;
+        }
+        #ups-3d-hub-stage.hub-visible .buoy-card-entrance.stagger-3 {
+            animation: videoBuoyPopIn 0.48s cubic-bezier(0.22, 1, 0.36, 1) 0.34s both;
+        }
+
+        /* 3D Stereoscopic Golden Buoy Button (金黃色 3D 立體浮標按鈕) */
+        .ups-3d-buoy-btn {
+            position: relative;
+            width: 100%;
+            border-radius: 24px;
+            padding: 16px 14px 18px 14px;
+            text-align: center;
+            cursor: pointer;
+            background: linear-gradient(155deg, #fffbeb 0%, #ffe58f 20%, #ffcc33 48%, #ffb500 76%, #d48800 100%);
+            border: 2.5px solid #fffbeb;
+            color: #24120c;
+            box-shadow:
+                0 7px 0 #b87000,
+                0 13px 0 #7c4700,
+                0 18px 0 #3d1e10,
+                0 24px 32px rgba(0, 0, 0, 0.72),
+                inset 0 3px 5px rgba(255, 255, 255, 0.9);
+            transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+            animation: buoyGentleFloat 3.6s ease-in-out infinite;
+        }
+        .ups-3d-buoy-btn.bob-delay-0 { animation-delay: 0s; }
+        .ups-3d-buoy-btn.bob-delay-1 { animation-delay: -0.9s; }
+        .ups-3d-buoy-btn.bob-delay-2 { animation-delay: -1.8s; }
+        .ups-3d-buoy-btn.bob-delay-3 { animation-delay: -2.7s; }
+
+        /* Inner Metallic Specular Bevel Rim */
+        .ups-3d-buoy-btn::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            border-radius: 19px;
+            border: 1.5px solid rgba(255, 251, 235, 0.68);
+            background: radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.45) 0%, transparent 72%);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Bottom 3D Buoy Waterline Golden Ring */
+        .ups-3d-buoy-btn::after {
+            content: '';
+            position: absolute;
+            left: 18%;
+            right: 18%;
+            bottom: -22px;
+            height: 10px;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(255, 181, 0, 0.5) 0%, transparent 75%);
+            pointer-events: none;
+        }
+
+        .ups-3d-buoy-btn:hover,
+        .ups-3d-buoy-btn:focus-visible {
+            animation-play-state: paused;
+            transform: translateY(-9px) scale(1.03) !important;
+            box-shadow:
+                0 10px 0 #c47a00,
+                0 17px 0 #854d00,
+                0 23px 0 #4a2412,
+                0 30px 42px rgba(0, 0, 0, 0.85),
+                0 0 32px rgba(255, 196, 37, 0.65),
+                inset 0 4px 8px rgba(255, 255, 255, 0.98);
+            outline: none;
+        }
+
+        .ups-3d-buoy-btn:active,
+        .ups-3d-buoy-btn.buoy-clicked-flare {
+            animation-play-state: paused;
+            transform: translateY(4px) scale(1.04) !important;
+            box-shadow:
+                0 3px 0 #b87000,
+                0 6px 0 #7c4700,
+                0 9px 0 #3d1e10,
+                0 0 48px rgba(255, 229, 143, 0.95);
+        }
+
+        /* Upper 3D Buoy Chamber inside each Golden Card (Matches Video 3D Character Stage) */
+        .buoy-3d-sculpture-stage {
+            position: relative;
+            height: 118px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            z-index: 3;
+        }
+        @media (min-width: 640px) {
+            .buoy-3d-sculpture-stage {
+                height: 132px;
+            }
+        }
+
+        /* Deep UPS Brown 3D Contrast Well inside the Golden Buoy */
+        .buoy-3d-dark-well {
+            position: absolute;
+            inset: 4px 6px;
+            border-radius: 18px;
+            background: radial-gradient(circle at 50% 42%, #52291c 0%, #32180f 58%, #1d0d08 100%);
+            border: 2px solid rgba(255, 229, 143, 0.88);
+            box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.75);
+            overflow: hidden;
+        }
+
+        /* Glowing 3D Buoy Pedestal Ring */
+        .buoy-pedestal-ring {
+            position: absolute;
+            bottom: -14px;
+            left: 50%;
+            width: 104px;
+            height: 40px;
+            margin-left: -52px;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 196, 37, 0.8);
+            box-shadow: 0 0 14px rgba(255, 181, 0, 0.45);
+            pointer-events: none;
+        }
+
+        /* 3D Extruded Floating Golden Buoy Totem */
+        .buoy-3d-floating-totem {
+            position: relative;
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, #fffbeb 0%, #ffe17d 30%, #ffb500 68%, #c47a00 100%);
+            border: 2px solid #ffffff;
+            color: #24120c;
+            box-shadow:
+                0 6px 0 #9a5b00,
+                0 10px 0 #522d00,
+                0 14px 20px rgba(0, 0, 0, 0.68),
+                inset 0 2px 3px rgba(255, 255, 255, 0.95);
+            z-index: 5;
+        }
+
+        /* Floating Mini 3D Satellite Badge */
+        .buoy-3d-mini-orb {
+            position: absolute;
+            top: -9px;
+            right: -12px;
+            padding: 2px 7px;
+            border-radius: 999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            font-weight: 900;
+            background: #24120c;
+            color: #ffe17d;
+            border: 1.5px solid #ffb500;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+            white-space: nowrap;
+        }
+
+        .buoy-title-3d {
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.88);
+        }
+
+        /* Top Header 4 Golden 3D Buoy Navigation Buttons (Deep Brown Dock + Golden 3D Buoys) */
+        .orbital-nav-dock.deep-brown-buoy-dock {
+            background: linear-gradient(180deg, #351c15 0%, #24120c 100%);
+            border: 1.5px solid rgba(255, 181, 0, 0.65);
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.7);
+            padding: 7px 7px 10px 7px;
+            border-radius: 16px;
+        }
+
+        .orbital-buoy-nav-btn {
+            position: relative;
+            border-radius: 12px;
+            background: linear-gradient(160deg, #fff6cc 0%, #ffe17d 25%, #ffb500 62%, #d48800 100%);
+            color: #24120c !important;
+            border: 1.5px solid #fffbeb !important;
+            box-shadow:
+                0 4px 0 #8a4f00,
+                0 7px 0 #4a261b,
+                0 8px 14px rgba(0, 0, 0, 0.5),
+                inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            transition: transform 0.16s ease, box-shadow 0.16s ease, opacity 0.16s ease;
+            opacity: 0.88;
+        }
+
+        .orbital-buoy-nav-btn:hover {
+            opacity: 1;
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 0 #9a5b00,
+                0 9px 0 #4a261b,
+                0 10px 18px rgba(0, 0, 0, 0.6);
+        }
+
+        .orbital-buoy-nav-btn.buoy-nav-active {
+            opacity: 1;
+            background: linear-gradient(155deg, #ffffff 0%, #ffe999 20%, #ffb500 58%, #e09600 100%) !important;
+            border: 2px solid #ffffff !important;
+            transform: translateY(-2px);
+            box-shadow:
+                0 6px 0 #9a5b00,
+                0 9px 0 #522d00,
+                0 0 18px rgba(255, 196, 37, 0.7) !important;
+        }
+
+        .orbital-buoy-nav-btn .buoy-active-dot {
+            display: none;
+        }
+        .orbital-buoy-nav-btn.buoy-nav-active .buoy-active-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #16a34a;
+        }
+
+    
+        /* ================= GOLDEN LINES ROTATING BEHIND & AROUND OPENING UPS LOGO ================= */
+        .ups-logo-backdrop-lines {
+            position: absolute;
+            top: 42%;
+            left: 50%;
+            width: 340px;
+            height: 340px;
+            transform: translate(-50%, -50%) translateZ(-30px);
+            pointer-events: none;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+        @media (min-width: 640px) {
+            .ups-logo-backdrop-lines {
+                width: 440px;
+                height: 440px;
+            }
+        }
+
+        @keyframes goldLineSpinCW {
+            0%   { transform: translate(-50%, -50%) rotateZ(0deg); }
+            100% { transform: translate(-50%, -50%) rotateZ(360deg); }
+        }
+        @keyframes goldLineSpinCCW {
+            0%   { transform: translate(-50%, -50%) rotateZ(360deg); }
+            100% { transform: translate(-50%, -50%) rotateZ(0deg); }
+        }
+        @keyframes goldLineTiltOrbit1 {
+            0%   { transform: translate(-50%, -50%) rotateX(62deg) rotateY(18deg) rotateZ(0deg); }
+            100% { transform: translate(-50%, -50%) rotateX(62deg) rotateY(18deg) rotateZ(360deg); }
+        }
+        @keyframes goldLineTiltOrbit2 {
+            0%   { transform: translate(-50%, -50%) rotateX(62deg) rotateY(-22deg) rotateZ(360deg); }
+            100% { transform: translate(-50%, -50%) rotateX(62deg) rotateY(-22deg) rotateZ(0deg); }
+        }
+        @keyframes goldLineTiltOrbit3 {
+            0%   { transform: translate(-50%, -50%) rotateX(28deg) rotateY(58deg) rotateZ(0deg); }
+            100% { transform: translate(-50%, -50%) rotateX(28deg) rotateY(58deg) rotateZ(360deg); }
+        }
+
+        .ups-gold-ring-svg-cw {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            animation: goldLineSpinCW 11s linear infinite;
+            will-change: transform;
+        }
+        .ups-gold-ring-svg-ccw {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 84%;
+            height: 84%;
+            animation: goldLineSpinCCW 8.5s linear infinite;
+            will-change: transform;
+        }
+        .ups-gold-3d-ribbon-1 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 86%;
+            height: 86%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: rgba(255, 229, 143, 0.85);
+            border-bottom-color: rgba(255, 181, 0, 0.65);
+            animation: goldLineSpinCCW 9s linear infinite;
+            will-change: transform;
+        }
+        .ups-gold-3d-ribbon-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 88%;
+            height: 88%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-left-color: #ffb500;
+            border-right-color: #ffe17d;
+            box-shadow: 0 0 15px rgba(255, 225, 125, 0.4);
+            animation: goldLineTiltOrbit2 7.8s linear infinite;
+            will-change: transform;
+        }
+        .ups-gold-3d-ribbon-3 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 78%;
+            height: 78%;
+            border-radius: 50%;
+            border: 2px dashed rgba(255, 210, 77, 0.72);
+            animation: goldLineTiltOrbit3 9.2s linear infinite;
+            will-change: transform;
+        }
+
+        /* ================= 4 GOLDEN BUOY BUTTONS PROGRESSIVE SPLIT-APART TRANSITION (四大按鈕漸進分開進入頁面) ================= */
+        @keyframes buoySplitLeftInner {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            25% {
+                opacity: 1;
+                transform: translate3d(-18px, -8px, 0) scale(1.03);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(-125vw, -24px, 0) rotateZ(-8deg) scale(0.9);
+            }
+        }
+
+        @keyframes buoySplitLeftOuter {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            15% {
+                opacity: 1;
+                transform: translate3d(-24px, -6px, 0) scale(1.02);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(-135vw, 16px, 0) rotateZ(-12deg) scale(0.86);
+            }
+        }
+
+        @keyframes buoySplitRightInner {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            25% {
+                opacity: 1;
+                transform: translate3d(18px, -8px, 0) scale(1.03);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(125vw, -24px, 0) rotateZ(8deg) scale(0.9);
+            }
+        }
+
+        @keyframes buoySplitRightOuter {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            15% {
+                opacity: 1;
+                transform: translate3d(24px, -6px, 0) scale(1.02);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(135vw, 16px, 0) rotateZ(12deg) scale(0.86);
+            }
+        }
+
+        @keyframes hubHeaderSplitFadeUp {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(0, -65px, 0) scale(0.94);
+            }
+        }
+
+        @keyframes hubFooterSplitFadeDown {
+            0% {
+                opacity: 1;
+                transform: translate3d(0, 0, 0);
+            }
+            100% {
+                opacity: 0;
+                transform: translate3d(0, 50px, 0);
+            }
+        }
+
+        /* Progressive Split-Apart Choreography when a Buoy is Clicked */
+        #ups-3d-hub-stage.hub-split-exit {
+            pointer-events: none;
+        }
+        #ups-3d-hub-stage.hub-split-exit .hub-header-anim {
+            animation: hubHeaderSplitFadeUp 0.52s cubic-bezier(0.4, 0, 0.2, 1) 0.04s forwards !important;
+        }
+        #ups-3d-hub-stage.hub-split-exit .hub-footer-anim {
+            animation: hubFooterSplitFadeDown 0.45s cubic-bezier(0.4, 0, 0.2, 1) 0.02s forwards !important;
+        }
+        /* Inner pair splits first/progressively with outer pair so all 4 buttons progressively part left & right */
+        #ups-3d-hub-stage.hub-split-exit .buoy-card-entrance.stagger-0 {
+            animation: buoySplitLeftOuter 0.68s cubic-bezier(0.32, 0.04, 0.2, 1) 0.02s forwards !important;
+        }
+        #ups-3d-hub-stage.hub-split-exit .buoy-card-entrance.stagger-1 {
+            animation: buoySplitLeftInner 0.72s cubic-bezier(0.32, 0.04, 0.2, 1) 0.14s forwards !important;
+        }
+        #ups-3d-hub-stage.hub-split-exit .buoy-card-entrance.stagger-2 {
+            animation: buoySplitRightInner 0.72s cubic-bezier(0.32, 0.04, 0.2, 1) 0.14s forwards !important;
+        }
+        #ups-3d-hub-stage.hub-split-exit .buoy-card-entrance.stagger-3 {
+            animation: buoySplitRightOuter 0.68s cubic-bezier(0.32, 0.04, 0.2, 1) 0.02s forwards !important;
+        }
+
     </style>
 </head>
-<body class="spatial-360-body cockpit-curved-active text-slate-800 font-sans min-h-screen flex flex-col select-none pb-16">
+<body class="spatial-360-body text-slate-800 font-sans min-h-screen flex flex-col select-none pb-16">
 
     <!-- ================= 360° SPATIAL 3D ENVIRONMENT & HORIZON FLOOR ================= -->
     <div id="spatial-360-environment" aria-hidden="true">
@@ -1042,27 +1553,157 @@
         </div>
     </div>
 
-    <!-- ================= 3D UPS LOGO & "ULD Inspect 360" 360° SPLASH INTRO OVERLAY ================= -->
+    <!-- ================= 3D UPS LOGO & VIDEO-STYLE 4 GOLDEN 3D BUOY HUB OVERLAY ================= -->
     <div id="ups-3d-intro-overlay" class="fixed inset-0 z-[100] flex flex-col items-center justify-center p-4 sm:p-6 text-white select-none">
-        <!-- Three.js 3D Golden Rings & Particles Background on UPS Brown Backdrop -->
+        <!-- Three.js 3D Golden Rings & Particles Background on UPS Brown Backdrop (Matches Video) -->
         <canvas id="ups-intro-3d-canvas" class="absolute inset-0 w-full h-full pointer-events-none opacity-85"></canvas>
 
         <!-- Ambient UPS Brown & Gold Radial Spotlight -->
         <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_50%_45%,rgba(255,181,0,0.16)_0%,rgba(53,28,21,0.4)_48%,rgba(27,13,8,0.88)_100%)]"></div>
 
-        <!-- Center 3D Stage: Only 3D UPS Logo + 3D "ULD Inspect 360" Text (Click Logo to Enter) -->
+        <!-- STATE 1: Opening 3D UPS Logo + 3D Golden Orbital Ring + 3D "ULD Inspect 360" Text (Click Logo to 360° Spin into 4-Button Hub) -->
         <div id="ups-intro-interactive-zone" class="relative z-20 flex flex-col items-center justify-center ups-3d-stage">
             <!-- 3D Golden Orbital Ring -->
             <div class="ups-orbit-ring"></div>
 
-            <!-- 3D Extruded UPS Logo (360° Rotating - Click to Enter Page) -->
-            <div id="ups-logo-3d-container" onclick="enterMainAppFromIntro()" class="ups-logo-3d-rig mb-6 sm:mb-8 cursor-pointer" title="點擊進入頁面">
-                <!-- Populated with 30 extruded 3D Z-layers of the official Wikimedia UPS SVG logo -->
-            </div>
+            <!-- 3D Extruded UPS Logo (360° Rotating - Click to 360° Spin & Enter 4-Button Hub) -->
+            <div id="ups-logo-3d-container" onclick="enterMainAppFromIntro()" class="ups-logo-3d-rig mb-6 sm:mb-8 cursor-pointer" title="點擊進入 4 大按鈕選項"></div>
 
             <!-- 3D Extruded "ULD Inspect 360" Text (360° Rotating) -->
-            <div id="ups-text-3d-container" onclick="enterMainAppFromIntro()" class="ups-text-3d-rig cursor-pointer">
-                <!-- Populated with 24 extruded 3D Z-layers of "ULD Inspect 360" -->
+            <div id="ups-text-3d-container" onclick="enterMainAppFromIntro()" class="ups-text-3d-rig cursor-pointer"></div>
+        </div>
+
+        <!-- STATE 2: VIDEO-STYLE 3D FLOATING BUOY OPTION HUB (Revealed immediately when UPS Logo is Clicked) -->
+        <div id="ups-3d-hub-stage" class="px-2 sm:px-6 py-4">
+            <!-- Top Brand Badge: Only UPS Logo & "UPS ULD Inspect 360" -->
+            <div class="hub-header-anim text-center mb-6 sm:mb-8">
+                <div class="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-[#2b1610] border border-[#ffb500]/80 shadow-md">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" alt="UPS" class="w-5 h-6 object-contain" />
+                    <span class="text-xs sm:text-sm font-mono font-extrabold tracking-[0.14em] text-[#ffe17d]">
+                        UPS ULD Inspect 360
+                    </span>
+                </div>
+            </div>
+
+            <!-- 4 Golden 3D Stereoscopic Floating Buoy Buttons (Left-to-Right Staggered Video Pop-In) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full max-w-6xl pb-6">
+
+                <!-- Buoy 1: 3D檢查 -->
+                <div class="buoy-card-entrance stagger-0">
+                    <button type="button" id="hub-buoy-uld" onclick="selectBuoyOptionFromHub('uld', this)" class="ups-3d-buoy-btn bob-delay-0 group">
+                        <div class="buoy-3d-sculpture-stage">
+                            <div class="buoy-3d-dark-well">
+                                <div class="buoy-pedestal-ring"></div>
+                            </div>
+                            <div class="buoy-3d-floating-totem">
+                                <span class="buoy-3d-mini-orb">13 MODELS</span>
+                                <i class="fa-solid fa-boxes-packing text-3xl sm:text-4xl"></i>
+                            </div>
+                        </div>
+                        <div class="relative z-10 space-y-1 pt-1">
+                            <div class="inline-flex items-center gap-1 text-[10px] font-mono font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#24120c] text-[#ffe17d]">
+                                <i class="fa-solid fa-cube text-[#ffb500]"></i> STATION 01
+                            </div>
+                            <h3 class="buoy-title-3d text-lg sm:text-2xl font-black text-[#24120c] tracking-tight">
+                                3D 檢查
+                            </h3>
+                            <p class="text-[11px] sm:text-xs font-extrabold text-[#3d1e10]/90 leading-snug line-clamp-2 pb-1">
+                                13 項集裝箱、集裝板與配件 360° 適航拒收標準
+                            </p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Buoy 2: 判定計數機 -->
+                <div class="buoy-card-entrance stagger-1">
+                    <button type="button" id="hub-buoy-calc" onclick="selectBuoyOptionFromHub('calc', this)" class="ups-3d-buoy-btn bob-delay-1 group">
+                        <div class="buoy-3d-sculpture-stage">
+                            <div class="buoy-3d-dark-well">
+                                <div class="buoy-pedestal-ring"></div>
+                            </div>
+                            <div class="buoy-3d-floating-totem">
+                                <span class="buoy-3d-mini-orb">83-48-002</span>
+                                <i class="fa-solid fa-calculator text-3xl sm:text-4xl"></i>
+                            </div>
+                        </div>
+                        <div class="relative z-10 space-y-1 pt-1">
+                            <div class="inline-flex items-center gap-1 text-[10px] font-mono font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#24120c] text-[#ffe17d]">
+                                <i class="fa-solid fa-bolt text-[#ffb500]"></i> STATION 02
+                            </div>
+                            <h3 class="buoy-title-3d text-lg sm:text-2xl font-black text-[#24120c] tracking-tight">
+                                判定計數機
+                            </h3>
+                            <p class="text-[11px] sm:text-xs font-extrabold text-[#3d1e10]/90 leading-snug line-clamp-2 pb-1">
+                                輸入實測數值秒級判定 Serviceable 或拒收
+                            </p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Buoy 3: 檢驗速錄 -->
+                <div class="buoy-card-entrance stagger-2">
+                    <button type="button" id="hub-buoy-logger" onclick="selectBuoyOptionFromHub('logger', this)" class="ups-3d-buoy-btn bob-delay-2 group">
+                        <div class="buoy-3d-sculpture-stage">
+                            <div class="buoy-3d-dark-well">
+                                <div class="buoy-pedestal-ring"></div>
+                            </div>
+                            <div class="buoy-3d-floating-totem">
+                                <span class="buoy-3d-mini-orb">LIVE SYNC</span>
+                                <i class="fa-solid fa-clipboard-list text-3xl sm:text-4xl"></i>
+                            </div>
+                        </div>
+                        <div class="relative z-10 space-y-1 pt-1">
+                            <div class="inline-flex items-center gap-1 text-[10px] font-mono font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#24120c] text-[#ffe17d]">
+                                <i class="fa-solid fa-satellite-dish text-[#ffb500]"></i> STATION 03
+                            </div>
+                            <h3 class="buoy-title-3d text-lg sm:text-2xl font-black text-[#24120c] tracking-tight">
+                                檢驗速錄
+                            </h3>
+                            <p class="text-[11px] sm:text-xs font-extrabold text-[#3d1e10]/90 leading-snug line-clamp-2 pb-1">
+                                停機坪全員即時共享速錄清單與一鍵交接通報
+                            </p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Buoy 4: Contour 3D -->
+                <div class="buoy-card-entrance stagger-3">
+                    <button type="button" id="hub-buoy-contour" onclick="selectBuoyOptionFromHub('contour', this)" class="ups-3d-buoy-btn bob-delay-3 group">
+                        <div class="buoy-3d-sculpture-stage">
+                            <div class="buoy-3d-dark-well">
+                                <div class="buoy-pedestal-ring"></div>
+                            </div>
+                            <div class="buoy-3d-floating-totem">
+                                <span class="buoy-3d-mini-orb">16 CONTOURS</span>
+                                <i class="fa-solid fa-cubes text-3xl sm:text-4xl"></i>
+                            </div>
+                        </div>
+                        <div class="relative z-10 space-y-1 pt-1">
+                            <div class="inline-flex items-center gap-1 text-[10px] font-mono font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#24120c] text-[#ffe17d]">
+                                <i class="fa-solid fa-compass-drafting text-[#ffb500]"></i> STATION 04
+                            </div>
+                            <h3 class="buoy-title-3d text-lg sm:text-2xl font-black text-[#24120c] tracking-tight">
+                                Contour 3D
+                            </h3>
+                            <p class="text-[11px] sm:text-xs font-extrabold text-[#3d1e10]/90 leading-snug line-clamp-2 pb-1">
+                                16 組航空貨盤輪廓 3D CAD 立體模型與平面對照
+                            </p>
+                        </div>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Bottom Helper Bar on Deep Brown Hub -->
+            <div class="hub-footer-anim flex flex-wrap items-center justify-center gap-3 text-xs text-amber-200/90 font-medium">
+                <button type="button" onclick="replayIntroSplashFromHub()" class="px-3.5 py-1.5 rounded-full bg-[#2b1610] hover:bg-[#3d2015] border border-amber-400/50 text-[#ffe17d] font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-rotate-left text-[#ffb500]"></i>
+                    <span>返回 3D UPS 開場標誌</span>
+                </button>
+                <button type="button" onclick="openCardModal()" class="px-3.5 py-1.5 rounded-full bg-[#2b1610] hover:bg-[#3d2015] border border-amber-400/50 text-[#ffe17d] font-bold transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-id-card text-[#ffb500]"></i>
+                    <span>查閱 FORM: 83-48-002 檢查卡</span>
+                </button>
             </div>
         </div>
     </div>
@@ -1104,8 +1745,8 @@
             <!-- Top 360° Spatial Telemetry & Brand Row -->
             <div class="flex justify-between items-center gap-2 md:gap-4">
                 
-                <!-- Left: 3D Shield Logo & Title -->
-                <div class="flex items-center gap-3 cursor-pointer min-w-0 group" onclick="switchPage('uld')">
+                <!-- Left: 3D Shield Logo & Title (Click to open Video-Style 3D Buoy Option Hub) -->
+                <div class="flex items-center gap-3 cursor-pointer min-w-0 group" onclick="open3DHubFromApp()" title="點擊開啟 3D 立體浮標總選單">
                     <div class="relative flex-shrink-0 w-9 h-11 md:w-10 md:h-12 flex items-center justify-center filter drop-shadow-[0_4px_10px_rgba(255,181,0,0.4)] transition-transform duration-500 group-hover:rotate-[360deg]">
                         <img 
                           src="https://upload.wikimedia.org/wikipedia/commons/6/6b/United_Parcel_Service_logo_2014.svg" 
@@ -1144,30 +1785,38 @@
                     <!-- Toggle 3D Curved Cockpit Tilt Button -->
                     <button id="btn-toggle-3d-tilt" onclick="toggleCockpit3DTilt()" title="切換 360° 環艙立體傾角 / 平面模式" class="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-[#ffe17d] border border-amber-400/50 text-xs font-bold transition shadow">
                         <i class="fa-solid fa-vr-cardboard text-[11px]"></i>
-                        <span id="cockpit-tilt-label">360° 環艙視角: 開</span>
+                        <span id="cockpit-tilt-label">360° 環艙視角: 平面</span>
                     </button>
 
                     <!-- Official Inspection Card Button -->
-                    <button onclick="openCardModal()" class="px-3 sm:px-4 py-1.5 ups-gold-gradient text-[#2b1610] hover:brightness-110 active:scale-95 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 shadow-[0_4px_14px_rgba(255,181,0,0.4)] border border-amber-200 transition">
-                        <i class="fa-solid fa-id-card text-xs sm:text-sm"></i> 
+                    <button onclick="openCardModal()" class="px-3 sm:px-4 py-1.5 bg-[#24120c] hover:bg-[#3d2015] text-[#ffe17d] border-2 border-[#ffb500] active:scale-95 rounded-xl text-xs sm:text-sm font-black flex items-center gap-1.5 shadow transition">
+                        <i class="fa-solid fa-id-card text-xs sm:text-sm text-[#ffb500]"></i> 
                         <span>檢查卡</span>
                     </button>
                 </div>
             </div>
 
-            <!-- 360° Orbital Carousel Page Navigation Dock (4 Stations at 0°, 90°, 180°, 270°) -->
-            <div class="orbital-nav-dock grid grid-cols-2 sm:grid-cols-4 text-xs font-bold gap-1.5">
-                <button id="nav-tab-uld" onclick="switchPage('uld')" class="orbital-tab-btn orbital-tab-active py-2 px-2.5 flex items-center justify-center gap-1.5 font-extrabold truncate">
-                    <i class="fa-solid fa-boxes-packing"></i> <span>📦 3D 檢查 (<span id="uld-count-badge">13</span>)</span>
+            <!-- Hidden 4 Tab State Holders (Removed from top of active page per user request; accessible via 上一步) -->
+            <div class="hidden" aria-hidden="true">
+                <button id="nav-tab-uld" onclick="switchPage('uld')" class="orbital-tab-btn orbital-buoy-nav-btn buoy-nav-active py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate">
+                    <span class="buoy-active-dot"></span>
+                    <i class="fa-solid fa-boxes-packing text-[#24120c]"></i>
+                    <span>📦 3D 檢查 (<span id="uld-count-badge">13</span>)</span>
                 </button>
-                <button id="nav-tab-calc" onclick="switchPage('calc')" class="orbital-tab-btn orbital-tab-inactive py-2 px-2.5 flex items-center justify-center gap-1.5 font-bold truncate">
-                    <i class="fa-solid fa-calculator text-amber-400"></i> <span>⚡ 判定計算機</span>
+                <button id="nav-tab-calc" onclick="switchPage('calc')" class="orbital-tab-btn orbital-buoy-nav-btn py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate">
+                    <span class="buoy-active-dot"></span>
+                    <i class="fa-solid fa-calculator text-[#24120c]"></i>
+                    <span>⚡ 判定計數機</span>
                 </button>
-                <button id="nav-tab-logger" onclick="switchPage('logger')" class="orbital-tab-btn orbital-tab-inactive py-2 px-2.5 flex items-center justify-center gap-1.5 font-bold truncate">
-                    <i class="fa-solid fa-clipboard-list text-emerald-400"></i> <span>📋 檢驗速錄</span>
+                <button id="nav-tab-logger" onclick="switchPage('logger')" class="orbital-tab-btn orbital-buoy-nav-btn py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate">
+                    <span class="buoy-active-dot"></span>
+                    <i class="fa-solid fa-clipboard-list text-[#24120c]"></i>
+                    <span>📋 檢驗速錄</span>
                 </button>
-                <button id="nav-tab-contour" onclick="switchPage('contour')" class="orbital-tab-btn orbital-tab-inactive py-2 px-2.5 flex items-center justify-center gap-1.5 font-bold truncate">
-                    <i class="fa-solid fa-cubes text-sky-400"></i> <span>📐 Contour 3D (16)</span>
+                <button id="nav-tab-contour" onclick="switchPage('contour')" class="orbital-tab-btn orbital-buoy-nav-btn py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate">
+                    <span class="buoy-active-dot"></span>
+                    <i class="fa-solid fa-cubes text-[#24120c]"></i>
+                    <span>📐 Contour 3D (16)</span>
                 </button>
             </div>
         </div>
@@ -1874,7 +2523,7 @@
     </main>
 
     <!-- ================= FLOATING 360° ORBITAL QUICK-SWITCH RING DOCK ================= -->
-    <div id="spatial-360-bottom-dock" class="fixed bottom-3 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full flex items-center gap-2 text-white text-xs">
+    <div id="spatial-360-bottom-dock" class="hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-30 px-3 py-1.5 rounded-full items-center gap-2 text-white text-xs">
         <button onclick="rotatePage360(-1)" class="px-2.5 py-1 rounded-full bg-amber-500/20 hover:bg-[#ffb500] hover:text-[#2b1610] text-amber-300 font-bold transition flex items-center gap-1" title="逆時針 360° 旋轉切換上一頁 (-90°)">
             <i class="fa-solid fa-rotate-left"></i>
             
@@ -2459,7 +3108,8 @@
         }
 
         let scene, camera, renderer, controls, uldGroup;
-        const gltfLoader = new THREE.GLTFLoader();
+        let uldModelLoadedOnce = false;
+        const gltfLoader = (typeof THREE !== 'undefined' && THREE.GLTFLoader) ? new THREE.GLTFLoader() : null;
 
         function init3D() {
             renderCategoryButtons();
@@ -2468,18 +3118,26 @@
             loadLogsFromStorage();
             initUniversalSync();
 
+            const initData = uldData['amp'];
+            if (initData) {
+                document.getElementById('current-item-title').innerText = initData.title.toUpperCase();
+                document.getElementById('criteria-box-header').innerText = initData.headerLabel || "拒收標準 (Unserviceable Criteria)";
+                document.getElementById('part-name').innerText = initData.label + " " + (initData.titleSuffix || "官方拒收標準 (83-48-002)");
+                document.getElementById('part-limits').innerText = initData.fullCriteria;
+            }
+
             const container = document.getElementById('canvas-container');
-            if (!container) return;
+            if (!container || typeof THREE === 'undefined') return;
 
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x0f172a);
 
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera = new THREE.PerspectiveCamera(45, (container.clientWidth || 600) / (container.clientHeight || 460), 0.1, 100);
             camera.position.set(4.2, 2.8, 5.0);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
+            renderer.setSize(container.clientWidth || 600, container.clientHeight || 460);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
             container.appendChild(renderer.domElement);
 
             controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -2497,12 +3155,12 @@
             uldGroup = new THREE.Group();
             scene.add(uldGroup);
 
-            switchItem('amp');
             window.addEventListener('resize', onWindowResize);
             animate();
         }
 
         function switchItem(key) {
+            uldModelLoadedOnce = true;
             currentItemKey = key;
             const data = uldData[key];
             if (!data) return;
@@ -2656,19 +3314,7 @@
         let orbitOverlayTimer = null;
 
         function trigger360PageTransitionEffect(fromPage, toPage) {
-            const fromMeta = PAGE_ORBIT_META[fromPage] || PAGE_ORBIT_META['uld'];
             const toMeta = PAGE_ORBIT_META[toPage] || PAGE_ORBIT_META['uld'];
-
-            // Compute shortest 360° rotation direction
-            let diff = toMeta.idx - fromMeta.idx;
-            if (diff === 3) diff = -1;
-            if (diff === -3) diff = 1;
-            const isClockwise = diff >= 0;
-
-            if (fromPage !== toPage) {
-                cumulativeOrbitAngle += (diff * 90);
-                document.documentElement.style.setProperty('--orbit-angle', `${cumulativeOrbitAngle}deg`);
-            }
 
             const degEl = document.getElementById('header-azimuth-deg');
             if (degEl) degEl.innerText = toMeta.deg;
@@ -2676,34 +3322,16 @@
             const dockSt = document.getElementById('dock-active-station');
             if (dockSt) dockSt.innerText = `${toMeta.label}`;
 
-            // Trigger 360° Portal HUD Overlay when switching between different pages
-            if (fromPage !== toPage) {
-                const overlay = document.getElementById('orbit-transition-overlay');
-                const hudAngle = document.getElementById('orbit-hud-angle');
-                const hudLabel = document.getElementById('orbit-hud-label');
-                if (overlay && hudAngle && hudLabel) {
-                    hudAngle.innerText = toMeta.deg;
-                    hudLabel.innerText = toMeta.label;
-                    overlay.classList.add('active');
-                    if (orbitOverlayTimer) clearTimeout(orbitOverlayTimer);
-                    orbitOverlayTimer = setTimeout(() => {
-                        overlay.classList.remove('active');
-                    }, 420);
-                }
-            }
+            // Ensure any 360° transition overlay is hidden (removed per user request)
+            const overlay = document.getElementById('orbit-transition-overlay');
+            if (overlay) overlay.classList.remove('active');
 
             // Dismiss calculator overlay if open when switching pages
             dismissCalcVerdict360Overlay(true);
 
-            // Trigger 3D Stage Rotation Animation and clean up class after completion
             const stage = document.getElementById('main-3d-cockpit-stage');
-            if (stage && fromPage !== toPage) {
-                stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                void stage.offsetWidth;
-                stage.classList.add(isClockwise ? 'anim-orbit-cw' : 'anim-orbit-ccw');
-                setTimeout(() => {
-                    stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw');
-                }, 660);
+            if (stage) {
+                stage.classList.remove('anim-orbit-cw', 'anim-orbit-ccw', 'anim-video-page-arrival');
             }
         }
 
@@ -2739,7 +3367,7 @@
             }
         }
 
-        let cockpit3DTiltEnabled = true;
+        let cockpit3DTiltEnabled = false;
         function toggleCockpit3DTilt() {
             cockpit3DTiltEnabled = !cockpit3DTiltEnabled;
             const lbl = document.getElementById('cockpit-tilt-label');
@@ -2770,9 +3398,9 @@
                 const btn = document.getElementById(`nav-tab-${t}`);
                 if (!btn) return;
                 if (t === page) {
-                    btn.className = "orbital-tab-btn orbital-tab-active py-2 px-2.5 flex items-center justify-center gap-1.5 font-extrabold truncate";
+                    btn.className = "orbital-tab-btn orbital-buoy-nav-btn buoy-nav-active py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate";
                 } else {
-                    btn.className = "orbital-tab-btn orbital-tab-inactive py-2 px-2.5 flex items-center justify-center gap-1.5 font-bold truncate";
+                    btn.className = "orbital-tab-btn orbital-buoy-nav-btn py-2.5 px-3 flex items-center justify-center gap-1.5 font-black truncate";
                 }
             });
 
@@ -2833,6 +3461,10 @@
                     leftUld.classList.remove('hidden');
                     detailsPanel.classList.remove('hidden');
                     mainUld.classList.remove('hidden');
+                    const introOv = document.getElementById('ups-3d-intro-overlay');
+                    if (!uldModelLoadedOnce && (!introOv || introOv.classList.contains('hidden'))) {
+                        switchItem(currentItemKey || 'amp');
+                    }
                     setTimeout(onWindowResize, 20);
                 } else if (page === 'calc') {
                     leftCalc.classList.remove('hidden');
@@ -2958,6 +3590,9 @@
         }
         function animate() {
             requestAnimationFrame(animate);
+            const introOv = document.getElementById('ups-3d-intro-overlay');
+            if (introOv && !introOv.classList.contains('hidden')) return;
+
             if (activePage === 'uld' && activeRenderer === 'three') {
                 if (controls) controls.update();
                 if (renderer && scene && camera) {
@@ -5335,22 +5970,9 @@ ${defectDesc}
         }
 
         function triggerContourSubPage360Effect(targetPageId) {
-            const isToP1 = (targetPageId === 'page1');
-            cumulativeOrbitAngle += (isToP1 ? -90 : 90);
-            document.documentElement.style.setProperty('--orbit-angle', `${cumulativeOrbitAngle}deg`);
-
+            // 360° subpage rotation overlay removed per user request
             const overlay = document.getElementById('orbit-transition-overlay');
-            const hudAngle = document.getElementById('orbit-hud-angle');
-            const hudLabel = document.getElementById('orbit-hud-label');
-            if (overlay && hudAngle && hudLabel) {
-                hudAngle.innerText = isToP1 ? 'PAGE 1' : 'PAGE 2';
-                hudLabel.innerText = isToP1 ? '頁面 1：3D 結構檢視' : '頁面 2：原圖平面對照表';
-                overlay.classList.add('active');
-                if (orbitOverlayTimer) clearTimeout(orbitOverlayTimer);
-                orbitOverlayTimer = setTimeout(() => {
-                    overlay.classList.remove('active');
-                }, 420);
-            }
+            if (overlay) overlay.classList.remove('active');
         }
 
         function switchWebPage(pageId) {
@@ -5359,11 +5981,7 @@ ${defectDesc}
             } else if (pageId === 2 || pageId === '2' || pageId === 'page2') {
                 pageId = 'page2';
             }
-            const prevSubPage = contourState.currentPage;
             contourState.currentPage = pageId;
-            if (prevSubPage !== pageId) {
-                triggerContourSubPage360Effect(pageId);
-            }
 
             const p1 = document.getElementById('page-1-container');
             const p2 = document.getElementById('page-2-container');
@@ -5372,11 +5990,7 @@ ${defectDesc}
             const headerModes = document.getElementById('header-3d-modes');
 
             if (pageId === 'page1') {
-                if (p1) {
-                    p1.classList.remove('hidden', 'anim-subpage-flip');
-                    void p1.offsetWidth;
-                    p1.classList.add('anim-subpage-flip');
-                }
+                if (p1) p1.classList.remove('hidden', 'anim-subpage-flip');
                 if (p2) p2.classList.add('hidden');
                 if (tab1) tab1.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 contour-subpage-btn-active';
                 if (tab2) tab2.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 contour-subpage-btn-inactive';
@@ -5388,11 +6002,7 @@ ${defectDesc}
                 }, 20);
             } else {
                 if (p1) p1.classList.add('hidden');
-                if (p2) {
-                    p2.classList.remove('hidden', 'anim-subpage-flip');
-                    void p2.offsetWidth;
-                    p2.classList.add('anim-subpage-flip');
-                }
+                if (p2) p2.classList.remove('hidden', 'anim-subpage-flip');
                 if (tab2) tab2.className = 'px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center gap-1.5 contour-subpage-btn-active';
                 if (tab1) tab1.className = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 contour-subpage-btn-inactive';
                 if (headerModes) headerModes.classList.add('lg:hidden');
@@ -5858,7 +6468,7 @@ ${defectDesc}
             const textContainer = document.getElementById('ups-text-3d-container');
             if (!logoContainer || !textContainer) return;
 
-            // 1. Build 18 GPU-optimized 3D depth layers inside an inner spinning rig so click-to-zoom never snaps or drops frames
+            // 1. Build 18 GPU-optimized 3D depth layers inside an inner spinning rig (exact match to user's video)
             logoContainer.innerHTML = '';
             const logoInnerRig = document.createElement('div');
             logoInnerRig.className = 'ups-logo-3d-inner';
@@ -5889,7 +6499,7 @@ ${defectDesc}
             }
             logoContainer.appendChild(logoInnerRig);
 
-            // 2. Build 24 stacked 3D depth layers for "ULD Inspect 360" text
+            // 2. Build 24 stacked 3D depth layers for "ULD Inspect 360" text (exact match to user's video)
             textContainer.innerHTML = '';
             const totalTextLayers = 24;
             const textDepthSpan = 22; // px total 3D extrusion thickness
@@ -5922,6 +6532,7 @@ ${defectDesc}
         function initIntroThreeStage() {
             const canvas = document.getElementById('ups-intro-3d-canvas');
             if (!canvas || typeof THREE === 'undefined') return;
+            if (introThreeRenderer) return;
 
             const w = window.innerWidth || 800;
             const h = window.innerHeight || 600;
@@ -6027,38 +6638,145 @@ ${defectDesc}
         }
 
         let isEnteringMainApp = false;
+        let isTransitioningFromHub = false;
+
+        // Step 1: Clicking the opening 3D UPS Logo plays the video's 360° spin + zoom animation and enters the 4 Golden 3D Buoy Buttons Hub
         function enterMainAppFromIntro() {
             if (isEnteringMainApp) return;
-            const overlay = document.getElementById('ups-3d-intro-overlay');
-            if (!overlay) return;
+            const logoZone = document.getElementById('ups-intro-interactive-zone');
+            const hubStage = document.getElementById('ups-3d-hub-stage');
+            if (!logoZone || !hubStage) return;
+
             isEnteringMainApp = true;
             window.__introEnteringBoost = true;
             if (navigator.vibrate) navigator.vibrate(25);
-            overlay.classList.add('intro-exit');
+
+            logoZone.classList.add('logo-warp-to-hub');
+
             setTimeout(() => {
-                introPaused = true;
-                overlay.classList.add('hidden');
-                if (introAnimFrameId) {
-                    cancelAnimationFrame(introAnimFrameId);
-                    introAnimFrameId = null;
-                }
-                if (introThreeRenderer) {
-                    introThreeRenderer.dispose();
-                    introThreeRenderer = null;
+                logoZone.style.display = 'none';
+                window.__introEnteringBoost = false;
+                if (introThreeCamera) {
+                    introThreeCamera.position.set(0, 0, 16);
                 }
                 const logoC = document.getElementById('ups-logo-3d-container');
                 const textC = document.getElementById('ups-text-3d-container');
                 if (logoC) logoC.innerHTML = '';
                 if (textC) textC.innerHTML = '';
+
+                hubStage.classList.remove('hub-zoom-exit', 'hub-split-exit');
+                hubStage.classList.add('hub-visible');
+            }, 1820);
+        }
+
+        // Step 2: Clicking any of the 4 Golden 3D Buoy Buttons triggers the Progressive Split-Apart Transition (四大按鈕漸進分開進入頁面)
+        function selectBuoyOptionFromHub(targetPage, btnEl) {
+            if (isTransitioningFromHub) return;
+            isTransitioningFromHub = true;
+            if (navigator.vibrate) navigator.vibrate(25);
+
+            if (btnEl) {
+                btnEl.classList.add('buoy-clicked-flare');
+            }
+
+            const overlay = document.getElementById('ups-3d-intro-overlay');
+            const hubStage = document.getElementById('ups-3d-hub-stage');
+
+            // Initialize main app on first entry and prepare target page underneath
+            ensureMainAppInitialized();
+            switchPage(targetPage);
+
+            if (hubStage) {
+                hubStage.classList.remove('hub-zoom-exit');
+                hubStage.classList.add('hub-split-exit');
+            }
+            if (overlay) {
+                overlay.style.transition = 'opacity 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.22s';
+                overlay.style.opacity = '0';
+            }
+
+            setTimeout(() => {
+                if (overlay) {
+                    overlay.classList.add('hidden');
+                    overlay.style.opacity = '';
+                    overlay.style.transition = '';
+                }
+                if (hubStage) {
+                    hubStage.classList.remove('hub-split-exit', 'hub-zoom-exit', 'hub-visible');
+                }
+                if (btnEl) {
+                    btnEl.classList.remove('buoy-clicked-flare');
+                }
+                isTransitioningFromHub = false;
+
+                if (targetPage === 'uld' && !uldModelLoadedOnce) {
+                    switchItem(currentItemKey || 'amp');
+                }
                 onWindowResize();
-            }, 1850);
+            }, 760);
+        }
+
+        // Re-open the Video-Style 3D Floating Buoy Hub at any time from the header UPS Logo or "3D 浮標選單" button
+        function open3DHubFromApp() {
+            const overlay = document.getElementById('ups-3d-intro-overlay');
+            const logoZone = document.getElementById('ups-intro-interactive-zone');
+            const hubStage = document.getElementById('ups-3d-hub-stage');
+            if (!overlay || !hubStage) return;
+
+            if (navigator.vibrate) navigator.vibrate(15);
+            isTransitioningFromHub = false;
+
+            if (logoZone) {
+                logoZone.style.display = 'none';
+                logoZone.classList.remove('logo-warp-to-hub');
+            }
+
+            overlay.classList.remove('hidden', 'intro-exit');
+            overlay.style.opacity = '1';
+            overlay.style.transition = '';
+
+            hubStage.classList.remove('hub-split-exit', 'hub-zoom-exit', 'hub-visible');
+            void hubStage.offsetWidth;
+            hubStage.classList.add('hub-visible');
+        }
+
+        // Return from the 4-Buoy Hub back to the spinning 3D UPS Shield Logo splash
+        function replayIntroSplashFromHub() {
+            const logoZone = document.getElementById('ups-intro-interactive-zone');
+            const hubStage = document.getElementById('ups-3d-hub-stage');
+            if (!logoZone || !hubStage) return;
+
+            if (navigator.vibrate) navigator.vibrate(15);
+            isEnteringMainApp = false;
+            isTransitioningFromHub = false;
+            window.__introEnteringBoost = false;
+            introPaused = false;
+            if (introThreeCamera) {
+                introThreeCamera.position.set(0, 0, 16);
+            }
+
+            buildUps3DIntroLayers();
+            initIntroThreeStage();
+
+            hubStage.classList.remove('hub-split-exit', 'hub-visible', 'hub-zoom-exit');
+            logoZone.style.display = '';
+            logoZone.classList.remove('logo-warp-to-hub');
+        }
+
+        let mainAppInitialized = false;
+        function ensureMainAppInitialized() {
+            if (mainAppInitialized) return;
+            mainAppInitialized = true;
+            init3D();
         }
 
         window.onload = function() {
             buildUps3DIntroLayers();
             initIntroThreeStage();
-            init3D();
-            checkUrlHash();
+            if (window.location.hash && window.location.hash !== '#') {
+                ensureMainAppInitialized();
+                checkUrlHash();
+            }
         };
     </script>
 </body>
